@@ -19,26 +19,44 @@ fn check_recursive_aliases(
       _ => aliases[d.name.to_string()] = d
     }
   }
-  for name, d in aliases {
-    let visited : Map[String, Unit] = Map([])
-    let stack = [d.value]
-    while stack.pop() is Some(e) {
-      let refs = e.extract_type_names()
-      for r in refs {
-        let r = r.to_string()
-        if r == name {
-          @atd.error_at(
-            d.loc,
-            "not implemented in atdmbt: recursive type alias '\{name}'; use a record or a sum type to break the cycle",
-          )
-        }
-        match aliases.get(r) {
-          Some(d2) if !visited.contains(r) => {
-            visited[r] = ()
-            stack.push(d2.value)
+  // depth-first search on the graph of aliases, iteratively
+  // state: 1 = being visited, 2 = done
+  let state : Map[String, Int] = Map([])
+  for d in defs {
+    let root = d.name.to_string()
+    if !aliases.contains(root) || state.contains(root) {
+      continue
+    }
+    let stack : Array[(String, Array[String], Int)] = []
+    let deps = (name : String) => {
+      aliases[name].value
+      .extract_type_names()
+      .map(n => n.to_string())
+      .filter(n => aliases.contains(n))
+    }
+    state[root] = 1
+    stack.push((root, deps(root), 0))
+    while stack.last() is Some((name, succ, i)) {
+      if i < succ.length() {
+        stack[stack.length() - 1] = (name, succ, i + 1)
+        let next = succ[i]
+        match state.get(next) {
+          Some(1) => {
+            let d = aliases[next]
+            @atd.error_at(
+              d.loc,
+              "not implemented in atdmbt: recursive type alias '\{next}'; use a record or a sum type to break the cycle",
+            )
           }
-          _ => ()
+          Some(_) => ()
+          None => {
+            state[next] = 1
+            stack.push((next, deps(next), 0))
+          }
         }
+      } else {
+        state[name] = 2
+        ignore(stack.pop())
       }
     }
   }
