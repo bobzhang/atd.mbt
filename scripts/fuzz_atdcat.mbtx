@@ -1,0 +1,178 @@
+// Differential fuzzing of atdcat: mutate the ATD files of the upstream
+// repository and compare the outputs of the MoonBit atdcat and of the
+// reference OCaml atdcat.
+//
+// Usage, from the root of the repository, after `moon build --target native`:
+//
+//   moonx scripts/fuzz_atdcat.mbtx <reference atdcat.exe> [count] [seed] [atdcat]
+//
+// The last argument is the MoonBit atdcat to test, a native executable or
+// a .wasm file run with moonrun; it defaults to the native build in _build.
+
+import {
+  "moonbitlang/async@0.22.4",
+  "moonbitlang/async@0.22.4/fs",
+  "moonbitlang/async@0.22.4/process",
+  "moonbitlang/async@0.22.4/stdio",
+  "moonbitlang/core/env",
+  "moonbitlang/core/random",
+  "moonbitlang/core/string",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/encoding/utf8",
+}
+
+///|
+let tokens : Array[String] = [
+  "(", ")", "[", "]", "{", "}", "<", ">", ";", ",", ":", "*", "|", "=", "?", "~",
+  ".", "from", "import", "as", "type", "of", "inherit", "x", "A", "'a", "\"s\"",
+  "'q'", "list", "option", "nullable", "shared", "wrap", "(*", "*)", "\n", "\"",
+  "\\",
+]
+
+///|
+let options : Array[Array[String]] = [[], ["-x", "-i"]]
+
+///|
+/// All the files with the given suffix under a directory.
+async fn find_files(dir : String, suffix : String) -> Array[String] {
+  let res = []
+  for name in @fs.readdir(dir, sort=true) {
+    let path = dir + "/" + name
+    match @fs.kind(path) {
+      Directory => res.append(find_files(path, suffix))
+      Regular => if name.has_suffix(suffix) { res.push(path) }
+      _ => ()
+    }
+  }
+  res
+}
+
+///|
+fn is_space(b : Byte) -> Bool {
+  b == b' ' || b == b'\t' || b == b'\n' || b == b'\r' || b == b'\x0C' || b == b'\x0B'
+}
+
+///|
+fn is_word(b : Byte) -> Bool {
+  (b >= b'a' && b <= b'z') ||
+  (b >= b'A' && b <= b'Z') ||
+  (b >= b'0' && b <= b'9') ||
+  b == b'_'
+}
+
+///|
+/// Split source code into rough tokens: blanks, words, double-quoted
+/// strings and single bytes.
+fn tokenize(src : Bytes) -> Array[Bytes] {
+  let res = []
+  let n = src.length()
+  let mut i = 0
+  while i < n {
+    let start = i
+    let b = src[i]
+    if is_space(b) {
+      while i < n && is_space(src[i]) {
+        i += 1
+      }
+    } else if is_word(b) {
+      while i < n && is_word(src[i]) {
+        i += 1
+      }
+    } else if b == b'"' {
+      let mut j = i + 1
+      while j < n && src[j] != b'"' {
+        j += 1
+      }
+      i = if j < n { j + 1 } else { i + 1 }
+    } else {
+      i += 1
+    }
+    res.push(src[start:i].to_owned())
+  }
+  res
+}
+
+///|
+fn mutate(rand : @random.Rand, src : Bytes) -> Bytes {
+  let parts = tokenize(src)
+  let blank = () => if rand.boolean() { "" } else { " " }
+  for _ in 0..<(1 + rand.int(limit=4)) {
+    if parts.is_empty() {
+      break
+    }
+    let op = rand.double()
+    let i = rand.int(limit=parts.length())
+    let token = tokens[rand.int(limit=tokens.length())]
+    if op < 0.4 {
+      ignore(parts.remove(i))
+    } else if op < 0.8 {
+      parts.insert(i, @utf8.encode(blank() + token + blank()))
+    } else {
+      parts[i] = @utf8.encode(token)
+    }
+  }
+  let buf = @buffer.Buffer()
+  for p in parts {
+    buf.write_bytes(p)
+  }
+  buf.contents()
+}
+
+///|
+async fn run(exe : String, args : Array[String]) -> (Int, Bytes, Bytes) {
+  // a MoonBit program compiled to wasm runs with moonrun
+  let (exe, args) = if exe.has_suffix(".wasm") {
+    ("moonrun", [exe, ..args])
+  } else {
+    (exe, args)
+  }
+  let (code, out, err) = @process.collect_output(exe, args)
+  (code, out.binary(), err.binary())
+}
+
+///|
+async fn main {
+  let args = @env.args()
+  if args.length() < 2 {
+    @stdio.stderr.write(
+      "usage: moonx scripts/fuzz_atdcat.mbtx <reference atdcat.exe> [count] [seed] [atdcat]\n",
+    )
+    raise Failure("missing argument")
+  }
+  let reference = args[1]
+  let count = if args.length() > 2 { @string.parse_int(args[2]) } else { 1000 }
+  let seed = if args.length() > 3 { args[3] } else { "0" }
+  let mbt_atdcat = if args.length() > 4 {
+    args[4]
+  } else {
+    "_build/native/debug/build/cmd/atdcat/atdcat.exe"
+  }
+  // the seed of ChaCha8 must have 32 bytes
+  let seed_bytes = @utf8.encode((seed + String::make(32, '_')).view(end_offset=32))
+  let rand = @random.Rand::chacha8(seed=seed_bytes)
+  let sources = []
+  for path in find_files(".repos/atd", ".atd") {
+    sources.push(@fs.read_file(path).binary())
+  }
+  let tmp = @fs.tmpdir(prefix="atdcat-fuzz")
+  let path = tmp + "/fuzz.atd"
+  let mut diffs = 0
+  for _ in 0..<count {
+    let src = mutate(rand, sources[rand.int(limit=sources.length())])
+    @fs.write_file(path, src)
+    for opts in options {
+      let expected = run(reference, [..opts, path])
+      let actual = run(mbt_atdcat, [..opts, path])
+      if expected != actual {
+        diffs += 1
+        @stdio.stdout.write("=== difference with options [\{opts.join(" ")}]:\n")
+        @stdio.stdout.write(src)
+        @stdio.stdout.write("\n")
+      }
+    }
+  }
+  @stdio.stdout.write("\{diffs} differences\n")
+  if diffs > 0 {
+    raise Failure("differences found")
+  }
+}

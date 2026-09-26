@@ -2,6 +2,8 @@
 package "bobzhang/atd/atdcat"
 
 // Values
+pub fn input_files(ArrayView[String]) -> Array[String?]
+
 pub fn run(Io, ArrayView[String]) -> Int
 
 // Errors

@@ -1,4 +1,7 @@
 // atdmbt: generate MoonBit code from ATD type definitions.
+//
+// This runs on the native and wasm backends; the latter is what `moonx`
+// uses.
 
 ///|
 priv suberror Exit {
@@ -24,7 +27,7 @@ let usage : String =
   #|  -help        print this help and exit
 
 ///|
-fn run(args : ArrayView[String]) -> Unit raise Error {
+async fn run(args : ArrayView[String]) -> Unit {
   let inputs = []
   let mut output : String? = None
   let mut i = 1
@@ -33,22 +36,26 @@ fn run(args : ArrayView[String]) -> Unit raise Error {
       "-o" | "--output" => {
         i += 1
         if i >= args.length() {
-          eprintln("atdmbt: option '-o' needs an argument.\n" + usage)
+          @stdio.stderr.write(
+            "atdmbt: option '-o' needs an argument.\n" + usage + "\n",
+          )
           raise Exit(2)
         }
         output = Some(args[i])
       }
       "-version" | "--version" => {
-        println(@atd.version)
+        @stdio.stdout.write(@atd.version + "\n")
         raise Exit(0)
       }
       "-help" | "--help" | "-h" => {
-        println(usage)
+        @stdio.stdout.write(usage + "\n")
         raise Exit(0)
       }
       arg =>
         if arg.has_prefix("-") {
-          eprintln("atdmbt: unknown option '\{arg}'.\n" + usage)
+          @stdio.stderr.write(
+            "atdmbt: unknown option '\{arg}'.\n" + usage + "\n",
+          )
           raise Exit(2)
         } else {
           inputs.push(arg)
@@ -57,47 +64,38 @@ fn run(args : ArrayView[String]) -> Unit raise Error {
     i += 1
   }
   if inputs.is_empty() {
-    eprintln(usage)
+    @stdio.stderr.write(usage + "\n")
     raise Exit(2)
   }
   if output is Some(_) && inputs.length() > 1 {
-    eprintln("atdmbt: option '-o' requires a single input file.")
+    @stdio.stderr.write("atdmbt: option '-o' requires a single input file.\n")
     raise Exit(2)
   }
   for input in inputs {
-    let src = @fs.read_file_to_bytes(input)
+    let src = @fs.read_file(input).binary()
     let basename = match input.rev_find("/") {
       Some(i) => input.view(start_offset=i + 1).to_owned()
       None => input
     }
     let code = @mbtgen.generate(src, atd_filename=basename, pos_fname=input)
     match output {
-      Some("-") => print_string(code)
-      Some(path) => @fs.write_string_to_file(path, code)
-      None => @fs.write_string_to_file(@mbtgen.output_file_name(input), code)
+      Some("-") => @stdio.stdout.write(code)
+      Some(path) => @fs.write_file(path, code)
+      None => @fs.write_file(@mbtgen.output_file_name(input), code)
     }
   }
 }
 
 ///|
-fn print_string(s : String) -> Unit {
-  if s.has_suffix("\n") {
-    println(s.view(end_offset=s.length() - 1))
-  } else {
-    println(s)
-  }
-}
-
-///|
-fn main {
+async fn main {
   run(@env.args()) catch {
     Exit(code) => @sys.exit(code)
     @atd.AtdError(msg) => {
-      eprintln(msg)
+      @stdio.stderr.write(msg + "\n")
       @sys.exit(1)
     }
     e => {
-      eprintln(e)
+      @stdio.stderr.write("atdmbt: \{e}\n")
       @sys.exit(2)
     }
   }

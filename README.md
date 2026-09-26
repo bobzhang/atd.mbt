@@ -16,16 +16,31 @@ What's included:
 | `bobzhang/atd/atdcat` | The `atdcat` tool as a library. |
 | `bobzhang/atd/mbtgen` | The MoonBit code generator. |
 | `bobzhang/atd/runtime` | Runtime library used by the generated MoonBit code. |
-| `cmd/atdcat`, `cmd/atdmbt` | Command-line tools (native). |
+| `cmd/atdcat`, `cmd/atdmbt` | Command-line tools (wasm and native), runnable with `moonx`. |
 
-## Building
+## Installation
+
+The command-line tools run with `moonx`, without installation:
 
 ```bash
-moon build --target native
+moonx bobzhang/atd/cmd/atdcat foo.atd
+moonx bobzhang/atd/cmd/atdmbt foo.atd
 ```
 
-The executables are then `_build/native/debug/build/cmd/atdcat/atdcat.exe`
-and `_build/native/debug/build/cmd/atdmbt/atdmbt.exe`.
+They are built on [`moonbitlang/async`](https://mooncakes.io/docs/moonbitlang/async)
+and run on the wasm (the default for `moonx`) and native backends. To use
+the library, add the module to a project:
+
+```bash
+moon add bobzhang/atd
+```
+
+From a clone of the repository:
+
+```bash
+moon run src/cmd/atdcat -- foo.atd
+moon build --target native   # _build/native/debug/build/cmd/{atdcat,atdmbt}/*.exe
+```
 
 ## atdcat
 
@@ -224,15 +239,18 @@ git clone https://github.com/ahrefs/atd .repos/atd
 Tests:
 
 ```bash
-moon test                   # all backends: --target native|js|wasm|wasm-gc
-scripts/regen_fixtures.sh   # regenerate the MoonBit code of src/tests/*
+moon test                                  # also with --target native|js|wasm
+moonx scripts/regen_fixtures.mbtx          # regenerate the code of src/tests/*
 ```
 
-To regenerate the compatibility tests, build the reference `atdcat` from
-`.repos/atd` (it needs easy-format, menhir, re, yojson and cmdliner), then:
+The compatibility tests and the fuzzer need a reference `atdcat` built from
+`.repos/atd` with dune (it needs easy-format, menhir, re, yojson and
+cmdliner):
 
 ```bash
-scripts/gen_compat_tests.py path/to/atdcat.exe && moon fmt
+moonx scripts/gen_compat_tests.mbtx path/to/atdcat.exe && moon fmt
+moon build --target native
+moonx scripts/fuzz_atdcat.mbtx path/to/atdcat.exe 1000
 ```
 
 ## License

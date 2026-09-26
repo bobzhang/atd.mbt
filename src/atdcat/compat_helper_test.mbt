@@ -31,3 +31,24 @@ fn check_atdcat(
   assert_eq(out.to_string(), stdout)
   assert_eq(exit_code, code)
 }
+
+///|
+test "input files" {
+  debug_inspect(@atdcat.input_files(["atdcat"]), content="[None]")
+  debug_inspect(
+    @atdcat.input_files(["atdcat", "-ml", "foo", "a.atd", "-o", "out", "b.atd"]),
+    content=(
+      #|[Some("b.atd"), Some("a.atd")]
+    ),
+  )
+  debug_inspect(
+    @atdcat.input_files(["atdcat", "-jsonschema", "root", "a.atd"]),
+    content=(
+      #|[Some("a.atd")]
+    ),
+  )
+  debug_inspect(
+    @atdcat.input_files(["atdcat", "-version", "a.atd"]),
+    content="[]",
+  )
+}

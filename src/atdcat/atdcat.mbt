@@ -308,3 +308,26 @@ pub fn run(io : Io, args : ArrayView[String]) -> Int {
     _ => 0
   }
 }
+
+///|
+/// The files that `run` reads for the given command-line arguments, in the
+/// order in which it reads them (`None` for the standard input).
+///
+/// This lets an asynchronous program read the input files before calling
+/// `run` with an `Io` that serves them from memory. It is implemented by
+/// running atdcat on empty inputs, which are valid ATD files, and
+/// discarding its output.
+pub fn input_files(args : ArrayView[String]) -> Array[String?] {
+  let files = []
+  let io : Io = {
+    read_file: path => {
+      files.push(path)
+      b""
+    },
+    write_file: (_, _) => (),
+    print_out: _ => (),
+    print_err: _ => (),
+  }
+  ignore(run(io, args))
+  files
+}

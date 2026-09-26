@@ -1,11 +1,12 @@
 import {
   "bobzhang/atd/atdcat" @atdcat_lib,
-  "bobzhang/atd/internal/stdin",
-  "moonbitlang/x/fs",
+  "moonbitlang/async",
+  "moonbitlang/async/fs",
+  "moonbitlang/async/stdio",
   "moonbitlang/x/sys",
   "moonbitlang/core/env",
 }
 
-supported_targets = "native"
+supported_targets = "native+wasm"
 
 pkgtype(kind: "executable")
