@@ -85,26 +85,27 @@ pub fn make_predef_table(
 
 ///|
 /// Follow aliases of the form `type t = u` down to the original definition.
+/// Cyclic aliases such as `type t = t` stop at the last definition before
+/// the cycle.
 pub fn get_original_definition(
   tbl : PredefTable,
   name : TypeName,
 ) -> (Int, TypeDef?)? {
-  match tbl.get(name) {
-    None => None
-    Some((_, opt_def)) as res =>
-      match opt_def {
-        None => res
-        Some(def) =>
-          match def.value {
-            Name(_, inst, _) =>
-              match get_original_definition(tbl, inst.name) {
-                None => res
-                Some(_) as res => res
-              }
-            _ => res
-          }
-      }
+  let visited : Array[TypeName] = []
+  let mut res = tbl.get(name)
+  guard res is Some(_) else { return None }
+  visited.push(name)
+  while res is Some((_, Some({ value: Name(_, inst, _), .. }))) {
+    if visited.contains(inst.name) {
+      break
+    }
+    visited.push(inst.name)
+    match tbl.get(inst.name) {
+      None => break
+      Some(_) as next => res = next
+    }
   }
+  res
 }
 
 ///|
