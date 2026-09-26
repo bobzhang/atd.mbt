@@ -125,6 +125,7 @@ fn is_ident_char(c : Char) -> Bool {
 /// A valid name for a value or a field: `[a-z_][A-Za-z0-9_]*`.
 fn is_lowercase_ident(s : String) -> Bool {
   s != "" &&
+  s != "_" &&
   s.iter().all(is_ident_char) &&
   ((s[0] >= 'a' && s[0] <= 'z') || s[0] == '_')
 }

@@ -69,8 +69,8 @@ test "errors" {
   inspect(
     gen_error("type t = [ A of int ] <json open_enum>"),
     content=(
-      #|File "test.atd", line 1, characters 0-38:
-      #|<json open_enum> requires a variant with a string payload
+      #|File "test.atd", line 1, characters 15-19:
+      #|The argument of this variant must be of type string as imposed by <json open_enum>.
     ),
   )
 }
@@ -395,6 +395,78 @@ test "lifted types inherit derive" {
       #|}
       #|}
       #|}
+    ),
+  )
+}
+
+///|
+test "open_enum rules, like atdgen" {
+  inspect(
+    gen_error("type t = [ A | B ] <json open_enum>"),
+    content=(
+      #|File "test.atd", line 1, characters 9-35:
+      #|Missing catch-all case of the form `| Other of string`, required by <json open_enum>.
+    ),
+  )
+  inspect(
+    gen_error("type t = [ A | B of string | C of string ] <json open_enum>"),
+    content=(
+      #|File "test.atd", line 1, characters 9-59:
+      #|Multiple variants have arguments, which doesn't make sense when combined with <json open_enum>.
+    ),
+  )
+  inspect(
+    gen_error("type t = [ A | B of int ] <json open_enum>"),
+    content=(
+      #|File "test.atd", line 1, characters 19-23:
+      #|The argument of this variant must be of type string as imposed by <json open_enum>.
+    ),
+  )
+  // aliases of string are accepted
+  ignore(gen("type s = string\ntype t = [ A | B of s ] <json open_enum>"))
+}
+
+///|
+test "duplicate JSON names" {
+  inspect(
+    gen_error(
+      "type t = { a <json name=\"x\">: int; b <json name=\"x\">: string }",
+    ),
+    content=(
+      #|File "test.atd", line 1, characters 35-60:
+      #|Duplicate JSON field name "x", already used at File "test.atd", line 1, characters 11-33
+    ),
+  )
+  inspect(
+    gen_error("type t = [ A <json name=\"B\"> | B ]"),
+    content=(
+      #|File "test.atd", line 1, characters 31-32:
+      #|Duplicate JSON variant name "B", already used at File "test.atd", line 1, characters 11-28
+    ),
+  )
+}
+
+///|
+test "reserved names" {
+  inspect(
+    gen_error("type t = { x <mbt name=\"_\">: int }"),
+    content=(
+      #|File "test.atd", line 1, characters 11-32:
+      #|invalid MoonBit field name "_"
+    ),
+  )
+  inspect(
+    gen_error("from atd_runtime import t\ntype u = atd_runtime.t"),
+    content=(
+      #|File "test.atd", line 1, characters 0-25:
+      #|the package alias 'atd_runtime' is reserved for the runtime of atdmbt; choose another one with <mbt name="...">
+    ),
+  )
+  inspect(
+    gen_error("from m <mbt name=\"atd_runtime\"> import t\ntype u = m.t"),
+    content=(
+      #|File "test.atd", line 1, characters 0-40:
+      #|the package alias 'atd_runtime' is reserved for the runtime of atdmbt; choose another one with <mbt name="...">
     ),
   )
 }

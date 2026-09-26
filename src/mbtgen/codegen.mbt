@@ -122,7 +122,7 @@ fn imported_writer_name(atd_name : String) -> String {
 /// Package alias of an imported ATD module: `<mbt name="...">` or its local
 /// name.
 fn package_alias(x : @atd.Import) -> String raise @atd.AtdError {
-  match get_mbt_string(x.annot, "name") {
+  let name = match get_mbt_string(x.annot, "name") {
     Some(name) => {
       if !is_lowercase_ident(name) {
         @atd.error_at(
@@ -134,6 +134,13 @@ fn package_alias(x : @atd.Import) -> String raise @atd.AtdError {
     }
     None => sanitize(x.name)
   }
+  if name == "atd_runtime" {
+    @atd.error_at(
+      x.loc,
+      "the package alias 'atd_runtime' is reserved for the runtime of atdmbt; choose another one with <mbt name=\"...\">",
+    )
+  }
+  name
 }
 
 ///|

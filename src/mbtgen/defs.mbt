@@ -204,6 +204,7 @@ fn Env::gen_record(
   let atd_name = d.name.to_string()
   let type_name = self.type_name(atd_name)
   let infos = self.field_infos(fields)
+  check_duplicate_json_names(infos.map(f => (f.loc, f.json_name)), "field")
   let keep_nulls = @atd.get_json_keep_nulls(an)
   // type definition
   out.push("///|")
@@ -322,19 +323,32 @@ fn Env::gen_sum(
   // unknown tags and is written as a plain string
   let mut open_case : String? = None
   if json_sum.json_open_enum {
-    for c in cases {
-      if c.payload is Some(e) &&
-        self.deref(e) is Name(_, { name: { path: ["string"], }, .. }, _) {
-        open_case = Some(c.mbt_name)
-      }
-    }
-    if open_case is None {
-      @atd.error_at(
-        d.loc,
-        "<json open_enum> requires a variant with a string payload",
-      )
+    // same rules and messages as atdgen
+    let sum_loc = unwrap(d.value).loc()
+    match cases.filter(c => c.payload is Some(_)) {
+      [] =>
+        @atd.error_at(
+          sum_loc, "Missing catch-all case of the form `| Other of string`, required by <json open_enum>.",
+        )
+      [c] =>
+        match c.payload {
+          Some(e) if self.deref(e)
+            is Name(_, { name: { path: ["string"], }, args: [], .. }, _) =>
+            open_case = Some(c.mbt_name)
+          Some(e) =>
+            @atd.error_at(
+              e.loc(),
+              "The argument of this variant must be of type string as imposed by <json open_enum>.",
+            )
+          None => ()
+        }
+      _ =>
+        @atd.error_at(
+          sum_loc, "Multiple variants have arguments, which doesn't make sense when combined with <json open_enum>.",
+        )
     }
   }
+  check_duplicate_json_names(cases.map(c => (c.loc, c.json_name)), "variant")
   // type definition
   out.push("///|")
   out.append(doc_comment(d.loc, d.annot))
@@ -525,5 +539,27 @@ fn Env::gen_helpers(
     out.push("  \{self.writer_name(atd_name)}(self)")
     out.push("}")
     out.push("")
+  }
+}
+
+///|
+/// Two fields of a record, or two variants of a sum type, can't have the
+/// same JSON name: one of them would be lost when writing JSON, and reading
+/// would be ambiguous.
+fn check_duplicate_json_names(
+  names : Array[(@atd.Loc, String)],
+  what : String,
+) -> Unit raise @atd.AtdError {
+  let seen : Map[String, @atd.Loc] = Map([])
+  for x in names {
+    let (loc, name) = x
+    match seen.get(name) {
+      Some(first) =>
+        @atd.error_at(
+          loc,
+          "Duplicate JSON \{what} name \{mbt_string_literal(name)}, already used at \{@atd.string_of_loc(first)}",
+        )
+      None => seen[name] = loc
+    }
   }
 }
