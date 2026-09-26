@@ -1,0 +1,1 @@
+type t = { inherit u } type u = { inherit t }

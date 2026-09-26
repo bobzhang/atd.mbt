@@ -6,12 +6,14 @@
 // symbol derives the empty string; it ends at the end of the last token
 // consumed.
 //
-// Error reporting emulates Menhir's legacy error-recovery strategy, which
-// upstream relies on to produce messages such as "Expecting '='": when a
-// syntax error occurs, the innermost enclosing grammar position that has an
-// `error` alternative determines the message. Such positions are
-// represented by `Parser::frame`. Errors not caught by any frame produce a
-// generic "Syntax error" message.
+// Error reporting emulates Menhir's "simplified" error-handling strategy,
+// which upstream relies on to produce messages such as "Expecting '='":
+// when a syntax error is detected, only reductions are performed, without
+// popping the stack. Therefore a specific message is produced only if the
+// error occurs exactly at a grammar position that has an `error`
+// alternative (possibly after completing the constructs that end there).
+// Such positions call `Parser::fail_with`. Other errors produce a generic
+// "Syntax error" message.
 
 ///|
 priv suberror RawSyntaxError {
@@ -57,17 +59,9 @@ fn Parser::expect(self : Parser, tok : Token) -> Unit raise Error {
 }
 
 ///|
-/// Run `f` in the scope of an `error` alternative of the grammar: raw
-/// syntax errors occurring within `f` are reported with message `msg`.
-fn[T] Parser::frame(
-  _self : Parser,
-  msg : String,
-  f : () -> T raise Error,
-) -> T raise Error {
-  f() catch {
-    RawSyntaxError(loc) => error_at(loc, msg)
-    e => raise e
-  }
+/// Fail at a grammar position that has an `error` alternative.
+fn[T] Parser::fail_with(self : Parser, msg : String) -> T raise Error {
+  error_at(self.tok_loc, msg)
 }
 
 ///|
@@ -89,6 +83,11 @@ fn Parser::lident_or_kw(self : Parser) -> String raise Error {
 }
 
 ///|
+fn Parser::starts_type_expr(self : Parser) -> Bool {
+  self.tok is (OpBrack | OpCurl | OpParen | Tident(_)) || self.is_lident_or_kw()
+}
+
+///|
 /// `annot: asection annot | (empty)`
 fn Parser::annot(self : Parser) -> Annot raise Error {
   let res = []
@@ -102,18 +101,19 @@ fn Parser::annot(self : Parser) -> Annot raise Error {
 fn Parser::asection(self : Parser) -> AnnotSection raise Error {
   let start = self.tok_loc.start
   self.advance() // LT
-  self.frame("Expecting lowercase identifier", () => {
-    let name = self.lident_or_kw()
-    let fields = []
-    while self.is_lident_or_kw() {
-      fields.push(self.afield())
-    }
-    if !(self.tok is Gt) {
-      self.frame("Expecting '>'", () => self.fail())
-    }
-    self.advance()
-    { name, loc: Loc::new(start, self.last_end), fields, }
-  })
+  if !self.is_lident_or_kw() {
+    self.fail_with("Expecting lowercase identifier")
+  }
+  let name = self.lident_or_kw()
+  let fields = []
+  while self.is_lident_or_kw() {
+    fields.push(self.afield())
+  }
+  if !(self.tok is Gt) {
+    self.fail_with("Expecting '>'")
+  }
+  self.advance()
+  { name, loc: Loc::new(start, self.last_end), fields, }
 }
 
 ///|
@@ -163,40 +163,37 @@ fn Parser::module_(self : Parser) -> Module raise Error {
 fn Parser::from_import(self : Parser) -> Import raise Error {
   let start = self.tok_loc.start
   self.advance() // FROM
-  self.frame("Expecting module name after 'from'", () => {
-    let path = [self.lident_or_kw()]
-    while self.tok is Dot {
-      self.advance()
-      path.push(self.lident_or_kw())
+  if !self.is_lident_or_kw() {
+    self.fail_with("Expecting module name after 'from'")
+  }
+  let path = [self.lident_or_kw()]
+  while self.tok is Dot {
+    self.advance()
+    path.push(self.lident_or_kw())
+  }
+  let annot = self.annot()
+  let alias_ = if self.tok is As {
+    self.advance()
+    if !self.is_lident_or_kw() {
+      self.fail_with("Expecting module alias after 'as'")
     }
-    let annot = self.annot()
-    let alias_ = if self.tok is As {
-      self.advance()
-      Some(
-        self.frame("Expecting module alias after 'as'", () => {
-          self.lident_or_kw()
-        }),
-      )
-    } else {
-      None
-    }
-    self.expect(ImportKw)
-    let types = [self.imported_type_item()]
-    while self.tok is Comma {
-      self.advance()
-      types.push(self.imported_type_item())
-    }
-    if !(self.tok is (From | TypeKw | Eof)) {
-      self.fail()
-    }
-    Import::new(
-      loc=Loc::new(start, self.last_end),
-      path~,
-      annot~,
-      alias_?,
-      types~,
-    )
-  })
+    Some(self.lident_or_kw())
+  } else {
+    None
+  }
+  self.expect(ImportKw)
+  let types = [self.imported_type_item()]
+  while self.tok is Comma {
+    self.advance()
+    types.push(self.imported_type_item())
+  }
+  Import::new(
+    loc=Loc::new(start, self.last_end),
+    path~,
+    annot~,
+    alias_?,
+    types~,
+  )
 }
 
 ///|
@@ -210,13 +207,14 @@ fn Parser::imported_type_item(self : Parser) -> ImportedType raise Error {
     }
     OpParen => {
       self.advance()
-      self.frame("Expecting type variable list", () => {
-        let ps = self.type_var_list()
-        self.expect(ClParen)
-        let name = self.lident_or_kw()
-        let annot = self.annot()
-        { params: ps, name, annot, }
-      })
+      if !(self.tok is Tident(_)) {
+        self.fail_with("Expecting type variable list")
+      }
+      let ps = self.type_var_list()
+      self.expect(ClParen)
+      let name = self.lident_or_kw()
+      let annot = self.annot()
+      { params: ps, name, annot, }
     }
     _ => {
       let name = self.lident_or_kw()
@@ -251,46 +249,60 @@ fn Parser::type_var_list(self : Parser) -> Array[String] raise Error {
 fn Parser::type_def(self : Parser) -> TypeDef raise Error {
   let start = self.tok_loc.start
   self.advance() // TYPE
-  self.frame("Expecting type name", () => {
-    let param = match self.tok {
-      Tident(s) => {
-        self.advance()
-        [s]
-      }
-      OpParen => {
-        self.advance()
-        let l = self.type_var_list()
-        if !(self.tok is ClParen) {
-          self.frame("Expecting ')'", () => self.fail())
-        }
-        self.advance()
-        l
-      }
-      _ => []
+  let param = match self.tok {
+    Tident(s) => {
+      self.advance()
+      [s]
     }
-    let name = self.lident_or_kw()
-    let annot = self.annot()
-    if !(self.tok is EqTok) {
-      self.frame("Expecting '='", () => self.fail())
-    }
-    self.advance()
-    let value = self.frame("Expecting type expression", () => {
-      let t = self.type_expr()
-      if !(self.tok is (TypeKw | Eof)) {
-        self.fail()
+    OpParen => {
+      self.advance()
+      let l = self.type_var_list()
+      if !(self.tok is ClParen) {
+        self.fail_with("Expecting ')'")
       }
-      t
-    })
-    let orig : TypeDef = {
-      loc: Loc::new(start, self.last_end),
-      name: TypeName::simple(name),
-      param,
-      annot,
-      value,
-      orig: None,
+      self.advance()
+      l
     }
-    { ..orig, orig: Some(orig), }
-  })
+    _ => {
+      if !self.is_lident_or_kw() {
+        self.fail_with("Expecting type name")
+      }
+      []
+    }
+  }
+  let name = self.lident_or_kw()
+  let annot = self.annot()
+  if !(self.tok is EqTok) {
+    self.fail_with("Expecting '='")
+  }
+  self.advance()
+  if !self.starts_type_expr() {
+    self.fail_with("Expecting type expression")
+  }
+  let value = self.type_expr(TopDef)
+  let orig : TypeDef = {
+    loc: Loc::new(start, self.last_end),
+    name: TypeName::simple(name),
+    param,
+    annot,
+    value,
+    orig: None,
+  }
+  { ..orig, orig: Some(orig), }
+}
+
+///|
+/// The syntactic context of a type expression, which determines the tokens
+/// on which Menhir reduces it (and runs its semantic action).
+priv enum Ctx {
+  /// Right-hand side of a type definition
+  TopDef
+  /// First cell of a parenthesized expression, not annotated
+  ParenFirst
+  /// First cell of a parenthesized expression, annotated
+  ParenFirstAnnotated
+  /// Contexts where the expression can also be reduced on the error token
+  ErrorFollow
 }
 
 ///|
@@ -302,7 +314,7 @@ priv enum Paren {
 }
 
 ///|
-fn Parser::type_expr(self : Parser) -> TypeExpr raise Error {
+fn Parser::type_expr(self : Parser, ctx : Ctx) -> TypeExpr raise Error {
   let start = self.tok_loc.start
   let base = match self.tok {
     OpBrack => {
@@ -314,7 +326,7 @@ fn Parser::type_expr(self : Parser) -> TypeExpr raise Error {
       } else {
         let l = self.variant_list()
         if !(self.tok is ClBrack) {
-          self.frame("Expecting ']'", () => self.fail())
+          self.fail_with("Expecting ']'")
         }
         self.advance()
         let a = self.annot()
@@ -330,7 +342,7 @@ fn Parser::type_expr(self : Parser) -> TypeExpr raise Error {
       } else {
         let l = self.field_list()
         if !(self.tok is ClCurl) {
-          self.frame("Expecting '}'", () => self.fail())
+          self.fail_with("Expecting '}'")
         }
         self.advance()
         let a = self.annot()
@@ -340,7 +352,7 @@ fn Parser::type_expr(self : Parser) -> TypeExpr raise Error {
     OpParen =>
       match self.paren() {
         PTuple(t) => t
-        PArgs(start, args) => self.type_inst_rest(start, args)
+        PArgs(start, args) => self.type_inst_rest(start, args, ctx)
       }
     Tident(s) => {
       self.advance()
@@ -349,73 +361,97 @@ fn Parser::type_expr(self : Parser) -> TypeExpr raise Error {
     Lident(_) | From | ImportKw | As =>
       // empty type_args: the production starts at the end of the previous
       // token
-      self.type_inst_rest(self.last_end, [])
+      self.type_inst_rest(self.last_end, [], ctx)
     _ => self.fail()
   }
   let mut t = base
   while self.is_lident_or_kw() {
-    t = self.type_inst_rest(t.loc().start, [t])
+    t = self.type_inst_rest(t.loc().start, [t], ctx)
   }
   t
 }
 
 ///|
+fn Parser::starts_annot_expr(self : Parser) -> Bool {
+  self.tok is (Lt | Colon) || self.starts_type_expr()
+}
+
+///|
 /// Parse the parenthesized part of a type expression, after `(`:
 /// a tuple, or a list of type arguments.
+///
+/// The grammar is:
+/// ```text
+/// type_expr: OP_PAREN annot_expr CL_PAREN annot
+///          | OP_PAREN cartesian_product CL_PAREN annot
+///          | OP_PAREN cartesian_product error
+/// cartesian_product: annot_expr STAR cartesian_product
+///                  | annot_expr STAR annot_expr
+///                  | (empty)
+/// type_args: OP_PAREN type_arg_list CL_PAREN
+///          | OP_PAREN type_arg_list error
+/// type_arg_list: type_expr COMMA type_arg_list | type_expr COMMA type_expr
+/// ```
 fn Parser::paren(self : Parser) -> Paren raise Error {
   let start = self.tok_loc.start
   self.advance() // OP_PAREN
-  self.frame("Expecting ')'", () => {
-    if self.tok is ClParen {
-      // empty cartesian product
+  let finish_tuple = (cells : Array[Cell]) => {
+    self.advance() // CL_PAREN
+    let a = self.annot()
+    PTuple(Tuple(Loc::new(start, self.last_end), cells, a))
+  }
+  if self.tok is ClParen {
+    // empty cartesian product
+    return finish_tuple([])
+  }
+  if !self.starts_annot_expr() {
+    // the empty cartesian product can be reduced
+    self.fail_with("Expecting ')'")
+  }
+  let (first, annotated) = self.annot_expr(first=true)
+  match self.tok {
+    Star => {
+      let cells = [first]
+      while self.tok is Star {
+        self.advance()
+        if self.starts_annot_expr() {
+          cells.push(self.annot_expr(first=false).0)
+        } else if self.tok is ClParen {
+          // empty cartesian product after the star
+          break
+        } else {
+          self.fail_with("Expecting ')'")
+        }
+      }
+      if !(self.tok is ClParen) {
+        self.fail_with("Expecting ')'")
+      }
+      finish_tuple(cells)
+    }
+    ClParen => finish_tuple([first])
+    Comma if !annotated => {
+      let args = [first.expr]
+      while self.tok is Comma {
+        self.advance()
+        args.push(self.type_expr(ErrorFollow))
+      }
+      if !(self.tok is ClParen) {
+        self.fail_with("Expecting ')'")
+      }
       self.advance()
-      let a = self.annot()
-      return PTuple(Tuple(Loc::new(start, self.last_end), [], a))
+      if !self.is_lident_or_kw() {
+        self.fail()
+      }
+      PArgs(start, args)
     }
-    let (first, annotated) = self.annot_expr()
-    match self.tok {
-      Star => {
-        let cells = [first]
-        while self.tok is Star {
-          self.advance()
-          cells.push(self.annot_expr().0)
-        }
-        if !(self.tok is ClParen) {
-          self.fail()
-        }
-        self.advance()
-        let a = self.annot()
-        PTuple(Tuple(Loc::new(start, self.last_end), cells, a))
-      }
-      ClParen => {
-        self.advance()
-        let a = self.annot()
-        PTuple(Tuple(Loc::new(start, self.last_end), [first], a))
-      }
-      Comma if !annotated => {
-        let args = [first.expr]
-        while self.tok is Comma {
-          self.advance()
-          args.push(self.type_expr())
-        }
-        if !(self.tok is ClParen) {
-          self.fail()
-        }
-        self.advance()
-        if !self.is_lident_or_kw() {
-          self.fail()
-        }
-        PArgs(start, args)
-      }
-      _ => self.fail()
-    }
-  })
+    _ => self.fail()
+  }
 }
 
 ///|
 /// `annot_expr: annot COLON type_expr | type_expr`
 /// Also return whether the first form was used.
-fn Parser::annot_expr(self : Parser) -> (Cell, Bool) raise Error {
+fn Parser::annot_expr(self : Parser, first~ : Bool) -> (Cell, Bool) raise Error {
   match self.tok {
     Lt | Colon => {
       let start = if self.tok is Lt {
@@ -425,11 +461,17 @@ fn Parser::annot_expr(self : Parser) -> (Cell, Bool) raise Error {
       }
       let a = self.annot()
       self.expect(Colon)
-      let x = self.type_expr()
+      let x = self.type_expr(
+        if first {
+          ParenFirstAnnotated
+        } else {
+          ErrorFollow
+        },
+      )
       ({ loc: Loc::new(start, self.last_end), expr: x, annot: a, }, true)
     }
     _ => {
-      let x = self.type_expr()
+      let x = self.type_expr(if first { ParenFirst } else { ErrorFollow })
       (
         { loc: Loc::new(x.loc().start, self.last_end), expr: x, annot: [], },
         false,
@@ -445,6 +487,7 @@ fn Parser::type_inst_rest(
   self : Parser,
   start : Pos,
   args : Array[TypeExpr],
+  ctx : Ctx,
 ) -> TypeExpr raise Error {
   let path = [self.lident_or_kw()]
   while self.tok is Dot {
@@ -456,6 +499,12 @@ fn Parser::type_inst_rest(
   let loc = Loc::new(start, self.last_end)
   let name = TypeName::new(path)
   let inst : TypeInst = { loc: inst_loc, name, args, }
+  if path is ["list" | "option" | "nullable" | "shared" | "wrap"] &&
+    !self.can_reduce(ctx) {
+    // Menhir would detect the syntax error before running the semantic
+    // action of this production
+    self.fail()
+  }
   match (path, args) {
     (["list"], [x]) => List(loc, x, a)
     (["option"], [x]) => Option(loc, x, a)
@@ -482,6 +531,19 @@ fn Parser::type_inst_rest(
 }
 
 ///|
+/// Whether Menhir reduces a type expression in context `ctx`, given the
+/// current lookahead token.
+fn Parser::can_reduce(self : Parser, ctx : Ctx) -> Bool {
+  self.is_lident_or_kw() ||
+  (match ctx {
+    TopDef => self.tok is (TypeKw | Eof)
+    ParenFirst => self.tok is (Star | ClParen | Comma)
+    ParenFirstAnnotated => self.tok is (Star | ClParen)
+    ErrorFollow => true
+  })
+}
+
+///|
 /// `variant_list: BAR variant_list0 | variant_list0`
 fn Parser::variant_list(self : Parser) -> Array[Variant] raise Error {
   if self.tok is Bar {
@@ -504,9 +566,10 @@ fn Parser::variant(self : Parser) -> Variant raise Error {
       let a = self.annot()
       if self.tok is Of {
         self.advance()
-        let t = self.frame("Expecting type expression after 'of'", () => {
-          self.type_expr()
-        })
+        if !self.starts_type_expr() {
+          self.fail_with("Expecting type expression after 'of'")
+        }
+        let t = self.type_expr(ErrorFollow)
         Variant(Loc::new(start, self.last_end), x, a, Some(t))
       } else {
         Variant(Loc::new(start, self.last_end), x, a, None)
@@ -514,7 +577,7 @@ fn Parser::variant(self : Parser) -> Variant raise Error {
     }
     InheritKw => {
       self.advance()
-      let t = self.type_expr()
+      let t = self.type_expr(ErrorFollow)
       Inherit(Loc::new(start, self.last_end), t)
     }
     _ => self.fail()
@@ -523,7 +586,7 @@ fn Parser::variant(self : Parser) -> Variant raise Error {
 
 ///|
 fn Parser::starts_field(self : Parser) -> Bool {
-  self.tok is (Lident(_) | From | ImportKw | As | Question | Tilde | InheritKw)
+  self.tok is (Question | Tilde | InheritKw) || self.is_lident_or_kw()
 }
 
 ///|
@@ -547,7 +610,7 @@ fn Parser::field(self : Parser) -> Field raise Error {
   let kind : FieldKind = match self.tok {
     InheritKw => {
       self.advance()
-      let t = self.type_expr()
+      let t = self.type_expr(ErrorFollow)
       return Inherit(Loc::new(start, self.last_end), t)
     }
     Question => {
@@ -563,12 +626,13 @@ fn Parser::field(self : Parser) -> Field raise Error {
   let name = self.lident_or_kw()
   let a = self.annot()
   if !(self.tok is Colon) {
-    self.frame("Expecting ':'", () => self.fail())
+    self.fail_with("Expecting ':'")
   }
   self.advance()
-  let t = self.frame("Expecting type expression after ':'", () => {
-    self.type_expr()
-  })
+  if !self.starts_type_expr() {
+    self.fail_with("Expecting type expression after ':'")
+  }
+  let t = self.type_expr(ErrorFollow)
   Field({ loc: Loc::new(start, self.last_end), name, kind, annot: a, expr: t, })
 }
 

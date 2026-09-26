@@ -236,16 +236,16 @@ fn Lexer::token(self : Lexer) -> (Token, Loc) raise AtdError {
         self.pos += 1 + n
         return (Tident(s), Loc::new(self.start, self.curr_pos()))
       }
-      let start = self.start
       self.pos += 1
       let s = self.string(false)
-      return (StringLit(s), Loc::new(start, self.curr_pos()))
+      // like ocamllex, the start of the token is the start of the last
+      // lexeme matched by the string rule, i.e. the closing quote
+      return (StringLit(s), Loc::new(self.start, self.curr_pos()))
     }
     if c == '"' {
-      let start = self.start
       self.pos += 1
       let s = self.string(true)
-      return (StringLit(s), Loc::new(start, self.curr_pos()))
+      return (StringLit(s), Loc::new(self.start, self.curr_pos()))
     }
     self.pos += 1
     let bytes = Bytes::from_array([c.to_byte()])
