@@ -128,14 +128,6 @@ pub fn[T] missing_field(
 // Parsing and printing
 
 ///|
-/// Parse a JSON string.
-pub fn parse(s : StringView) -> Json raise JsonError {
-  @json.parse(s) catch {
-    e => raise JsonError("invalid JSON: \{e}")
-  }
-}
-
-///|
 /// Print JSON compactly, or with the given indentation.
 pub fn stringify(x : Json, indent? : Int = 0) -> String {
   x.stringify(indent~)
@@ -163,21 +155,37 @@ pub fn read_bool(x : Json, path : Path) -> Bool raise JsonError {
 }
 
 ///|
+/// Whether the text of a JSON number is an integer literal (no fraction,
+/// no exponent), like the integers accepted by atdgen.
+fn is_integer_literal(r : String) -> Bool {
+  r != "" && r.iter().all(c => (c >= '0' && c <= '9') || c == '-')
+}
+
+///|
 /// Read an integer that must fit in 32 bits.
+///
+/// When the text of the number is known (see `parse`), it must be an
+/// integer literal: `1.0` or `1e3` are rejected, like with atdgen.
+/// Otherwise, the number must be an integral value within range.
 pub fn read_int(x : Json, path : Path) -> Int raise JsonError {
   match x {
-    Number(n, ..) if n == n.floor() && n >= -2147483648.0 && n <= 2147483647.0 =>
-      n.to_int()
+    Number(_, repr=Some(r)) if is_integer_literal(r) =>
+      @string.parse_int(r) catch {
+        _ => bad_json("int", x, path)
+      }
+    Number(n, repr=None) if n == n.floor() &&
+      n >= -2147483648.0 &&
+      n <= 2147483647.0 => n.to_int()
     _ => bad_json("int", x, path)
   }
 }
 
 ///|
-/// Read a 64-bit integer, using the exact textual representation of the
-/// number when available.
+/// Read a 64-bit integer, using the exact text of the number when
+/// available (see `read_int`).
 pub fn read_int64(x : Json, path : Path) -> Int64 raise JsonError {
   match x {
-    Number(_, repr=Some(r)) =>
+    Number(_, repr=Some(r)) if is_integer_literal(r) =>
       @string.parse_int64(r) catch {
         _ => bad_json("int64", x, path)
       }
@@ -279,14 +287,26 @@ pub fn write_float(x : Double) -> Json {
 }
 
 ///|
-/// Write a number rounded to an integer (`<json repr="int">`).
+/// The smallest positive normal number, OCaml's `min_float`.
+let min_normal_float : Double = 2.2250738585072014e-308
+
+///|
+/// Write a number rounded to an integer (`<json repr="int">`), exactly like
+/// atdgen: positive numbers are rounded half up; other numbers are
+/// formatted with C's `%.0f`, which rounds half to even (and may print
+/// `-0`). Non-finite numbers can't be represented in JSON; they are written
+/// as `NaN` or `Infinity`, which is not valid JSON (atdgen raises an error).
 pub fn write_float_as_int(x : Double) -> Json {
-  let r = x.round()
-  if r.abs() < 1.0e15 {
-    Json::number(r, repr=r.to_int64().to_string())
-  } else {
-    Json::number(r)
+  if x.is_nan() || x.is_inf() {
+    return Json::number(x)
   }
+  let text = if x >= min_normal_float {
+    format_integral((x + 0.5).trunc())
+  } else {
+    format_float_fixed0(x)
+  }
+  let value = @string.parse_double(text) catch { _ => x }
+  Json::number(value, repr=text)
 }
 
 ///|
@@ -297,7 +317,9 @@ pub fn write_float_prec(precision : Int) -> (Double) -> Json {
     if x.is_nan() || x.is_inf() {
       Json::number(x)
     } else {
-      let s = format_float_g(x, precision)
+      // like Yojson, precisions outside of 1..16 mean 17
+      let p = if precision >= 1 && precision <= 16 { precision } else { 17 }
+      let s = format_float_g(x, p)
       let s = if s.iter().all(c => (c >= '0' && c <= '9') || c == '-') {
         s + ".0"
       } else {

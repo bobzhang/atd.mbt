@@ -36,9 +36,7 @@ fn exact_decimal(x : Double) -> (String, Int) {
 fn round_digits(digits : String, n : Int) -> (Array[Int], Bool) {
   let d = digits.iter().map(c => c.to_int() - '0'.to_int()).collect()
   if d.length() <= n {
-    while d.length() < n {
-      d.push(0)
-    }
+    // no rounding needed; trailing zeros would be removed anyway
     return (d, false)
   }
   let kept = d[0:n].to_owned()
@@ -132,4 +130,52 @@ pub fn format_float_g(x : Double, precision : Int) -> String {
     }
   }
   buf.to_string()
+}
+
+///|
+/// Format an integral double exactly, e.g. `12345678901234567890`.
+fn format_integral(x : Double) -> String {
+  let (digits, exp10) = exact_decimal(x.abs())
+  if digits == "" {
+    return if x < 0.0 || 1.0 / x < 0.0 { "-0" } else { "0" }
+  }
+  let buf = StringBuilder()
+  if x < 0.0 {
+    buf.write_char('-')
+  }
+  for i in 0..<exp10 {
+    buf.write_char(
+      if i < digits.length() {
+        digits[i].unsafe_to_char()
+      } else {
+        '0'
+      },
+    )
+  }
+  buf.to_string()
+}
+
+///|
+/// Format a finite number like C's `printf("%.0f", x)`: rounded to an
+/// integer, half to even.
+fn format_float_fixed0(x : Double) -> String {
+  let negative = x < 0.0 || (x == 0.0 && 1.0 / x < 0.0)
+  let a = x.abs()
+  let f = a.floor()
+  let rest = a - f
+  let r = if rest > 0.5 {
+    f + 1.0
+  } else if rest < 0.5 {
+    f
+  } else if (f / 2.0).floor() * 2.0 == f {
+    f
+  } else {
+    f + 1.0
+  }
+  let s = format_integral(r)
+  if negative {
+    "-" + s
+  } else {
+    s
+  }
 }

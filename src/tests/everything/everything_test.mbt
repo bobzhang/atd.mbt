@@ -177,7 +177,7 @@ test "everything: errors" {
   inspect(
     error_message(() => ignore(@everything.root_of_string("{\"ID\""))),
     content=(
-      #|invalid JSON: Unexpected end of file
+      #|invalid JSON: unexpected end of input at line 1, column 6
     ),
   )
 }

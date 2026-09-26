@@ -118,6 +118,9 @@ For each ATD type `foo`:
   otherwise. Records get a `Foo::new` constructor with labelled arguments,
   optional for the optional fields and the fields with a default value.
 - `write_foo` and `read_foo` are the composable JSON writer and reader;
+  `foo_of_string` parses JSON with `@atd_runtime.parse`, which keeps the
+  exact text of numbers so that integers are validated and 64-bit integers
+  read without loss;
   readers report errors with the path of the offending value, e.g.
   `incompatible JSON value where type 'int' was expected: '"x"' at $.trees[0][1]`.
 - `foo_of_json`, `foo_of_string` and `string_of_foo` are conveniences.
@@ -131,9 +134,9 @@ The JSON representation is the same as with atdgen, atdts and atdpy.
 |---|---|---|
 | `unit` | `Unit` | `null` |
 | `bool` | `Bool` | boolean |
-| `int` | `Int` (range-checked) | number; `<json repr="string">`: string |
+| `int` | `Int` (range-checked) | integer literal, like atdgen (`1.0` is rejected); `<json repr="string">`: string |
 | `int <mbt repr="int64">` | `Int64` (all digits preserved) | number or string |
-| `float` | `Double` | number; `<json repr="int">` and `<json precision="N">` (N significant digits, like atdgen) supported |
+| `float` | `Double` | number; `<json repr="int">` and `<json precision="N">` (N significant digits) are written exactly like atdgen; non-finite numbers can't be represented in JSON and are written as `NaN`/`Infinity` |
 | `string` | `String` | string |
 | `abstract` | `Json` | any |
 | `t list` | `Array[T]` | array |
