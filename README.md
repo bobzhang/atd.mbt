@@ -154,8 +154,10 @@ Record fields:
 - `~foo : t` is `foo : T` with a default value used when the field is
   missing: the implicit default (`[]`, `None`, `0`, `""`, `false`, ...) or
   `<mbt default="expression">`;
-- `null` is treated as a missing field unless the record has
-  `<json keep_nulls>`;
+- for optional and defaulted fields, `null` is treated like a missing field
+  unless the record has `<json keep_nulls>`; a required field passes `null`
+  to the reader of its type (so `x : int nullable` accepts `null` but must
+  be present);
 - unknown fields are ignored.
 
 Other supported features: `<json name="...">` on fields and variants,
@@ -225,8 +227,8 @@ their locations, generated type names and JSON Schema output:
 Known, intentional differences:
 
 - Inputs that make upstream crash with an uncaught exception (decimal escape
-  sequences above `\255`, type names with more than two components) produce
-  proper error messages instead.
+  sequences above `\255`, type names with more than two components, an
+  invalid `-jsonschema-version`) produce proper error messages instead.
 - Strings are Unicode: invalid UTF-8 in string literals is replaced with
   U+FFFD.
 - `atdcat -version` prints the version of this port.

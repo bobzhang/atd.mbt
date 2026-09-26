@@ -26,48 +26,25 @@ priv suberror Exit {
 }
 
 ///|
-let usage_options : String =
-  #|  -o <path>
-  #|          write to this file instead of stdout
-  #|  -x
-  #|          make type expressions monomorphic
-  #|  -xk
-  #|          keep parametrized type definitions and imply -x.
-  #|          Default is to return only monomorphic type definitions
-  #|  -xd
-  #|          debug mode implying -x
-  #|  -i
-  #|          expand all 'inherit' statements
-  #|  -if
-  #|          expand 'inherit' statements in records
-  #|  -iv
-  #|          expand 'inherit' statements in sum types
-  #|  -jsonschema <root type name>
-  #|          translate the ATD file to JSON Schema.
-  #|  -jsonschema-no-additional-properties
-  #|          emit a JSON Schema that doesn't tolerate extra fields on JSON
-  #|          objects.
-  #|  -jsonschema-version { draft-2019-09 | draft-2020-12 }
-  #|          specify which version of the JSON Schema standard to target.
-  #|          Default: latest supported version, which is currently 'draft-2020-12'.
-  #|  -ml <name>
-  #|          output the ocaml code of the ATD abstract syntax tree
-  #|  -html-doc
-  #|          replace directly <doc html="..."> by (*html ... *)
-  #|          or replace <doc text="..."> by (*html ... *)
-  #|          where the contents are formatted as HTML
-  #|          using <p>, <code> and <pre>.
-  #|  -remove-wraps
-  #|          eliminate all 'wrap' constructs and their annotations
-  #|  -strip NAME1[,NAME2,...]
-  #|          remove all annotations of the form <NAME1 ...>,
-  #|          <NAME2 ...>, etc.
-  #|  -strip-all
-  #|          remove all annotations
-  #|  -version
-  #|          print the version of atd and exit
-  #|  -help  Display this list of options
-  #|  --help  Display this list of options
+let usage_options : String = [
+  "  -o <path>", "          write to this file instead of stdout", "  -x ", "          make type expressions monomorphic",
+  "  -xk ", "          keep parametrized type definitions and imply -x.", "          Default is to return only monomorphic type definitions",
+  "  -xd ", "          debug mode implying -x", "  -i ", "          expand all 'inherit' statements",
+  "  -if ", "          expand 'inherit' statements in records", "  -iv ", "          expand 'inherit' statements in sum types",
+  "  -jsonschema <root type name>", "          translate the ATD file to JSON Schema.",
+  "  -jsonschema-no-additional-properties ", "          emit a JSON Schema that doesn't tolerate extra fields on JSON",
+  "          objects.", "  -jsonschema-version { draft-2019-09 | draft-2020-12 }",
+  "          specify which version of the JSON Schema standard to target.", "          Default: latest supported version, which is currently 'draft-2020-12'.",
+  "  -ml <name>", "          output the ocaml code of the ATD abstract syntax tree",
+  "  -html-doc ", "          replace directly <doc html=\"...\"> by (*html ... *)",
+  "          or replace <doc text=\"...\"> by (*html ... *)", "          where the contents are formatted as HTML",
+  "          using <p>, <code> and <pre>.", "          This is suitable input for \"caml2html -ext html:cat\"",
+  "          which converts ATD files into HTML.", "  -remove-wraps ", "          eliminate all 'wrap' constructs and their annotations",
+  "  -strip NAME1[,NAME2,...]", "          remove all annotations of the form <NAME1 ...>,",
+  "          <NAME2 ...>, etc.", "  -strip-all ", "          remove all annotations",
+  "  -version ", "          print the version of atd and exit", "  -help  Display this list of options",
+  "  --help  Display this list of options",
+].join("\n")
 
 ///|
 fn format_html_comments(x : @atd.AnnotSection) -> @easy_format.T {
@@ -78,6 +55,8 @@ fn format_html_comments(x : @atd.AnnotSection) -> @easy_format.T {
       _ =>
         match x.fields.iter().find_first(f => f.name == "text") {
           Some({ loc, value: Some(s), .. }) =>
+            // unreachable error: the documentation is validated before
+            // printing
             comment(@atd.html_of_doc(@atd.parse_doc_text(loc, s))) catch {
               _ => @atd.default_format_annot(x)
             }
@@ -255,7 +234,14 @@ fn run_exn(io : Io, args : ArrayView[String]) -> Unit raise Error {
     // report invalid documentation, which can't be converted to HTML
     @atd.iter_annot(Module(m), (_, an) => {
       for sec in an {
-        if sec.name == "doc" && !sec.fields.iter().any(f => f.name == "html") {
+        // like format_html_comments: <doc html="..."> takes precedence over
+        // text, but only if it has a value
+        let has_html = match
+          sec.fields.iter().find_first(f => f.name == "html") {
+          Some({ value: Some(_), .. }) => true
+          _ => false
+        }
+        if sec.name == "doc" && !has_html {
           match sec.fields.iter().find_first(f => f.name == "text") {
             Some({ loc, value: Some(s), .. }) =>
               ignore(@atd.parse_doc_text(loc, s))

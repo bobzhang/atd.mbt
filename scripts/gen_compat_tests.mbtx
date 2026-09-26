@@ -148,7 +148,15 @@ async fn run_reference(
         stdin=@process.redirect_from_file(cwd + "/" + f),
       )
   }
-  { args, stdin_file, stdout: out.text(), stderr: err.text(), code, }
+  // the program name appears in usage messages
+  let program_name = (s : String) => s.replace_all(old=reference, new="atdcat")
+  {
+    args,
+    stdin_file,
+    stdout: program_name(out.text()),
+    stderr: program_name(err.text()),
+    code,
+  }
 }
 
 ///|
@@ -244,6 +252,15 @@ async fn main {
       "atdcat/tests/input/test2.atd", "atdcat/tests/input/schema.atd",
     ]),
   )
+  // command-line usage
+  for args in [
+    ["-help"],
+    ["--help"],
+    ["-bogus"],
+    ["-o"],
+  ] {
+    cases.push(run_reference(reference, upstream, args))
+  }
   generate("upstream", cases, inputs)
 
   // Malformed inputs
@@ -260,6 +277,9 @@ async fn main {
     let content = @utf8.decode(@fs.read_file(errors_dir + "/" + name).binary())
     inputs.push((name, content))
     cases.push(run_reference(reference, errors_dir, [name]))
+    if content.contains("doc") {
+      cases.push(run_reference(reference, errors_dir, ["-html-doc", name]))
+    }
   }
   generate("errors", cases, inputs)
 }

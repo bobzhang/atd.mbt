@@ -102,6 +102,8 @@ let errors_inputs : Map[String, String] = {
   "e099.atd": "type t = int <a b=\"é\">",
   "e100.atd": "type t = int <a b='xyz'>",
   "e101.atd": "type t = int <a b='\\''>",
+  "e102.atd": "type t <doc html text=\"{{\"> = int\n",
+  "e103.atd": "type t <doc html=\"<b>ok</b>\" text=\"{{\"> = int\n",
 }
 
 ///|
@@ -1077,7 +1079,19 @@ test "errors 80: atdcat e082.atd" {
 }
 
 ///|
-test "errors 81: atdcat e083.atd" {
+test "errors 81: atdcat -html-doc e082.atd" {
+  check_atdcat(
+    errors_inputs,
+    ["-html-doc", "e082.atd"],
+    stdin="",
+    stdout="",
+    stderr="File \"e082.atd\", line 1, characters 18-27:\nInvalid format for doc.text \"{{\":\nFailure(\"Missing `}}'\")\n",
+    code=1,
+  )
+}
+
+///|
+test "errors 82: atdcat e083.atd" {
   check_atdcat(
     errors_inputs,
     ["e083.atd"],
@@ -1089,7 +1103,7 @@ test "errors 81: atdcat e083.atd" {
 }
 
 ///|
-test "errors 82: atdcat e084.atd" {
+test "errors 83: atdcat e084.atd" {
   check_atdcat(
     errors_inputs,
     ["e084.atd"],
@@ -1101,7 +1115,7 @@ test "errors 82: atdcat e084.atd" {
 }
 
 ///|
-test "errors 83: atdcat e085.atd" {
+test "errors 84: atdcat e085.atd" {
   check_atdcat(
     errors_inputs,
     ["e085.atd"],
@@ -1113,7 +1127,7 @@ test "errors 83: atdcat e085.atd" {
 }
 
 ///|
-test "errors 84: atdcat e086.atd" {
+test "errors 85: atdcat e086.atd" {
   check_atdcat(
     errors_inputs,
     ["e086.atd"],
@@ -1125,7 +1139,19 @@ test "errors 84: atdcat e086.atd" {
 }
 
 ///|
-test "errors 85: atdcat e087.atd" {
+test "errors 86: atdcat -html-doc e086.atd" {
+  check_atdcat(
+    errors_inputs,
+    ["-html-doc", "e086.atd"],
+    stdin="",
+    stdout="",
+    stderr="File \"e086.atd\", line 1, characters 5-17:\nInvalid format for doc.text \"{{{ x\":\nFailure(\"Missing `}}}'\")\n",
+    code=1,
+  )
+}
+
+///|
+test "errors 87: atdcat e087.atd" {
   check_atdcat(
     errors_inputs,
     ["e087.atd"],
@@ -1137,7 +1163,7 @@ test "errors 85: atdcat e087.atd" {
 }
 
 ///|
-test "errors 86: atdcat e088.atd" {
+test "errors 88: atdcat e088.atd" {
   check_atdcat(
     errors_inputs,
     ["e088.atd"],
@@ -1149,7 +1175,7 @@ test "errors 86: atdcat e088.atd" {
 }
 
 ///|
-test "errors 87: atdcat e089.atd" {
+test "errors 89: atdcat e089.atd" {
   check_atdcat(
     errors_inputs,
     ["e089.atd"],
@@ -1161,7 +1187,7 @@ test "errors 87: atdcat e089.atd" {
 }
 
 ///|
-test "errors 88: atdcat e090.atd" {
+test "errors 90: atdcat e090.atd" {
   check_atdcat(
     errors_inputs,
     ["e090.atd"],
@@ -1173,7 +1199,7 @@ test "errors 88: atdcat e090.atd" {
 }
 
 ///|
-test "errors 89: atdcat e091.atd" {
+test "errors 91: atdcat e091.atd" {
   check_atdcat(
     errors_inputs,
     ["e091.atd"],
@@ -1185,7 +1211,7 @@ test "errors 89: atdcat e091.atd" {
 }
 
 ///|
-test "errors 90: atdcat e092.atd" {
+test "errors 92: atdcat e092.atd" {
   check_atdcat(
     errors_inputs,
     ["e092.atd"],
@@ -1197,7 +1223,7 @@ test "errors 90: atdcat e092.atd" {
 }
 
 ///|
-test "errors 91: atdcat e093.atd" {
+test "errors 93: atdcat e093.atd" {
   check_atdcat(
     errors_inputs,
     ["e093.atd"],
@@ -1209,7 +1235,7 @@ test "errors 91: atdcat e093.atd" {
 }
 
 ///|
-test "errors 92: atdcat e094.atd" {
+test "errors 94: atdcat e094.atd" {
   check_atdcat(
     errors_inputs,
     ["e094.atd"],
@@ -1221,7 +1247,7 @@ test "errors 92: atdcat e094.atd" {
 }
 
 ///|
-test "errors 93: atdcat e095.atd" {
+test "errors 95: atdcat e095.atd" {
   check_atdcat(
     errors_inputs,
     ["e095.atd"],
@@ -1233,7 +1259,7 @@ test "errors 93: atdcat e095.atd" {
 }
 
 ///|
-test "errors 94: atdcat e096.atd" {
+test "errors 96: atdcat e096.atd" {
   check_atdcat(
     errors_inputs,
     ["e096.atd"],
@@ -1245,7 +1271,7 @@ test "errors 94: atdcat e096.atd" {
 }
 
 ///|
-test "errors 95: atdcat e097.atd" {
+test "errors 97: atdcat e097.atd" {
   check_atdcat(
     errors_inputs,
     ["e097.atd"],
@@ -1257,7 +1283,7 @@ test "errors 95: atdcat e097.atd" {
 }
 
 ///|
-test "errors 96: atdcat e099.atd" {
+test "errors 98: atdcat e099.atd" {
   check_atdcat(
     errors_inputs,
     ["e099.atd"],
@@ -1269,7 +1295,7 @@ test "errors 96: atdcat e099.atd" {
 }
 
 ///|
-test "errors 97: atdcat e100.atd" {
+test "errors 99: atdcat e100.atd" {
   check_atdcat(
     errors_inputs,
     ["e100.atd"],
@@ -1281,12 +1307,60 @@ test "errors 97: atdcat e100.atd" {
 }
 
 ///|
-test "errors 98: atdcat e101.atd" {
+test "errors 100: atdcat e101.atd" {
   check_atdcat(
     errors_inputs,
     ["e101.atd"],
     stdin="",
     stdout="type t = int <a b=\"'\">\n",
+    stderr="",
+    code=0,
+  )
+}
+
+///|
+test "errors 101: atdcat e102.atd" {
+  check_atdcat(
+    errors_inputs,
+    ["e102.atd"],
+    stdin="",
+    stdout="type t <doc html text=\"{{\"> = int\n",
+    stderr="",
+    code=0,
+  )
+}
+
+///|
+test "errors 102: atdcat -html-doc e102.atd" {
+  check_atdcat(
+    errors_inputs,
+    ["-html-doc", "e102.atd"],
+    stdin="",
+    stdout="",
+    stderr="File \"e102.atd\", line 1, characters 17-26:\nInvalid format for doc.text \"{{\":\nFailure(\"Missing `}}'\")\n",
+    code=1,
+  )
+}
+
+///|
+test "errors 103: atdcat e103.atd" {
+  check_atdcat(
+    errors_inputs,
+    ["e103.atd"],
+    stdin="",
+    stdout="type t <doc html=\"<b>ok</b>\" text=\"{{\"> = int\n",
+    stderr="",
+    code=0,
+  )
+}
+
+///|
+test "errors 104: atdcat -html-doc e103.atd" {
+  check_atdcat(
+    errors_inputs,
+    ["-html-doc", "e103.atd"],
+    stdin="",
+    stdout="type t (*html <b>ok</b>*) = int\n",
     stderr="",
     code=0,
   )
