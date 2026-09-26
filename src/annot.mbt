@@ -265,6 +265,13 @@ fn collapse_fields(l : Array[AnnotField]) -> Array[AnnotField] {
 let id_counter : Ref[Int] = { val: -1, }
 
 ///|
+/// Reset the counter used by `annot_create_id`, as if the program had just
+/// started.
+pub fn annot_reset_ids() -> Unit {
+  id_counter.val = -1
+}
+
+///|
 /// Create a unique identifier (used for `shared` types).
 pub fn annot_create_id() -> String {
   id_counter.val += 1

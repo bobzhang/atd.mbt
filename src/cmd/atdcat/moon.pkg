@@ -1,6 +1,6 @@
 import {
-  "bobzhang/atd",
-  "bobzhang/atd/easy_format",
+  "bobzhang/atd/atdcat" @atdcat_lib,
+  "bobzhang/atd/internal/stdin",
   "moonbitlang/x/fs",
   "moonbitlang/x/sys",
   "moonbitlang/core/env",

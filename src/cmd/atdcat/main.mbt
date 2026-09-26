@@ -1,260 +1,22 @@
 // atdcat: check syntax, reformat, expand inherited definitions, export to
-// JSON Schema, ... A port of `atdcat/src/atdcat.ml`.
+// JSON Schema, ...
 
 ///|
-priv enum OutFormat {
-  Atd
-  Ocaml(String)
-  Jsonschema(String)
-}
-
-///|
-priv suberror Exit {
-  Exit(Int)
-}
-
-///|
-let usage_options : String =
-  #|  -o <path>
-  #|          write to this file instead of stdout
-  #|  -x
-  #|          make type expressions monomorphic
-  #|  -xk
-  #|          keep parametrized type definitions and imply -x.
-  #|          Default is to return only monomorphic type definitions
-  #|  -xd
-  #|          debug mode implying -x
-  #|  -i
-  #|          expand all 'inherit' statements
-  #|  -if
-  #|          expand 'inherit' statements in records
-  #|  -iv
-  #|          expand 'inherit' statements in sum types
-  #|  -jsonschema <root type name>
-  #|          translate the ATD file to JSON Schema.
-  #|  -jsonschema-no-additional-properties
-  #|          emit a JSON Schema that doesn't tolerate extra fields on JSON
-  #|          objects.
-  #|  -jsonschema-version { draft-2019-09 | draft-2020-12 }
-  #|          specify which version of the JSON Schema standard to target.
-  #|          Default: latest supported version, which is currently 'draft-2020-12'.
-  #|  -ml <name>
-  #|          output the ocaml code of the ATD abstract syntax tree
-  #|  -html-doc
-  #|          replace directly <doc html="..."> by (*html ... *)
-  #|          or replace <doc text="..."> by (*html ... *)
-  #|          where the contents are formatted as HTML
-  #|          using <p>, <code> and <pre>.
-  #|  -remove-wraps
-  #|          eliminate all 'wrap' constructs and their annotations
-  #|  -strip NAME1[,NAME2,...]
-  #|          remove all annotations of the form <NAME1 ...>,
-  #|          <NAME2 ...>, etc.
-  #|  -strip-all
-  #|          remove all annotations
-  #|  -version
-  #|          print the version of atd and exit
-  #|  -help  Display this list of options
-  #|  --help  Display this list of options
-
-///|
-fn format_html_comments(x : @atd.AnnotSection) -> @easy_format.T {
-  let comment = s => @easy_format.T::Atom("(*html " + s + "*)")
-  if x.name == "doc" {
-    match x.fields.iter().find_first(f => f.name == "html") {
-      Some({ value: Some(s), .. }) => comment(s)
-      _ =>
-        match x.fields.iter().find_first(f => f.name == "text") {
-          Some({ loc, value: Some(s), .. }) =>
-            comment(@atd.html_of_doc(@atd.parse_doc_text(loc, s))) catch {
-              _ => @atd.default_format_annot(x)
-            }
-          _ => @atd.default_format_annot(x)
-        }
-    }
-  } else {
-    @atd.default_format_annot(x)
-  }
-}
-
-///|
-fn basename(path : String) -> String {
-  match path.rev_find("/") {
-    Some(i) => path.view(start_offset=i + 1).to_owned()
-    None => path
-  }
-}
-
-///|
-fn read_source(path : String?) -> (Bytes, String) raise Error {
-  match path {
-    None => (@fs.read_file_to_bytes("/dev/stdin"), "<stdin>")
-    Some(path) => (@fs.read_file_to_bytes(path), path)
-  }
-}
-
-///|
-fn run(args : ArrayView[String]) -> Unit raise Error {
-  let mut expand = false
-  let mut keep_poly = false
-  let mut xdebug = false
-  let mut inherit_fields = false
-  let mut inherit_variants = false
-  let mut remove_wraps = false
-  let strip_sections : Array[String] = []
-  let mut strip_all = false
-  let mut out_format = Atd
-  let mut jsonschema_version = @atd.default_jsonschema_version
-  let mut xprop = true
-  let mut html_doc = false
-  let input_files : Array[String] = []
-  let mut output_file : String? = None
-  let prog = if args.length() > 0 { args[0] } else { "atdcat" }
-  let usage = () => "Usage: \{prog} [FILE ...]\n" + usage_options
-  let mut i = 1
-  let next_arg = (opt : String) => {
-    i += 1
-    if i >= args.length() {
-      eprintln("\{prog}: option '\{opt}' needs an argument.\n" + usage())
-      raise Exit(2)
-    }
-    args[i]
-  }
-  while i < args.length() {
-    let arg = args[i]
-    match arg {
-      "-o" => output_file = Some(next_arg(arg))
-      "-x" => expand = true
-      "-xk" => {
-        expand = true
-        keep_poly = true
+fn main {
+  let io : @atdcat_lib.Io = {
+    read_file: path => {
+      match path {
+        None => @stdin.read_all()
+        Some(path) => @fs.read_file_to_bytes(path)
       }
-      "-xd" => {
-        expand = true
-        xdebug = true
-      }
-      "-i" => {
-        inherit_fields = true
-        inherit_variants = true
-      }
-      "-if" => inherit_fields = true
-      "-iv" => inherit_variants = true
-      "-jsonschema" => out_format = Jsonschema(next_arg(arg))
-      "-jsonschema-no-additional-properties" => xprop = false
-      "-jsonschema-version" =>
-        jsonschema_version = match next_arg(arg) {
-          "draft-2019-09" => Draft_2019_09
-          "draft-2020-12" => Draft_2020_12
-          s => {
-            eprintln(
-              "Invalid JSON Schema version identifier: " + @atd.ocaml_quote(s),
-            )
-            raise Exit(1)
-          }
-        }
-      "-ml" => out_format = Ocaml(next_arg(arg))
-      "-html-doc" => html_doc = true
-      "-remove-wraps" => remove_wraps = true
-      "-strip" => {
-        let l = next_arg(arg).split(",").map(x => x.to_owned()).collect()
-        let old = strip_sections.copy()
-        strip_sections.clear()
-        strip_sections.append(l)
-        strip_sections.append(old)
-      }
-      "-strip-all" => strip_all = true
-      "-version" => {
-        println(@atd.version)
-        raise Exit(0)
-      }
-      "-help" | "--help" => {
-        println(usage())
-        raise Exit(0)
-      }
-      _ =>
-        if arg.has_prefix("-") && arg != "-" {
-          eprintln("\{prog}: unknown option '\{arg}'.\n" + usage())
-          raise Exit(2)
-        } else {
-          // like OCaml's Arg, files are accumulated in reverse order
-          input_files.insert(0, arg)
-        }
-    }
-    i += 1
+    },
+    write_file: (path, contents) => @fs.write_string_to_file(path, contents),
+    print_out: s => print_string(s),
+    print_err: s => eprint_string(s),
   }
-  let (force_inherit, annot_schema) = match out_format {
-    Jsonschema(_) => (true, Some(@atd.jsonschema_annot_schema))
-    _ => (false, None)
-  }
-  let inherit_fields = inherit_fields || force_inherit
-  let inherit_variants = inherit_variants || force_inherit
-  let sources : Array[String?] = if input_files.is_empty() {
-    [None]
-  } else {
-    input_files.map(f => Some(f))
-  }
-  let modules = []
-  for source in sources {
-    let (src, pos_fname) = read_source(source)
-    modules.push(
-      @atd.load_bytes(
-        src,
-        annot_schema?,
-        expand~,
-        keep_poly~,
-        xdebug~,
-        inherit_fields~,
-        inherit_variants~,
-        pos_fname~,
-      ),
-    )
-  }
-  let (first_head, first_imports) = match modules {
-    [first, ..] => (first.head, first.imports)
-    [] => ((@atd.dummy_loc, []), [])
-  }
-  let all_type_defs = []
-  for m in modules {
-    all_type_defs.append(m.type_defs)
-  }
-  let m : @atd.Module = {
-    head: first_head,
-    imports: first_imports,
-    type_defs: all_type_defs,
-  }
-  let m = if remove_wraps { m.remove_wrap_constructs() } else { m }
-  let m = if strip_all {
-    m.map_all_annot(_ => [])
-  } else {
-    m.map_all_annot(an => an.filter(s => !strip_sections.contains(s.name)))
-  }
-  let src_name = match input_files {
-    [] => "<stdin>"
-    [file] => "'" + basename(file) + "'"
-    _ => "multiple files"
-  }
-  let output = match out_format {
-    Atd => {
-      let format_annot = if html_doc {
-        format_html_comments
-      } else {
-        @atd.default_format_annot
-      }
-      @atd.to_string(Module(m), format_annot~) + "\n"
-    }
-    Ocaml(name) => @atd.reflect_module(name, m) + "\n"
-    Jsonschema(root_type) =>
-      @atd.print_jsonschema(
-        m,
-        src_name~,
-        root_type~,
-        version=jsonschema_version,
-        xprop~,
-      )
-  }
-  match output_file {
-    None => print_string(output)
-    Some(file) => @fs.write_string_to_file(file, output)
+  let code = @atdcat_lib.run(io, @env.args())
+  if code != 0 {
+    @sys.exit(code)
   }
 }
 
@@ -262,27 +24,16 @@ fn run(args : ArrayView[String]) -> Unit raise Error {
 fn print_string(s : String) -> Unit {
   if s.has_suffix("\n") {
     println(s.view(end_offset=s.length() - 1))
-  } else {
-    // no trailing newline: println would add one
+  } else if s != "" {
     println(s)
   }
 }
 
 ///|
-fn main {
-  run(@env.args()) catch {
-    Exit(code) => @sys.exit(code)
-    @atd.AtdError(msg) => {
-      eprintln(msg)
-      @sys.exit(1)
-    }
-    @fs.IOError(msg) => {
-      eprintln(msg)
-      @sys.exit(2)
-    }
-    e => {
-      eprintln(e)
-      @sys.exit(2)
-    }
+fn eprint_string(s : String) -> Unit {
+  if s.has_suffix("\n") {
+    eprintln(s.view(end_offset=s.length() - 1))
+  } else if s != "" {
+    eprintln(s)
   }
 }
