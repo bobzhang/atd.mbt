@@ -28,6 +28,10 @@ priv struct Env {
   defs : Map[String, @atd.TypeDef]
   /// Parametrized abstract types, which translate to `Json`
   abstract_poly : Array[String]
+  /// ATD type name -> base name of its functions
+  fun_bases : Map[String, String]
+  /// Names of the generated functions
+  used_funs : Map[String, Unit]
 }
 
 ///|
@@ -44,18 +48,74 @@ fn Env::type_name(self : Env, atd_name : String) -> String {
 }
 
 ///|
-fn fun_suffix(atd_name : String) -> String {
-  sanitize(atd_name)
+/// Names of the functions generated for a type whose functions use the
+/// base name `base`.
+fn function_names(base : String) -> Array[String] {
+  [
+    "read_" + base,
+    "write_" + base,
+    base + "_of_json",
+    base + "_of_string",
+    "string_of_" + base,
+  ]
 }
 
 ///|
-fn reader_name(atd_name : String) -> String {
-  "read_" + fun_suffix(atd_name)
+/// Allocate the base name of the functions generated for an ATD type,
+/// e.g. `foo` for `read_foo`, `write_foo`, etc., avoiding conflicts.
+fn Env::fun_base(self : Env, atd_name : String) -> String {
+  match self.fun_bases.get(atd_name) {
+    Some(base) => base
+    None => {
+      let preferred = sanitize(atd_name)
+      let mut i = 0
+      let base = for ;; {
+        let candidate = preferred + suffix(i)
+        i += 1
+        if function_names(candidate)
+          .iter()
+          .all(f => !self.used_funs.contains(f)) {
+          break candidate
+        }
+      }
+      for f in function_names(base) {
+        self.used_funs[f] = ()
+      }
+      self.fun_bases[atd_name] = base
+      base
+    }
+  }
 }
 
 ///|
-fn writer_name(atd_name : String) -> String {
-  "write_" + fun_suffix(atd_name)
+fn suffix(i : Int) -> String {
+  match i {
+    0 => ""
+    1 => "_"
+    n => n.to_string()
+  }
+}
+
+///|
+fn Env::reader_name(self : Env, atd_name : String) -> String {
+  "read_" + self.fun_base(atd_name)
+}
+
+///|
+fn Env::writer_name(self : Env, atd_name : String) -> String {
+  "write_" + self.fun_base(atd_name)
+}
+
+///|
+/// Reader of a type imported from another ATD module, assuming that its
+/// functions have the default names.
+fn imported_reader_name(atd_name : String) -> String {
+  "read_" + sanitize(atd_name)
+}
+
+///|
+fn imported_writer_name(atd_name : String) -> String {
+  "write_" + sanitize(atd_name)
 }
 
 ///|
@@ -63,7 +123,15 @@ fn writer_name(atd_name : String) -> String {
 /// name.
 fn package_alias(x : @atd.Import) -> String raise @atd.AtdError {
   match get_mbt_string(x.annot, "name") {
-    Some(name) => name
+    Some(name) => {
+      if !is_lowercase_ident(name) {
+        @atd.error_at(
+          x.loc,
+          "invalid MoonBit package alias \{mbt_string_literal(name)}",
+        )
+      }
+      name
+    }
     None => sanitize(x.name)
   }
 }
@@ -79,6 +147,35 @@ fn Env::resolve(
   match @atd.resolve_import(self.imports, loc, name) {
     (None, base_name) => (None, base_name)
     (Some((import_, _)), base_name) => (Some(package_alias(import_)), base_name)
+  }
+}
+
+///|
+/// Name of a type imported from another ATD module: `<mbt name="...">` on
+/// the imported type, or the name that atdmbt gives it by default, which
+/// avoids the names of builtin types.
+fn Env::imported_type_name(
+  self : Env,
+  loc : @atd.Loc,
+  name : @atd.TypeName,
+) -> String raise @atd.AtdError {
+  match @atd.resolve_import(self.imports, loc, name) {
+    (Some((_, Some(it))), base_name) =>
+      match get_mbt_string(it.annot, "name") {
+        Some(n) => check_type_name(loc, n)
+        None => default_imported_type_name(base_name)
+      }
+    (_, base_name) => default_imported_type_name(base_name)
+  }
+}
+
+///|
+fn default_imported_type_name(base_name : String) -> String {
+  let n = to_camel_case(sanitize(base_name))
+  if mbt_reserved_type_names.contains(n) {
+    n + "_"
+  } else {
+    n
   }
 }
 
@@ -171,11 +268,11 @@ fn Env::type_of_expr(
       }
     Name(loc, { name, args, .. }, an) =>
       match self.resolve(loc, name) {
-        (Some(alias_), base_name) => {
+        (Some(alias_), _) => {
           if !args.is_empty() {
             not_implemented(loc, "parametrized imported types")
           }
-          "@\{alias_}.\{to_camel_case(sanitize(base_name))}"
+          "@\{alias_}.\{self.imported_type_name(loc, name)}"
         }
         (None, base_name) => {
           if self.abstract_poly.contains(base_name) {
@@ -258,7 +355,8 @@ fn Env::reader(self : Env, e : @atd.TypeExpr) -> String raise @atd.AtdError {
       }
     Name(loc, { name, .. }, an) =>
       match self.resolve(loc, name) {
-        (Some(alias_), base_name) => "@\{alias_}.\{reader_name(base_name)}"
+        (Some(alias_), base_name) =>
+          "@\{alias_}.\{imported_reader_name(base_name)}"
         (None, base_name) => {
           if self.abstract_poly.contains(base_name) {
             return "\{rt}.read_json"
@@ -281,7 +379,7 @@ fn Env::reader(self : Env, e : @atd.TypeExpr) -> String raise @atd.AtdError {
             "float" => "\{rt}.read_float"
             "string" => "\{rt}.read_string"
             "abstract" => "\{rt}.read_json"
-            _ => reader_name(base_name)
+            _ => self.reader_name(base_name)
           }
         }
       }
@@ -359,7 +457,8 @@ fn Env::writer(self : Env, e : @atd.TypeExpr) -> String raise @atd.AtdError {
       }
     Name(loc, { name, .. }, an) =>
       match self.resolve(loc, name) {
-        (Some(alias_), base_name) => "@\{alias_}.\{writer_name(base_name)}"
+        (Some(alias_), base_name) =>
+          "@\{alias_}.\{imported_writer_name(base_name)}"
         (None, base_name) => {
           if self.abstract_poly.contains(base_name) {
             return "\{rt}.write_json"
@@ -392,7 +491,7 @@ fn Env::writer(self : Env, e : @atd.TypeExpr) -> String raise @atd.AtdError {
               }
             "string" => "\{rt}.write_string"
             "abstract" => "\{rt}.write_json"
-            _ => writer_name(base_name)
+            _ => self.writer_name(base_name)
           }
         }
       }
@@ -499,9 +598,27 @@ fn Env::default_value(
 }
 
 ///|
+/// Follow local type aliases and transparent `wrap` constructs.
+fn Env::deref(self : Env, e : @atd.TypeExpr) -> @atd.TypeExpr {
+  let visited = []
+  let mut e = unwrap(e)
+  while e is Name(_, { name: { path: [n], }, args: [], .. }, _) &&
+        self.defs.get(n) is Some(d) &&
+        !visited.contains(n) {
+    visited.push(n)
+    match unwrap(d.value) {
+      Sum(_) | Record(_) => break
+      v => e = v
+    }
+  }
+  e
+}
+
+///|
 /// If the field is `?foo: bar option`, its MoonBit type is `Bar?` and its
 /// JSON value has type `bar` rather than `bar option`.
-fn unwrap_field_type(
+fn Env::unwrap_field_type(
+  self : Env,
   loc : @atd.Loc,
   field_name : String,
   kind : @atd.FieldKind,
@@ -510,7 +627,7 @@ fn unwrap_field_type(
   match kind {
     Required | WithDefault => e
     Optional =>
-      match e {
+      match self.deref(e) {
         Option(_, e, _) => e
         _ =>
           @atd.error_at(

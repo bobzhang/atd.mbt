@@ -55,7 +55,7 @@ test "64-bit integers and numeric representations" {
   inspect(
     s,
     content=(
-      #|{"big":9007199254740993,"big_str":"-9223372036854775808","small_str":"42","rounded":3,"precise":3.14}
+      #|{"big":9007199254740993,"big_str":"-9223372036854775808","small_str":"42","rounded":3,"precise":3.1}
     ),
   )
   let y = @features.int64s_of_string(s)
@@ -204,7 +204,7 @@ test "open enums" {
   inspect(
     @features.string_of_fruit(Other("Cherry")),
     content=(
-      #|["Other","Cherry"]
+      #|"Cherry"
     ),
   )
 }

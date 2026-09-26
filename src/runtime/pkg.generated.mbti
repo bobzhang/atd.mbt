@@ -8,6 +8,8 @@ import {
 // Values
 pub fn[T] bad_json(String, Json, Path) -> T raise JsonError
 
+pub fn format_float_g(Double, Int) -> String
+
 pub fn get_field(Map[String, Json], String, keep_nulls? : Bool) -> Json?
 
 pub fn[T] missing_field(String, String, Path) -> T raise JsonError

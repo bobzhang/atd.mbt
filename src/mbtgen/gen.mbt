@@ -112,10 +112,16 @@ pub fn generate_module(
     imports: @atd.load_imports(m.imports),
     defs: Map::from_array(defs.map(d => (d.name.to_string(), d))),
     abstract_poly,
+    fun_bases: Map([]),
+    used_funs: Map([]),
   }
-  // Make sure that the types defined in the ATD file get the best names.
+  // Make sure that the types defined in the ATD file get the best names,
+  // in the order of their definitions.
   for d in defs {
     ignore(env.type_name(d.name.to_string()))
+  }
+  for d in defs {
+    ignore(env.fun_base(d.name.to_string()))
   }
   let out = header(atd_filename, m)
   for d in defs {

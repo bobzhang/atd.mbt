@@ -220,3 +220,181 @@ test "output file name" {
   inspect(@mbtgen.output_file_name("path/to/Foo.atd"), content="foo.mbt")
   inspect(@mbtgen.output_file_name("bar"), content="bar.mbt")
 }
+
+///|
+test "invalid MoonBit names" {
+  inspect(
+    gen_error("type t = { x <mbt name=\"foo-bar\">: int }"),
+    content=(
+      #|File "test.atd", line 1, characters 11-38:
+      #|invalid MoonBit field name "foo-bar"
+    ),
+  )
+  inspect(
+    gen_error("type t = { x <mbt name=\"match\">: int }"),
+    content=(
+      #|File "test.atd", line 1, characters 11-36:
+      #|invalid MoonBit field name "match"
+    ),
+  )
+  inspect(
+    gen_error("type t = [ A <mbt name=\"lowercase\"> ]"),
+    content=(
+      #|File "test.atd", line 1, characters 11-35:
+      #|invalid MoonBit constructor name "lowercase"
+    ),
+  )
+  inspect(
+    gen_error("from m <mbt name=\"Bad\"> import t\ntype u = m.t"),
+    content=(
+      #|File "test.atd", line 1, characters 0-32:
+      #|invalid MoonBit package alias "Bad"
+    ),
+  )
+}
+
+///|
+/// Extract the declarations and function signatures of generated code.
+fn signatures(code : String) -> String {
+  code
+  .split("\n")
+  .filter(l => l.has_prefix("pub") || l.has_prefix("  "))
+  .filter(l => {
+    !l.has_prefix("   ") &&
+    !l.contains("@atd_runtime.") &&
+    !l.has_prefix("  o[")
+  })
+  .map(l => l.to_owned())
+  .collect()
+  .join("\n")
+}
+
+///|
+test "no function name collisions" {
+  let code = gen(
+    (
+      #|type a' = int
+      #|type a_ = string
+      #|type read_x = int
+      #|type x_of_json = string
+    ),
+  )
+  inspect(
+    code
+    .split("\n")
+    .filter(l => l.has_prefix("pub fn"))
+    .map(l => l.to_owned())
+    .collect()
+    .join("\n"),
+    content=(
+      #|pub fn write_a_(x : A) -> Json {
+      #|pub fn read_a_(x : Json, path : @atd_runtime.Path) -> A raise @atd_runtime.JsonError {
+      #|pub fn a__of_json(x : Json) -> A raise @atd_runtime.JsonError {
+      #|pub fn a__of_string(s : StringView) -> A raise @atd_runtime.JsonError {
+      #|pub fn string_of_a_(x : A, indent? : Int = 0) -> String {
+      #|pub fn write_a__(x : A_) -> Json {
+      #|pub fn read_a__(x : Json, path : @atd_runtime.Path) -> A_ raise @atd_runtime.JsonError {
+      #|pub fn a___of_json(x : Json) -> A_ raise @atd_runtime.JsonError {
+      #|pub fn a___of_string(s : StringView) -> A_ raise @atd_runtime.JsonError {
+      #|pub fn string_of_a__(x : A_, indent? : Int = 0) -> String {
+      #|pub fn write_read_x(x : ReadX) -> Json {
+      #|pub fn read_read_x(x : Json, path : @atd_runtime.Path) -> ReadX raise @atd_runtime.JsonError {
+      #|pub fn read_x_of_json(x : Json) -> ReadX raise @atd_runtime.JsonError {
+      #|pub fn read_x_of_string(s : StringView) -> ReadX raise @atd_runtime.JsonError {
+      #|pub fn string_of_read_x(x : ReadX, indent? : Int = 0) -> String {
+      #|pub fn write_x_of_json_(x : XOfJson) -> Json {
+      #|pub fn read_x_of_json_(x : Json, path : @atd_runtime.Path) -> XOfJson raise @atd_runtime.JsonError {
+      #|pub fn x_of_json__of_json(x : Json) -> XOfJson raise @atd_runtime.JsonError {
+      #|pub fn x_of_json__of_string(s : StringView) -> XOfJson raise @atd_runtime.JsonError {
+      #|pub fn string_of_x_of_json_(x : XOfJson, indent? : Int = 0) -> String {
+    ),
+  )
+}
+
+///|
+test "optional field of an aliased option type" {
+  inspect(
+    signatures(gen("type maybe = int option\ntype t = { ?x: maybe }")),
+    content=(
+      #|pub type Maybe = Int?
+      #|pub fn write_maybe(x : Maybe) -> Json {
+      #|pub fn string_of_maybe(x : Maybe, indent? : Int = 0) -> String {
+      #|pub(all) struct T {
+      #|  x : Int?
+      #|pub fn T::new(
+      #|  x? : Int,
+      #|  T::{ x }
+      #|pub fn write_t(x : T) -> Json {
+      #|  let o : Map[String, Json] = Map([])
+      #|  match x.x {
+      #|  }
+      #|  Json::object(o)
+      #|  T::{
+      #|  }
+      #|pub fn string_of_t(x : T, indent? : Int = 0) -> String {
+      #|pub impl ToJson for T with to_json(self) {
+      #|  write_t(self)
+    ),
+  )
+}
+
+///|
+test "imported types avoid builtin names" {
+  let code = gen(
+    (
+      #|from ext import json, point <mbt name="Pt">
+      #|type t = { a: ext.json; b: ext.point }
+    ),
+  )
+  inspect(
+    code
+    .split("\n")
+    .filter(l => l.contains("ext"))
+    .map(l => l.to_owned())
+    .collect()
+    .join("\n"),
+    content=(
+      #|//     "<module>/ext" @ext,
+      #|  a : @ext.Json_
+      #|  b : @ext.Pt
+      #|  a~ : @ext.Json_,
+      #|  b~ : @ext.Pt,
+      #|  o["a"] = @ext.write_json(x.a)
+      #|  o["b"] = @ext.write_point(x.b)
+      #|    a: @atd_runtime.read_required_field(o, "t", "a", @ext.read_json, path),
+      #|    b: @atd_runtime.read_required_field(o, "t", "b", @ext.read_point, path),
+    ),
+  )
+}
+
+///|
+test "lifted types inherit derive" {
+  let code = gen("type t <mbt derive=\"\"> = [ A of { x: int } ]")
+  inspect(
+    code
+    .split("\n")
+    .filter(l => l.has_prefix("}") || l.has_prefix("pub(all)"))
+    .map(l => l.to_owned())
+    .collect()
+    .join("\n"),
+    content=(
+      #|pub(all) enum T {
+      #|}
+      #|}
+      #|}
+      #|}
+      #|}
+      #|}
+      #|}
+      #|pub(all) struct TA {
+      #|}
+      #|}
+      #|}
+      #|}
+      #|}
+      #|}
+      #|}
+      #|}
+    ),
+  )
+}

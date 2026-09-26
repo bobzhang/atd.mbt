@@ -12,6 +12,8 @@
 priv struct Lifter {
   names : @atd.UniqueNames
   new_defs : Array[@atd.TypeDef]
+  /// Annotations inherited by the lifted definitions: `<mbt derive=...>`
+  mut inherited_annot : @atd.Annot
 }
 
 ///|
@@ -30,7 +32,7 @@ fn Lifter::lift_expr(
         loc,
         name: @atd.TypeName::simple(name),
         param: [],
-        annot: [],
+        annot: self.inherited_annot,
         value,
         orig: None,
       })
@@ -117,10 +119,11 @@ fn lift_inline_types(defs : Array[@atd.TypeDef]) -> Array[@atd.TypeDef] {
   for d in defs {
     ignore(names.translate(d.name.to_string()))
   }
-  let lifter : Lifter = { names, new_defs: [], }
+  let lifter : Lifter = { names, new_defs: [], inherited_annot: [], }
   let res = []
   for d in defs {
     let name = d.name.to_string()
+    lifter.inherited_annot = derive_annot(d.annot)
     // the top of a type definition may be a record or a sum, possibly under
     // transparent 'wrap' constructs
     let value = loop_top(d.value, e => lifter.lift_children(name, e))
@@ -140,4 +143,20 @@ fn loop_top(
     Wrap(loc, t, an) if is_transparent_wrap(an) => Wrap(loc, loop_top(t, f), an)
     _ => f(e)
   }
+}
+
+///|
+/// The `<mbt derive=...>` annotation of a type definition, if any, to be
+/// inherited by the types lifted from it.
+fn derive_annot(an : @atd.Annot) -> @atd.Annot {
+  let res = []
+  for sec in an {
+    if sec.name == "mbt" {
+      let fields = sec.fields.filter(f => f.name == "derive")
+      if !fields.is_empty() {
+        res.push({ ..sec, fields, })
+      }
+    }
+  }
+  res
 }

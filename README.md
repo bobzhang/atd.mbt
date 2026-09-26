@@ -114,7 +114,7 @@ The JSON representation is the same as with atdgen, atdts and atdpy.
 | `bool` | `Bool` | boolean |
 | `int` | `Int` (range-checked) | number; `<json repr="string">`: string |
 | `int <mbt repr="int64">` | `Int64` (all digits preserved) | number or string |
-| `float` | `Double` | number; `<json repr="int">`, `<json precision="N">` supported |
+| `float` | `Double` | number; `<json repr="int">` and `<json precision="N">` (N significant digits, like atdgen) supported |
 | `string` | `String` | string |
 | `abstract` | `Json` | any |
 | `t list` | `Array[T]` | array |
@@ -140,7 +140,8 @@ Record fields:
 - unknown fields are ignored.
 
 Other supported features: `<json name="...">` on fields and variants,
-`<json open_enum>`, `inherit`, `<doc text="...">` (turned into `///`
+`<json open_enum>` (unknown tags are read into the variant with a string
+payload, which is written as a plain string), `inherit`, `<doc text="...">` (turned into `///`
 comments), inline records and sum types (lifted into named types such as
 `InlinePoint`), recursive types (except type aliases defined in terms of
 themselves, e.g. `type t = t list`), and names that clash with MoonBit
@@ -152,6 +153,7 @@ keywords or builtin names (renamed, e.g. `match` → `match_`, `Some` →
 | Annotation | Position | Meaning |
 |---|---|---|
 | `<mbt name="alias">` | `from m <mbt name="alias"> import ...` | package alias of an imported module (default: the module's local name) |
+| `<mbt name="T">` | `from m import t <mbt name="T">` | MoonBit name of an imported type, if not the default |
 | `<mbt name="n">` | field, variant | MoonBit name of a field or constructor |
 | `<mbt default="expr">` | `~field` | default value, a MoonBit expression |
 | `<mbt repr="map">` | `(k * v) list` | represent as `Map[K, V]` |
@@ -162,7 +164,11 @@ keywords or builtin names (renamed, e.g. `match` → `match_`, `Some` →
 ### Imports
 
 `from foo import t` makes `foo.t` refer to `@foo.T`, read with
-`@foo.read_t` and written with `@foo.write_t`. The MoonBit package
+`@foo.read_t` and written with `@foo.write_t`. These are the names that
+atdmbt gives by default to the type `t` of `foo.atd` (names of builtin types
+such as `Json` get an underscore, e.g. `Json_`); if the names were
+adjusted to avoid a conflict in `foo.atd`, give the type name with
+`<mbt name="...">` on the imported type. The MoonBit package
 containing the code generated from `foo.atd` must be imported in `moon.pkg`
 with the alias `foo`, or the alias given by `<mbt name="...">`.
 

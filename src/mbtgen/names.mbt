@@ -112,3 +112,33 @@ fn member_names(reserved : Array[String]) -> @atd.UniqueNames {
     safe_prefix="",
   )
 }
+
+///|
+fn is_ident_char(c : Char) -> Bool {
+  (c >= 'a' && c <= 'z') ||
+  (c >= 'A' && c <= 'Z') ||
+  (c >= '0' && c <= '9') ||
+  c == '_'
+}
+
+///|
+/// A valid name for a value or a field: `[a-z_][A-Za-z0-9_]*`.
+fn is_lowercase_ident(s : String) -> Bool {
+  s != "" &&
+  s.iter().all(is_ident_char) &&
+  ((s[0] >= 'a' && s[0] <= 'z') || s[0] == '_')
+}
+
+///|
+/// A valid name for a type or a constructor: `[A-Z][A-Za-z0-9_]*`.
+fn is_uppercase_ident(s : String) -> Bool {
+  s != "" && s.iter().all(is_ident_char) && s[0] >= 'A' && s[0] <= 'Z'
+}
+
+///|
+fn check_type_name(loc : @atd.Loc, n : String) -> String raise @atd.AtdError {
+  if !is_uppercase_ident(n) {
+    @atd.error_at(loc, "invalid MoonBit type name \{mbt_string_literal(n)}")
+  }
+  n
+}

@@ -84,12 +84,19 @@ fn Env::field_infos(
     match f {
       Inherit(loc, _) => @atd.error_at(loc, "inherit should have been expanded")
       Field({ loc, name, kind, annot, expr, }) => {
-        let preferred = match get_mbt_string(annot, "name") {
-          Some(n) => n
-          None => sanitize(name)
+        let mbt_name = match get_mbt_string(annot, "name") {
+          Some(n) => {
+            if !is_lowercase_ident(n) || mbt_keywords.contains(n) {
+              @atd.error_at(
+                loc,
+                "invalid MoonBit field name \{mbt_string_literal(n)}",
+              )
+            }
+            names.translate(name, preferred_translation=n)
+          }
+          None => names.translate(name, preferred_translation=sanitize(name))
         }
-        let mbt_name = names.translate(name, preferred_translation=preferred)
-        let value_type = unwrap_field_type(loc, name, kind, expr)
+        let value_type = self.unwrap_field_type(loc, name, kind, expr)
         let default = match kind {
           WithDefault =>
             match get_mbt_string(annot, "default") {
@@ -146,8 +153,16 @@ fn Env::case_infos(
       Inherit(loc, _) => @atd.error_at(loc, "inherit should have been expanded")
       Variant(loc, name, annot, payload) => {
         let preferred = match get_mbt_string(annot, "name") {
-          Some(n) => n
-          None => to_camel_case_first(sanitize(name))
+          Some(n) => {
+            if !is_uppercase_ident(n) {
+              @atd.error_at(
+                loc,
+                "invalid MoonBit constructor name \{mbt_string_literal(n)}",
+              )
+            }
+            n
+          }
+          None => sanitize(name)
         }
         let mbt_name = names.translate(name, preferred_translation=preferred)
         let arg_types = match payload {
@@ -176,13 +191,6 @@ fn Env::case_infos(
     }
   }
   res
-}
-
-///|
-/// Constructor names must start with an uppercase letter, which ATD
-/// already guarantees.
-fn to_camel_case_first(s : String) -> String {
-  s
 }
 
 ///|
@@ -235,7 +243,7 @@ fn Env::gen_record(
   out.push("")
   // writer
   out.push("///|")
-  out.push("pub fn \{writer_name(atd_name)}(x : \{type_name}) -> Json {")
+  out.push("pub fn \{self.writer_name(atd_name)}(x : \{type_name}) -> Json {")
   if infos.is_empty() {
     out.push("  ignore(x)")
   }
@@ -264,7 +272,7 @@ fn Env::gen_record(
   let type_lit = mbt_string_literal(atd_name)
   out.push("///|")
   out.push(
-    "pub fn \{reader_name(atd_name)}(x : Json, path : \{rt}.Path) -> \{type_name} raise \{rt}.JsonError {",
+    "pub fn \{self.reader_name(atd_name)}(x : Json, path : \{rt}.Path) -> \{type_name} raise \{rt}.JsonError {",
   )
   let o = if infos.is_empty() { "_" } else { "o" }
   out.push("  let \{o} = \{rt}.read_object(x, path, \{type_lit})")
@@ -310,6 +318,23 @@ fn Env::gen_sum(
   let cases = self.case_infos(variants)
   let json_sum = @atd.get_json_sum(an)
   let object_repr = json_sum.json_sum_repr is Object
+  // with <json open_enum>, the variant with a string payload receives the
+  // unknown tags and is written as a plain string
+  let mut open_case : String? = None
+  if json_sum.json_open_enum {
+    for c in cases {
+      if c.payload is Some(e) &&
+        self.deref(e) is Name(_, { name: { path: ["string"], }, .. }, _) {
+        open_case = Some(c.mbt_name)
+      }
+    }
+    if open_case is None {
+      @atd.error_at(
+        d.loc,
+        "<json open_enum> requires a variant with a string payload",
+      )
+    }
+  }
   // type definition
   out.push("///|")
   out.append(doc_comment(d.loc, d.annot))
@@ -328,7 +353,7 @@ fn Env::gen_sum(
   out.push("")
   // writer
   out.push("///|")
-  out.push("pub fn \{writer_name(atd_name)}(x : \{type_name}) -> Json {")
+  out.push("pub fn \{self.writer_name(atd_name)}(x : \{type_name}) -> Json {")
   if cases.is_empty() {
     out.push("  ignore(x)")
     out.push("  abort(\"impossible: empty type\")")
@@ -345,7 +370,9 @@ fn Env::gen_sum(
             Tuple(_, cells, _) if n >= 2 => self.write_tuple_vars(cells, vars)
             _ => self.write_expr(e, "v0")
           }
-          let json = if object_repr {
+          let json = if open_case == Some(c.mbt_name) {
+            payload
+          } else if object_repr {
             "Json::object(Map::from_array([(\{mbt_string_literal(c.json_name)}, \{payload})]))"
           } else {
             "Json::array([\{tag}, \{payload}])"
@@ -364,28 +391,13 @@ fn Env::gen_sum(
   let type_lit = mbt_string_literal(atd_name)
   out.push("///|")
   out.push(
-    "pub fn \{reader_name(atd_name)}(x : Json, path : \{rt}.Path) -> \{type_name} raise \{rt}.JsonError {",
+    "pub fn \{self.reader_name(atd_name)}(x : Json, path : \{rt}.Path) -> \{type_name} raise \{rt}.JsonError {",
   )
   out.push("  match x {")
-  let mut open_case : CaseInfo? = None
   for c in cases {
     if c.payload is None {
       out.push(
         "    String(\{mbt_string_literal(c.json_name)}) => \{type_name}::\{c.mbt_name}",
-      )
-    }
-  }
-  if json_sum.json_open_enum {
-    for c in cases {
-      if c.payload is Some(e) &&
-        unwrap(e) is Name(_, { name: { path: ["string"], }, .. }, _) {
-        open_case = Some(c)
-      }
-    }
-    if open_case is None {
-      @atd.error_at(
-        d.loc,
-        "<json open_enum> requires a variant with a string payload",
       )
     }
   }
@@ -425,7 +437,12 @@ fn Env::gen_sum(
     }
   }
   match open_case {
-    Some(c) => out.push("    String(s) => \{type_name}::\{c.mbt_name}(s)")
+    Some(c) => {
+      let value = cases.iter().find_first(x => x.mbt_name == c).unwrap()
+      out.push(
+        "    String(_) => \{type_name}::\{c}(\{self.read_expr(value.payload.unwrap(), "x", "path")})",
+      )
+    }
     None => ()
   }
   out.push("    _ => \{rt}.bad_json(\{type_lit}, x, path)")
@@ -452,13 +469,13 @@ fn Env::gen_alias(
     out.push("")
   }
   out.push("///|")
-  out.push("pub fn \{writer_name(atd_name)}(x : \{type_name}) -> Json {")
+  out.push("pub fn \{self.writer_name(atd_name)}(x : \{type_name}) -> Json {")
   out.push("  \{self.write_expr(e, "x")}")
   out.push("}")
   out.push("")
   out.push("///|")
   out.push(
-    "pub fn \{reader_name(atd_name)}(x : Json, path : \{rt}.Path) -> \{type_name} raise \{rt}.JsonError {",
+    "pub fn \{self.reader_name(atd_name)}(x : Json, path : \{rt}.Path) -> \{type_name} raise \{rt}.JsonError {",
   )
   out.push("  \{self.read_expr(e, "x", "path")}")
   out.push("}")
@@ -474,13 +491,13 @@ fn Env::gen_helpers(
 ) -> Unit {
   let atd_name = d.name.to_string()
   let type_name = self.type_name(atd_name)
-  let s = fun_suffix(atd_name)
+  let s = self.fun_base(atd_name)
   out.push("///|")
   out.push("/// Convert a JSON value into a value of type `\{type_name}`.")
   out.push(
     "pub fn \{s}_of_json(x : Json) -> \{type_name} raise \{rt}.JsonError {",
   )
-  out.push("  \{reader_name(atd_name)}(x, \{rt}.Path::Root)")
+  out.push("  \{self.reader_name(atd_name)}(x, \{rt}.Path::Root)")
   out.push("}")
   out.push("")
   out.push("///|")
@@ -488,7 +505,7 @@ fn Env::gen_helpers(
   out.push(
     "pub fn \{s}_of_string(s : StringView) -> \{type_name} raise \{rt}.JsonError {",
   )
-  out.push("  \{reader_name(atd_name)}(\{rt}.parse(s), \{rt}.Path::Root)")
+  out.push("  \{self.reader_name(atd_name)}(\{rt}.parse(s), \{rt}.Path::Root)")
   out.push("}")
   out.push("")
   out.push("///|")
@@ -499,13 +516,13 @@ fn Env::gen_helpers(
   out.push(
     "pub fn string_of_\{s}(x : \{type_name}, indent? : Int = 0) -> String {",
   )
-  out.push("  \{rt}.stringify(\{writer_name(atd_name)}(x), indent~)")
+  out.push("  \{rt}.stringify(\{self.writer_name(atd_name)}(x), indent~)")
   out.push("}")
   out.push("")
   if nominal {
     out.push("///|")
     out.push("pub impl ToJson for \{type_name} with to_json(self) {")
-    out.push("  \{writer_name(atd_name)}(self)")
+    out.push("  \{self.writer_name(atd_name)}(self)")
     out.push("}")
     out.push("")
   }

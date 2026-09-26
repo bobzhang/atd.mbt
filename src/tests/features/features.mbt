@@ -1100,8 +1100,7 @@ pub fn write_fruit(x : Fruit) -> Json {
   match x {
     Fruit::Apple => Json::string("Apple")
     Fruit::Banana => Json::string("Banana")
-    Fruit::Other(v0) =>
-      Json::array([Json::string("Other"), @atd_runtime.write_string(v0)])
+    Fruit::Other(v0) => @atd_runtime.write_string(v0)
   }
 }
 
@@ -1115,7 +1114,7 @@ pub fn read_fruit(
     String("Banana") => Fruit::Banana
     Array([String("Other"), v]) =>
       Fruit::Other(@atd_runtime.read_string(v, path.index(1)))
-    String(s) => Fruit::Other(s)
+    String(_) => Fruit::Other(@atd_runtime.read_string(x, path))
     _ => @atd_runtime.bad_json("fruit", x, path)
   }
 }

@@ -290,12 +290,22 @@ pub fn write_float_as_int(x : Double) -> Json {
 }
 
 ///|
-/// Build a writer for numbers with at most `precision` decimal places
-/// (`<json precision="N">`).
+/// Build a writer for numbers with at most `precision` significant digits
+/// (`<json precision="N">`), formatted like atdgen does (C's `%.Ng`).
 pub fn write_float_prec(precision : Int) -> (Double) -> Json {
   x => {
-    let m = @math.pow(10.0, precision.to_double())
-    Json::number((x * m).round() / m)
+    if x.is_nan() || x.is_inf() {
+      Json::number(x)
+    } else {
+      let s = format_float_g(x, precision)
+      let s = if s.iter().all(c => (c >= '0' && c <= '9') || c == '-') {
+        s + ".0"
+      } else {
+        s
+      }
+      let v = @string.parse_double(s) catch { _ => x }
+      Json::number(v, repr=s)
+    }
   }
 }
 
