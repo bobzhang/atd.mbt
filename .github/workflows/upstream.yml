@@ -1,0 +1,58 @@
+name: Upstream compatibility
+
+# Build the reference OCaml atdcat at the upstream commit this port follows,
+# check that the compatibility tests embedded in src/atdcat are up to date
+# with it, and run a bounded differential fuzzing session.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ATD_COMMIT: c714a585771bfe7a6eb414a3ebefed30e0611c66
+
+jobs:
+  differential:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Checkout upstream ATD
+        run: |
+          git clone https://github.com/ahrefs/atd .repos/atd
+          git -C .repos/atd checkout "$ATD_COMMIT"
+
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: "4.14"
+
+      - name: Build the reference atdcat
+        run: |
+          opam install -y "dune>=3.18" menhir re yojson.2.1.0 cmdliner easy-format
+          cd .repos/atd
+          opam exec -- dune build ./atdcat/src/atdcat.exe 2>&1 | grep -v Alert || true
+          test -x _build/default/atdcat/src/atdcat.exe
+
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Check that the compatibility tests are up to date
+        run: |
+          moon update
+          moonx scripts/gen_compat_tests.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe"
+          moon fmt
+          git diff --exit-code -- src/atdcat
+
+      - name: Differential fuzzing
+        run: |
+          moon build --target native src/cmd/atdcat
+          moonx scripts/fuzz_atdcat.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe" 300 "$GITHUB_RUN_ID"

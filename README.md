@@ -249,6 +249,7 @@ compatibility tests; clone them into `.repos` (ignored by git):
 
 ```bash
 git clone https://github.com/ahrefs/atd .repos/atd
+git -C .repos/atd checkout c714a585771bfe7a6eb414a3ebefed30e0611c66
 ```
 
 Tests:
@@ -266,8 +267,10 @@ tools, update the expected outputs with
 `moon-cram update -r -y tests/cram` (with the tools on `PATH`).
 
 The compatibility tests and the fuzzer need a reference `atdcat` built from
-`.repos/atd` with dune (it needs easy-format, menhir, re, yojson and
-cmdliner):
+`.repos/atd` with dune, OCaml 4.14 and Yojson 2.1.0 (it also needs
+easy-format, menhir, re and cmdliner); see
+[.github/workflows/upstream.yml](.github/workflows/upstream.yml), which runs
+them in CI:
 
 ```bash
 moonx scripts/gen_compat_tests.mbtx path/to/atdcat.exe && moon fmt
