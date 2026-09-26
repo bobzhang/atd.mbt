@@ -128,7 +128,7 @@ pub fn parse_doc_text(Loc, String) -> Array[DocBlock] raise AtdError
 
 pub fn parse_module(BytesView, pos_fname? : String, pos_lnum? : Int) -> Module raise AtdError
 
-pub let predef_list : Array[(TypeName, Int, TypeDef?)]
+pub fn predef_types() -> Array[(TypeName, Int, TypeDef?)]
 
 pub fn print_doc_text(Array[DocBlock]) -> String
 
@@ -378,11 +378,7 @@ pub impl Compare for TypeName
 pub impl Show for TypeName
 
 pub struct UniqueNames {
-  reserved_identifiers : Map[String, Unit]
-  reserved_prefixes : Array[String]
-  safe_prefix : String
-  translations : Map[String, String]
-  reverse_translations : Map[String, String]
+  // private fields
 }
 pub fn UniqueNames::all(Self) -> Array[(String, String)]
 pub fn UniqueNames::create(Self, String) -> String
@@ -395,17 +391,6 @@ pub(all) enum Variant {
   Variant(Loc, String, Array[AnnotSection], TypeExpr?)
   Inherit(Loc, TypeExpr)
 } derive(Eq, @debug.Debug)
-
-pub(all) struct VisitorHooks {
-  module_ : ((Module) -> Unit raise AtdError, Module) -> Unit raise AtdError
-  import_ : ((Import) -> Unit raise AtdError, Import) -> Unit raise AtdError
-  imported_type : ((ImportedType) -> Unit raise AtdError, ImportedType) -> Unit raise AtdError
-  type_def : ((TypeDef) -> Unit raise AtdError, TypeDef) -> Unit raise AtdError
-  type_expr : ((TypeExpr) -> Unit raise AtdError, TypeExpr) -> Unit raise AtdError
-  variant : ((Variant) -> Unit raise AtdError, Variant) -> Unit raise AtdError
-  cell : ((Cell) -> Unit raise AtdError, Cell) -> Unit raise AtdError
-  field : ((Field) -> Unit raise AtdError, Field) -> Unit raise AtdError
-}
 
 // Type aliases
 pub type Annot = Array[AnnotSection]

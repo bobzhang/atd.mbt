@@ -1,25 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "bobzhang/atd/format"
 
-import {
-  "moonbitlang/core/debug",
-}
-
 // Values
 pub fn utf8_length(StringView) -> Int
 
 // Errors
 
 // Types and methods
-pub(all) enum BoxType {
-  HBox
-  VBox
-  HVBox
-  HOVBox
-  Box
-  Fits
-} derive(Eq, @debug.Debug)
-
 type Formatter
 pub fn Formatter::close_box(Self) -> Unit
 pub fn Formatter::contents(Self) -> String

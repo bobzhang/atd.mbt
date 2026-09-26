@@ -16,7 +16,7 @@ fn predef_def(name : String, mk : (Loc, TypeExpr) -> TypeExpr) -> TypeDef {
 
 ///|
 /// The list of predefined types: name, arity, and definition if any.
-pub let predef_list : Array[(TypeName, Int, TypeDef?)] = [
+let predef_list : Array[(TypeName, Int, TypeDef?)] = [
   (TypeName::simple("unit"), 0, None),
   (TypeName::simple("bool"), 0, None),
   (TypeName::simple("int"), 0, None),
@@ -49,6 +49,12 @@ pub let predef_list : Array[(TypeName, Int, TypeDef?)] = [
     Some(predef_def("wrap", (l, a) => Wrap(l, a, []))),
   ),
 ]
+
+///|
+/// The predefined types: name, arity, and definition if any.
+pub fn predef_types() -> Array[(TypeName, Int, TypeDef?)] {
+  predef_list.copy()
+}
 
 ///|
 /// A table mapping type names to their arity and definition.

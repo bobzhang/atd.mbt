@@ -9,14 +9,14 @@
 
 ///|
 /// Kinds of pretty-printing boxes.
-pub(all) enum BoxType {
+priv enum BoxType {
   HBox
   VBox
   HVBox
   HOVBox
   Box
   Fits
-} derive(Eq, Debug)
+}
 
 ///|
 priv enum Token {

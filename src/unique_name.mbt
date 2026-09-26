@@ -4,11 +4,11 @@
 ///|
 /// A registry of unique names.
 pub struct UniqueNames {
-  reserved_identifiers : Map[String, Unit]
-  reserved_prefixes : Array[String]
-  safe_prefix : String
-  translations : Map[String, String]
-  reverse_translations : Map[String, String]
+  priv reserved_identifiers : Map[String, Unit]
+  priv reserved_prefixes : Array[String]
+  priv safe_prefix : String
+  priv translations : Map[String, String]
+  priv reverse_translations : Map[String, String]
 }
 
 ///|

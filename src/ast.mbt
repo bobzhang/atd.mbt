@@ -315,7 +315,7 @@ pub fn Module::map_all_annot(self : Module, f : (Annot) -> Annot) -> Module {
 ///|
 /// Hooks for the visitor. Each hook receives a continuation that must be
 /// called to visit the children of the node.
-pub(all) struct VisitorHooks {
+priv struct VisitorHooks {
   module_ : ((Module) -> Unit raise AtdError, Module) -> Unit raise AtdError
   import_ : ((Import) -> Unit raise AtdError, Import) -> Unit raise AtdError
   imported_type : ((ImportedType) -> Unit raise AtdError, ImportedType) -> Unit raise AtdError
