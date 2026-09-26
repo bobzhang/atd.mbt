@@ -1,0 +1,3 @@
+import {
+  "bobzhang/atd/runtime" @atd_runtime,
+}

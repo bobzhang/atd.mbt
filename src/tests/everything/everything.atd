@@ -1,0 +1,79 @@
+(*
+   ATD type definitions for testing their translation to TypeScript.
+*)
+
+from ext_types import tag
+
+(* Testing raw JSON. Should map to type 'any'. *)
+type anything = abstract
+
+type different_kinds_of_things = [
+  | Root (* class name conflict *)
+  | Thing of int
+  | WOW <json name="wow">
+  | Amaze <json name="!!!"> of string list
+]
+
+(* TS keyword *)
+type this = int
+
+type ('a, 'b) parametrized_record = {
+  field_a: 'a;
+  ~field_b: 'b list;
+}
+
+type 'a parametrized_tuple = ('a * 'a * int)
+
+type simple_record = {
+  str: string;
+}
+
+type root = {
+  id <json name="ID">: string;
+  this: this;
+  items: int list list;
+  ?maybe: int option;
+  ?maybe2: simple_record option;
+  ~extras: int list;
+  ~answer <ts default="42">: int;
+  aliased: alias;
+  point: (float * float);
+  kinds: different_kinds_of_things list;
+  assoc1: (float * int) list;
+  assoc2: (string * int) list <json repr="object">;
+  assoc3: (float * int) list <ts repr="map">;
+  assoc4: (string * int) list <json repr="object"> <ts repr="map">;
+  ~options: int option list;
+  ~nullables: int nullable list;
+  untyped_things: abstract list;
+  foo: foo nullable;
+  parametrized_record: (int, float) parametrized_record;
+  parametrized_tuple: different_kinds_of_things parametrized_tuple;
+  anything: anything;
+  wrapped: string wrap list;
+  ext_tag: ext_types.tag;
+}
+
+type alias = int list
+
+(* Test for <json repr="object"> on sum types.
+   Tagged variants are encoded as single-key JSON objects {"Constructor": payload}
+   instead of the default two-element array ["Constructor", payload].
+   This matches the default Rust/Serde externally-tagged encoding and
+   also maps naturally to YAML (each variant is a single-key mapping). *)
+type shape = [
+  | Circle of float  (* radius *)
+  | Square of float  (* side length *)
+  | Point            (* unit variant -- still encoded as a plain string *)
+] <json repr="object">
+
+type pair = (string * int)
+
+type foo = {
+  foo: string;
+}
+
+type special_string = string wrap
+
+type import_default <ts from="Import"> = abstract
+type import_ <ts from="Import" t="import"> = abstract
