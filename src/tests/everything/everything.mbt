@@ -63,6 +63,12 @@ pub(all) enum DifferentKindsOfThings {
 } derive(Eq, Debug)
 
 ///|
+pub extend DifferentKindsOfThings with Eq::{equal, not_equal}
+
+///|
+pub extend DifferentKindsOfThings with Debug::{to_repr}
+
+///|
 pub fn write_different_kinds_of_things(x : DifferentKindsOfThings) -> Json {
   match x {
     DifferentKindsOfThings::Root => Json::string("Root")
@@ -127,6 +133,9 @@ pub impl ToJson for DifferentKindsOfThings with fn to_json(self) {
 }
 
 ///|
+pub extend DifferentKindsOfThings with ToJson::{to_json}
+
+///|
 pub type This = Int
 
 ///|
@@ -165,6 +174,12 @@ pub fn string_of_this(x : This, indent? : Int = 0) -> String {
 pub(all) struct SimpleRecord {
   str : String
 } derive(Eq, Debug)
+
+///|
+pub extend SimpleRecord with Eq::{equal, not_equal}
+
+///|
+pub extend SimpleRecord with Debug::{to_repr}
 
 ///|
 /// Create a value of type `SimpleRecord`.
@@ -221,6 +236,9 @@ pub impl ToJson for SimpleRecord with fn to_json(self) {
 }
 
 ///|
+pub extend SimpleRecord with ToJson::{to_json}
+
+///|
 pub(all) struct Root {
   id : String
   this : This
@@ -246,6 +264,12 @@ pub(all) struct Root {
   wrapped : Array[String]
   ext_tag : @ext_types.Tag
 } derive(Eq, Debug)
+
+///|
+pub extend Root with Eq::{equal, not_equal}
+
+///|
+pub extend Root with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Root`.
@@ -529,6 +553,9 @@ pub impl ToJson for Root with fn to_json(self) {
 }
 
 ///|
+pub extend Root with ToJson::{to_json}
+
+///|
 pub type Alias = Array[Int]
 
 ///|
@@ -569,6 +596,12 @@ pub(all) enum Shape {
   Square(Double)
   Point
 } derive(Eq, Debug)
+
+///|
+pub extend Shape with Eq::{equal, not_equal}
+
+///|
+pub extend Shape with Debug::{to_repr}
 
 ///|
 pub fn write_shape(x : Shape) -> Json {
@@ -625,6 +658,9 @@ pub impl ToJson for Shape with fn to_json(self) {
 }
 
 ///|
+pub extend Shape with ToJson::{to_json}
+
+///|
 pub type Pair = (String, Int)
 
 ///|
@@ -669,6 +705,12 @@ pub fn string_of_pair(x : Pair, indent? : Int = 0) -> String {
 pub(all) struct Foo {
   foo : String
 } derive(Eq, Debug)
+
+///|
+pub extend Foo with Eq::{equal, not_equal}
+
+///|
+pub extend Foo with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Foo`.
@@ -719,6 +761,9 @@ pub fn string_of_foo(x : Foo, indent? : Int = 0) -> String {
 pub impl ToJson for Foo with fn to_json(self) {
   write_foo(self)
 }
+
+///|
+pub extend Foo with ToJson::{to_json}
 
 ///|
 pub type SpecialString = String
@@ -840,6 +885,12 @@ pub(all) struct IntFloatParametrizedRecord {
 } derive(Eq, Debug)
 
 ///|
+pub extend IntFloatParametrizedRecord with Eq::{equal, not_equal}
+
+///|
+pub extend IntFloatParametrizedRecord with Debug::{to_repr}
+
+///|
 /// Create a value of type `IntFloatParametrizedRecord`.
 pub fn IntFloatParametrizedRecord::new(
   field_a~ : Int,
@@ -909,6 +960,9 @@ pub fn string_of__int_float_parametrized_record(
 pub impl ToJson for IntFloatParametrizedRecord with fn to_json(self) {
   write__int_float_parametrized_record(self)
 }
+
+///|
+pub extend IntFloatParametrizedRecord with ToJson::{to_json}
 
 ///|
 pub type TupleE1a4b40 = (DifferentKindsOfThings, DifferentKindsOfThings, Int)

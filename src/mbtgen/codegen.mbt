@@ -30,6 +30,9 @@ priv struct Env {
   abstract_poly : Array[String]
   /// ATD type name -> base name of its functions
   fun_bases : Map[String, String]
+  /// Local types that must implement `Hash`, since they are used in the
+  /// keys of maps
+  hash_types : Map[String, Unit]
   /// Names of the generated functions
   used_funs : Map[String, Unit]
 }

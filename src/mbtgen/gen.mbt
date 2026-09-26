@@ -114,7 +114,9 @@ pub fn generate_module(
     abstract_poly,
     fun_bases: Map([]),
     used_funs: Map([]),
+    hash_types: Map([]),
   }
+  env.find_hash_types(defs)
   // Make sure that the types defined in the ATD file get the best names,
   // in the order of their definitions.
   for d in defs {
@@ -182,4 +184,43 @@ pub fn output_file_name(atd_path : String) -> String {
     base
   }
   base.to_lower() + ".mbt"
+}
+
+///|
+/// Find the local types that are used, directly or not, in the keys of
+/// maps (`(k * v) list <mbt repr="map">`), which must implement `Hash`.
+fn Env::find_hash_types(
+  self : Env,
+  defs : Array[@atd.TypeDef],
+) -> Unit raise @atd.AtdError {
+  let todo : Array[String] = []
+  for d in defs {
+    d.value.fold((), (e, _) => {
+      match e {
+        List(loc, elt, an) =>
+          match assoc_kind(loc, elt, an) {
+            ArrayMap(key, _) =>
+              for n in key.extract_type_names() {
+                todo.push(n.to_string())
+              }
+            _ => ()
+          }
+        _ => ()
+      }
+    })
+  }
+  while todo.pop() is Some(name) {
+    if self.hash_types.contains(name) {
+      continue
+    }
+    match self.defs.get(name) {
+      None => () // predefined or imported
+      Some(d) => {
+        self.hash_types[name] = ()
+        for n in d.value.extract_type_names() {
+          todo.push(n.to_string())
+        }
+      }
+    }
+  }
 }

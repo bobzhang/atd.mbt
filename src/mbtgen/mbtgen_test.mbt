@@ -108,6 +108,12 @@ test "generated code" {
       #|} derive(Eq, Debug)
       #|
       #|///|
+      #|pub extend Point with Eq::{equal, not_equal}
+      #|
+      #|///|
+      #|pub extend Point with Debug::{to_repr}
+      #|
+      #|///|
       #|/// Create a value of type `Point`.
       #|pub fn Point::new(
       #|  x~ : Double,
@@ -161,10 +167,19 @@ test "generated code" {
       #|}
       #|
       #|///|
+      #|pub extend Point with ToJson::{to_json}
+      #|
+      #|///|
       #|pub(all) enum Shape {
       #|  Dot
       #|  Circle(Point, Double)
       #|} derive(Eq, Debug)
+      #|
+      #|///|
+      #|pub extend Shape with Eq::{equal, not_equal}
+      #|
+      #|///|
+      #|pub extend Shape with Debug::{to_repr}
       #|
       #|///|
       #|pub fn write_shape(x : Shape) -> Json {
@@ -210,6 +225,9 @@ test "generated code" {
       #|pub impl ToJson for Shape with to_json(self) {
       #|  write_shape(self)
       #|}
+      #|
+      #|///|
+      #|pub extend Shape with ToJson::{to_json}
       #|
     ),
   )
@@ -321,6 +339,8 @@ test "optional field of an aliased option type" {
       #|pub fn string_of_maybe(x : Maybe, indent? : Int = 0) -> String {
       #|pub(all) struct T {
       #|  x : Int?
+      #|pub extend T with Eq::{equal, not_equal}
+      #|pub extend T with Debug::{to_repr}
       #|pub fn T::new(
       #|  x? : Int,
       #|  T::{ x }
@@ -334,6 +354,7 @@ test "optional field of an aliased option type" {
       #|pub fn string_of_t(x : T, indent? : Int = 0) -> String {
       #|pub impl ToJson for T with to_json(self) {
       #|  write_t(self)
+      #|pub extend T with ToJson::{to_json}
     ),
   )
 }
@@ -357,12 +378,15 @@ test "imported types avoid builtin names" {
       #|//     "<module>/ext" @ext,
       #|  a : @ext.Json_
       #|  b : @ext.Pt
+      #|pub extend T with Eq::{equal, not_equal}
+      #|pub extend T with Debug::{to_repr}
       #|  a~ : @ext.Json_,
       #|  b~ : @ext.Pt,
       #|  o["a"] = @ext.write_json(x.a)
       #|  o["b"] = @ext.write_point(x.b)
       #|    a: @atd_runtime.read_required_field(o, "t", "a", @ext.read_json, path),
       #|    b: @atd_runtime.read_required_field(o, "t", "b", @ext.read_point, path),
+      #|pub extend T with ToJson::{to_json}
     ),
   )
 }
@@ -467,6 +491,31 @@ test "reserved names" {
     content=(
       #|File "test.atd", line 1, characters 0-40:
       #|the package alias 'atd_runtime' is reserved for the runtime of atdmbt; choose another one with <mbt name="...">
+    ),
+  )
+}
+
+///|
+test "types used as keys of maps derive Hash" {
+  let code = gen(
+    (
+      #|type k = [ A | B of point ]
+      #|type point = { x : int; y : int }
+      #|type other = { z : int }
+      #|type t = (k * int) list <mbt repr="map">
+    ),
+  )
+  inspect(
+    code
+    .split("\n")
+    .filter(l => l.contains("derive("))
+    .map(l => l.to_owned())
+    .collect()
+    .join("\n"),
+    content=(
+      #|} derive(Eq, Hash, Debug)
+      #|} derive(Eq, Hash, Debug)
+      #|} derive(Eq, Debug)
     ),
   )
 }

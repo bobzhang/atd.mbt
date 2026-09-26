@@ -11,3 +11,9 @@ pub fn Celsius::from_double(x : Double) -> Celsius {
 pub fn Celsius::to_double(self : Celsius) -> Double {
   self.0
 }
+
+///|
+pub extend Celsius with Eq::{equal, not_equal}
+
+///|
+pub extend Celsius with Debug::{to_repr}

@@ -18,5 +18,3 @@ import {
 }
 
 source = "src"
-
-warnings = "-79"

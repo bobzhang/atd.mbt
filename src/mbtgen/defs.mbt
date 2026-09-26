@@ -50,11 +50,66 @@ fn doc_comment(
 }
 
 ///|
-fn derive_clause(an : @atd.Annot) -> String raise @atd.AtdError {
-  match get_mbt_string(an, "derive") {
-    None => " derive(Eq, Debug)"
-    Some(s) if s.trim() == "" => ""
-    Some(s) => " derive(\{s})"
+/// The traits derived by a struct or enum: `<mbt derive="...">`, or
+/// `Eq, Debug`, plus `Hash` for the types used as keys of maps.
+fn Env::derived_traits(
+  self : Env,
+  d : @atd.TypeDef,
+) -> Array[String] raise @atd.AtdError {
+  match get_mbt_string(d.annot, "derive") {
+    None =>
+      if self.hash_types.contains(d.name.to_string()) {
+        ["Eq", "Hash", "Debug"]
+      } else {
+        ["Eq", "Debug"]
+      }
+    Some(s) =>
+      s.split(",").map(x => x.trim().to_owned()).filter(x => x != "").collect()
+  }
+}
+
+///|
+fn Env::derive_clause(
+  self : Env,
+  d : @atd.TypeDef,
+) -> String raise @atd.AtdError {
+  match self.derived_traits(d) {
+    [] => ""
+    l => " derive(\{l.join(", ")})"
+  }
+}
+
+///|
+/// The methods of the traits that MoonBit promotes to methods of the type.
+fn trait_methods(t : String) -> Array[String]? {
+  match t {
+    "Eq" => Some(["equal", "not_equal"])
+    "Hash" => Some(["hash", "hash_combine"])
+    "Debug" => Some(["to_repr"])
+    "Compare" => Some(["compare", "op_lt", "op_le", "op_ge", "op_gt"])
+    "Default" => Some(["default"])
+    "ToJson" => Some(["to_json"])
+    _ => None
+  }
+}
+
+///|
+/// Make the methods of derived traits regular methods explicitly, as
+/// required by MoonBit (warning `implicit_impl_as_method`).
+fn extend_with(
+  out : Array[String],
+  type_name : String,
+  traits : Array[String],
+) -> Unit {
+  for t in traits {
+    match trait_methods(t) {
+      Some(methods) => {
+        out.push("///|")
+        out.push("pub extend \{type_name} with \{t}::{\{methods.join(", ")}}")
+        out.push("")
+      }
+      None => ()
+    }
   }
 }
 
@@ -219,8 +274,9 @@ fn Env::gen_record(
     }
     out.push("  \{f.mbt_name} : \{t}")
   }
-  out.push("}\{derive_clause(d.annot)}")
+  out.push("}\{self.derive_clause(d)}")
   out.push("")
+  extend_with(out, type_name, self.derived_traits(d))
   // constructor
   out.push("///|")
   out.push("/// Create a value of type `\{type_name}`.")
@@ -363,8 +419,9 @@ fn Env::gen_sum(
       l => out.push("  \{c.mbt_name}(\{l.join(", ")})")
     }
   }
-  out.push("}\{derive_clause(d.annot)}")
+  out.push("}\{self.derive_clause(d)}")
   out.push("")
+  extend_with(out, type_name, self.derived_traits(d))
   // writer
   out.push("///|")
   out.push("pub fn \{self.writer_name(atd_name)}(x : \{type_name}) -> Json {")
@@ -539,6 +596,7 @@ fn Env::gen_helpers(
     out.push("  \{self.writer_name(atd_name)}(self)")
     out.push("}")
     out.push("")
+    extend_with(out, type_name, ["ToJson"])
   }
 }
 

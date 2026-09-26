@@ -27,6 +27,12 @@ pub(all) struct Match {
 } derive(Eq, Debug)
 
 ///|
+pub extend Match with Eq::{equal, not_equal}
+
+///|
+pub extend Match with Debug::{to_repr}
+
+///|
 /// Create a value of type `Match`.
 pub fn Match::new(
   match_~ : Int,
@@ -101,6 +107,9 @@ pub impl ToJson for Match with fn to_json(self) {
 }
 
 ///|
+pub extend Match with ToJson::{to_json}
+
+///|
 pub(all) enum OptionLike {
   // JSON: "None"
   None_
@@ -111,6 +120,12 @@ pub(all) enum OptionLike {
   // JSON: "other"
   Different(Int, String, Bool)
 } derive(Eq, Debug)
+
+///|
+pub extend OptionLike with Eq::{equal, not_equal}
+
+///|
+pub extend OptionLike with Debug::{to_repr}
 
 ///|
 pub fn write_option_like(x : OptionLike) -> Json {
@@ -181,6 +196,9 @@ pub impl ToJson for OptionLike with fn to_json(self) {
 }
 
 ///|
+pub extend OptionLike with ToJson::{to_json}
+
+///|
 pub(all) struct Int64s {
   big : Int64
   big_str : Int64
@@ -188,6 +206,12 @@ pub(all) struct Int64s {
   rounded : Double
   precise : Double
 } derive(Eq, Debug)
+
+///|
+pub extend Int64s with Eq::{equal, not_equal}
+
+///|
+pub extend Int64s with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Int64s`.
@@ -262,11 +286,20 @@ pub impl ToJson for Int64s with fn to_json(self) {
 }
 
 ///|
+pub extend Int64s with ToJson::{to_json}
+
+///|
 pub(all) struct Maps {
   by_name : Map[String, Int]
   by_id : Map[Int, String]
   pairs : Array[(String, Double)]
 } derive(Eq, Debug)
+
+///|
+pub extend Maps with Eq::{equal, not_equal}
+
+///|
+pub extend Maps with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Maps`.
@@ -351,10 +384,19 @@ pub impl ToJson for Maps with fn to_json(self) {
 }
 
 ///|
+pub extend Maps with ToJson::{to_json}
+
+///|
 pub(all) enum Inline {
   Point(InlinePoint)
   Nested(Array[InlineNested])
 } derive(Eq, Debug)
+
+///|
+pub extend Inline with Eq::{equal, not_equal}
+
+///|
+pub extend Inline with Debug::{to_repr}
 
 ///|
 pub fn write_inline(x : Inline) -> Json {
@@ -410,10 +452,19 @@ pub impl ToJson for Inline with fn to_json(self) {
 }
 
 ///|
+pub extend Inline with ToJson::{to_json}
+
+///|
 pub(all) struct InlinePoint {
   x : Double
   y : Double
 } derive(Eq, Debug)
+
+///|
+pub extend InlinePoint with Eq::{equal, not_equal}
+
+///|
+pub extend InlinePoint with Debug::{to_repr}
 
 ///|
 /// Create a value of type `InlinePoint`.
@@ -474,9 +525,18 @@ pub impl ToJson for InlinePoint with fn to_json(self) {
 }
 
 ///|
+pub extend InlinePoint with ToJson::{to_json}
+
+///|
 pub(all) struct InlineNestedB {
   z : Int
 } derive(Eq, Debug)
+
+///|
+pub extend InlineNestedB with Eq::{equal, not_equal}
+
+///|
+pub extend InlineNestedB with Debug::{to_repr}
 
 ///|
 /// Create a value of type `InlineNestedB`.
@@ -536,10 +596,19 @@ pub impl ToJson for InlineNestedB with fn to_json(self) {
 }
 
 ///|
+pub extend InlineNestedB with ToJson::{to_json}
+
+///|
 pub(all) enum InlineNested {
   A
   B(InlineNestedB)
 } derive(Eq, Debug)
+
+///|
+pub extend InlineNested with Eq::{equal, not_equal}
+
+///|
+pub extend InlineNested with Debug::{to_repr}
 
 ///|
 pub fn write_inline_nested(x : InlineNested) -> Json {
@@ -592,10 +661,19 @@ pub impl ToJson for InlineNested with fn to_json(self) {
 }
 
 ///|
+pub extend InlineNested with ToJson::{to_json}
+
+///|
 pub(all) enum Tree {
   Leaf(Int)
   Node(Tree, Tree)
 } derive(Eq, Debug)
+
+///|
+pub extend Tree with Eq::{equal, not_equal}
+
+///|
+pub extend Tree with Debug::{to_repr}
 
 ///|
 pub fn write_tree(x : Tree) -> Json {
@@ -652,10 +730,19 @@ pub impl ToJson for Tree with fn to_json(self) {
 }
 
 ///|
+pub extend Tree with ToJson::{to_json}
+
+///|
 pub(all) struct Forest {
   trees : Array[Tree]
   parent : Forest?
 } derive(Eq, Debug)
+
+///|
+pub extend Forest with Eq::{equal, not_equal}
+
+///|
+pub extend Forest with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Forest`.
@@ -717,6 +804,9 @@ pub impl ToJson for Forest with fn to_json(self) {
 }
 
 ///|
+pub extend Forest with ToJson::{to_json}
+
+///|
 pub(all) struct Defaults {
   b : Bool
   i : Int
@@ -730,6 +820,12 @@ pub(all) struct Defaults {
   custom : Array[Int]
   custom_enum : Color
 } derive(Eq, Debug)
+
+///|
+pub extend Defaults with Eq::{equal, not_equal}
+
+///|
+pub extend Defaults with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Defaults`.
@@ -850,6 +946,9 @@ pub impl ToJson for Defaults with fn to_json(self) {
 }
 
 ///|
+pub extend Defaults with ToJson::{to_json}
+
+///|
 pub type StringList = Array[String]
 
 ///|
@@ -892,6 +991,12 @@ pub(all) enum Color {
   Green
   Blue
 } derive(Eq, Debug)
+
+///|
+pub extend Color with Eq::{equal, not_equal}
+
+///|
+pub extend Color with Debug::{to_repr}
 
 ///|
 pub fn write_color(x : Color) -> Json {
@@ -940,11 +1045,20 @@ pub impl ToJson for Color with fn to_json(self) {
 }
 
 ///|
+pub extend Color with ToJson::{to_json}
+
+///|
 pub(all) struct Patch {
   x : Int??
   y : Int??
   z : Int??
 } derive(Eq, Debug)
+
+///|
+pub extend Patch with Eq::{equal, not_equal}
+
+///|
+pub extend Patch with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Patch`.
@@ -1026,9 +1140,18 @@ pub impl ToJson for Patch with fn to_json(self) {
 }
 
 ///|
+pub extend Patch with ToJson::{to_json}
+
+///|
 pub(all) struct NoPatch {
   x : Int??
 } derive(Eq, Debug)
+
+///|
+pub extend NoPatch with Eq::{equal, not_equal}
+
+///|
+pub extend NoPatch with Debug::{to_repr}
 
 ///|
 /// Create a value of type `NoPatch`.
@@ -1089,11 +1212,20 @@ pub impl ToJson for NoPatch with fn to_json(self) {
 }
 
 ///|
+pub extend NoPatch with ToJson::{to_json}
+
+///|
 pub(all) enum Fruit {
   Apple
   Banana
   Other(String)
 } derive(Eq, Debug)
+
+///|
+pub extend Fruit with Eq::{equal, not_equal}
+
+///|
+pub extend Fruit with Debug::{to_repr}
 
 ///|
 pub fn write_fruit(x : Fruit) -> Json {
@@ -1144,12 +1276,21 @@ pub impl ToJson for Fruit with fn to_json(self) {
 }
 
 ///|
+pub extend Fruit with ToJson::{to_json}
+
+///|
 pub(all) struct Tuples {
   unit_tuple : Unit
   single : Int
   pair : (Int, String)
   annotated : (Int, Double)
 } derive(Eq, Debug)
+
+///|
+pub extend Tuples with Eq::{equal, not_equal}
+
+///|
+pub extend Tuples with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Tuples`.
@@ -1256,6 +1397,9 @@ pub impl ToJson for Tuples with fn to_json(self) {
 }
 
 ///|
+pub extend Tuples with ToJson::{to_json}
+
+///|
 pub fn write_celsius(x : Celsius) -> Json {
   (x => @atd_runtime.write_float(Celsius::to_double(x)))(x)
 }
@@ -1294,6 +1438,12 @@ pub(all) struct Temperatures {
   temps : Array[Celsius]
   plain : String
 } derive(Eq, Debug)
+
+///|
+pub extend Temperatures with Eq::{equal, not_equal}
+
+///|
+pub extend Temperatures with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Temperatures`.
@@ -1359,6 +1509,9 @@ pub fn string_of_temperatures(x : Temperatures, indent? : Int = 0) -> String {
 pub impl ToJson for Temperatures with fn to_json(self) {
   write_temperatures(self)
 }
+
+///|
+pub extend Temperatures with ToJson::{to_json}
 
 ///|
 pub type IntEntries = Array[StringIntEntry]
@@ -1439,6 +1592,12 @@ pub(all) struct Tagged {
 } derive(Eq, Debug)
 
 ///|
+pub extend Tagged with Eq::{equal, not_equal}
+
+///|
+pub extend Tagged with Debug::{to_repr}
+
+///|
 /// Create a value of type `Tagged`.
 pub fn Tagged::new(tag~ : @ext.Tag, tags~ : Array[@ext.Tag]) -> Tagged {
   Tagged::{ tag, tags, }
@@ -1495,6 +1654,9 @@ pub fn string_of_tagged(x : Tagged, indent? : Int = 0) -> String {
 pub impl ToJson for Tagged with fn to_json(self) {
   write_tagged(self)
 }
+
+///|
+pub extend Tagged with ToJson::{to_json}
 
 ///|
 pub(all) struct NoDerive {
@@ -1554,7 +1716,16 @@ pub impl ToJson for NoDerive with fn to_json(self) {
 }
 
 ///|
+pub extend NoDerive with ToJson::{to_json}
+
+///|
 pub(all) struct EmptyRecord {} derive(Eq, Debug)
+
+///|
+pub extend EmptyRecord with Eq::{equal, not_equal}
+
+///|
+pub extend EmptyRecord with Debug::{to_repr}
 
 ///|
 /// Create a value of type `EmptyRecord`.
@@ -1607,6 +1778,9 @@ pub impl ToJson for EmptyRecord with fn to_json(self) {
 }
 
 ///|
+pub extend EmptyRecord with ToJson::{to_json}
+
+///|
 /// A documented type.
 ///
 /// Second paragraph with `code`.
@@ -1620,6 +1794,12 @@ pub(all) enum Documented {
   Documented(Int)
   Undocumented
 } derive(Eq, Debug)
+
+///|
+pub extend Documented with Eq::{equal, not_equal}
+
+///|
+pub extend Documented with Debug::{to_repr}
 
 ///|
 pub fn write_documented(x : Documented) -> Json {
@@ -1670,10 +1850,19 @@ pub impl ToJson for Documented with fn to_json(self) {
 }
 
 ///|
+pub extend Documented with ToJson::{to_json}
+
+///|
 pub(all) struct StringIntEntry {
   key : String
   value : Int
 } derive(Eq, Debug)
+
+///|
+pub extend StringIntEntry with Eq::{equal, not_equal}
+
+///|
+pub extend StringIntEntry with Debug::{to_repr}
 
 ///|
 /// Create a value of type `StringIntEntry`.
@@ -1735,6 +1924,9 @@ pub fn string_of__string_int_entry(
 pub impl ToJson for StringIntEntry with fn to_json(self) {
   write__string_int_entry(self)
 }
+
+///|
+pub extend StringIntEntry with ToJson::{to_json}
 
 ///|
 pub type IntBoxed = Json

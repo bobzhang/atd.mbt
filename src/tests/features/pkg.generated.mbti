@@ -282,14 +282,21 @@ pub fn write_tuples(Tuples) -> Json
 
 // Types and methods
 pub(all) struct Celsius(Double) derive(Eq, @debug.Debug)
+pub fn Celsius::equal(Self, Self) -> Bool
 pub fn Celsius::from_double(Double) -> Self
+pub fn Celsius::not_equal(Self, Self) -> Bool
 pub fn Celsius::to_double(Self) -> Double
+pub fn Celsius::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Color {
   Red
   Green
   Blue
 } derive(Eq, @debug.Debug)
+pub fn Color::equal(Self, Self) -> Bool
+pub fn Color::not_equal(Self, Self) -> Bool
+pub fn Color::to_json(Self) -> Json
+pub fn Color::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Color
 
 pub(all) struct Defaults {
@@ -305,25 +312,41 @@ pub(all) struct Defaults {
   custom : Array[Int]
   custom_enum : Color
 } derive(Eq, @debug.Debug)
+pub fn Defaults::equal(Self, Self) -> Bool
 pub fn Defaults::new(b? : Bool, i? : Int, f? : Double, s? : String, l? : Array[String], o? : Int?, u? : Unit, j? : Json, alias_default? : Array[String], custom? : Array[Int], custom_enum? : Color) -> Self
+pub fn Defaults::not_equal(Self, Self) -> Bool
+pub fn Defaults::to_json(Self) -> Json
+pub fn Defaults::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Defaults
 
 pub(all) enum Documented {
   Documented(Int)
   Undocumented
 } derive(Eq, @debug.Debug)
+pub fn Documented::equal(Self, Self) -> Bool
+pub fn Documented::not_equal(Self, Self) -> Bool
+pub fn Documented::to_json(Self) -> Json
+pub fn Documented::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Documented
 
 pub(all) struct EmptyRecord {
 } derive(Eq, @debug.Debug)
+pub fn EmptyRecord::equal(Self, Self) -> Bool
 pub fn EmptyRecord::new() -> Self
+pub fn EmptyRecord::not_equal(Self, Self) -> Bool
+pub fn EmptyRecord::to_json(Self) -> Json
+pub fn EmptyRecord::to_repr(Self) -> @debug.Repr
 pub impl ToJson for EmptyRecord
 
 pub(all) struct Forest {
   trees : Array[Tree]
   parent : Forest?
 } derive(Eq, @debug.Debug)
+pub fn Forest::equal(Self, Self) -> Bool
 pub fn Forest::new(trees~ : Array[Tree], parent? : Self) -> Self
+pub fn Forest::not_equal(Self, Self) -> Bool
+pub fn Forest::to_json(Self) -> Json
+pub fn Forest::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Forest
 
 pub(all) enum Fruit {
@@ -331,31 +354,51 @@ pub(all) enum Fruit {
   Banana
   Other(String)
 } derive(Eq, @debug.Debug)
+pub fn Fruit::equal(Self, Self) -> Bool
+pub fn Fruit::not_equal(Self, Self) -> Bool
+pub fn Fruit::to_json(Self) -> Json
+pub fn Fruit::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Fruit
 
 pub(all) enum Inline {
   Point(InlinePoint)
   Nested(Array[InlineNested])
 } derive(Eq, @debug.Debug)
+pub fn Inline::equal(Self, Self) -> Bool
+pub fn Inline::not_equal(Self, Self) -> Bool
+pub fn Inline::to_json(Self) -> Json
+pub fn Inline::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Inline
 
 pub(all) enum InlineNested {
   A
   B(InlineNestedB)
 } derive(Eq, @debug.Debug)
+pub fn InlineNested::equal(Self, Self) -> Bool
+pub fn InlineNested::not_equal(Self, Self) -> Bool
+pub fn InlineNested::to_json(Self) -> Json
+pub fn InlineNested::to_repr(Self) -> @debug.Repr
 pub impl ToJson for InlineNested
 
 pub(all) struct InlineNestedB {
   z : Int
 } derive(Eq, @debug.Debug)
+pub fn InlineNestedB::equal(Self, Self) -> Bool
 pub fn InlineNestedB::new(z~ : Int) -> Self
+pub fn InlineNestedB::not_equal(Self, Self) -> Bool
+pub fn InlineNestedB::to_json(Self) -> Json
+pub fn InlineNestedB::to_repr(Self) -> @debug.Repr
 pub impl ToJson for InlineNestedB
 
 pub(all) struct InlinePoint {
   x : Double
   y : Double
 } derive(Eq, @debug.Debug)
+pub fn InlinePoint::equal(Self, Self) -> Bool
 pub fn InlinePoint::new(x~ : Double, y~ : Double) -> Self
+pub fn InlinePoint::not_equal(Self, Self) -> Bool
+pub fn InlinePoint::to_json(Self) -> Json
+pub fn InlinePoint::to_repr(Self) -> @debug.Repr
 pub impl ToJson for InlinePoint
 
 pub(all) struct Int64s {
@@ -365,7 +408,11 @@ pub(all) struct Int64s {
   rounded : Double
   precise : Double
 } derive(Eq, @debug.Debug)
+pub fn Int64s::equal(Self, Self) -> Bool
 pub fn Int64s::new(big~ : Int64, big_str~ : Int64, small_str~ : Int, rounded~ : Double, precise~ : Double) -> Self
+pub fn Int64s::not_equal(Self, Self) -> Bool
+pub fn Int64s::to_json(Self) -> Json
+pub fn Int64s::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Int64s
 
 pub(all) struct Maps {
@@ -373,7 +420,11 @@ pub(all) struct Maps {
   by_id : Map[Int, String]
   pairs : Array[(String, Double)]
 } derive(Eq, @debug.Debug)
+pub fn Maps::equal(Self, Self) -> Bool
 pub fn Maps::new(by_name~ : Map[String, Int], by_id~ : Map[Int, String], pairs~ : Array[(String, Double)]) -> Self
+pub fn Maps::not_equal(Self, Self) -> Bool
+pub fn Maps::to_json(Self) -> Json
+pub fn Maps::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Maps
 
 pub(all) struct Match {
@@ -383,19 +434,28 @@ pub(all) struct Match {
   x_ : Bool
   some_list : Array[Int]
 } derive(Eq, @debug.Debug)
+pub fn Match::equal(Self, Self) -> Bool
 pub fn Match::new(match_~ : Int, fn_~ : String, kind~ : String, x_~ : Bool, some_list? : Array[Int]) -> Self
+pub fn Match::not_equal(Self, Self) -> Bool
+pub fn Match::to_json(Self) -> Json
+pub fn Match::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Match
 
 pub(all) struct NoDerive {
   value : Celsius
 }
 pub fn NoDerive::new(value~ : Celsius) -> Self
+pub fn NoDerive::to_json(Self) -> Json
 pub impl ToJson for NoDerive
 
 pub(all) struct NoPatch {
   x : Int??
 } derive(Eq, @debug.Debug)
+pub fn NoPatch::equal(Self, Self) -> Bool
 pub fn NoPatch::new(x? : Int?) -> Self
+pub fn NoPatch::not_equal(Self, Self) -> Bool
+pub fn NoPatch::to_json(Self) -> Json
+pub fn NoPatch::to_repr(Self) -> @debug.Repr
 pub impl ToJson for NoPatch
 
 pub(all) enum OptionLike {
@@ -404,6 +464,10 @@ pub(all) enum OptionLike {
   Ok_
   Different(Int, String, Bool)
 } derive(Eq, @debug.Debug)
+pub fn OptionLike::equal(Self, Self) -> Bool
+pub fn OptionLike::not_equal(Self, Self) -> Bool
+pub fn OptionLike::to_json(Self) -> Json
+pub fn OptionLike::to_repr(Self) -> @debug.Repr
 pub impl ToJson for OptionLike
 
 pub(all) struct Patch {
@@ -411,34 +475,54 @@ pub(all) struct Patch {
   y : Int??
   z : Int??
 } derive(Eq, @debug.Debug)
+pub fn Patch::equal(Self, Self) -> Bool
 pub fn Patch::new(x? : Int?, y? : Int?, z? : Int?) -> Self
+pub fn Patch::not_equal(Self, Self) -> Bool
+pub fn Patch::to_json(Self) -> Json
+pub fn Patch::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Patch
 
 pub(all) struct StringIntEntry {
   key : String
   value : Int
 } derive(Eq, @debug.Debug)
+pub fn StringIntEntry::equal(Self, Self) -> Bool
 pub fn StringIntEntry::new(key~ : String, value~ : Int) -> Self
+pub fn StringIntEntry::not_equal(Self, Self) -> Bool
+pub fn StringIntEntry::to_json(Self) -> Json
+pub fn StringIntEntry::to_repr(Self) -> @debug.Repr
 pub impl ToJson for StringIntEntry
 
 pub(all) struct Tagged {
   tag : String
   tags : Array[String]
 } derive(Eq, @debug.Debug)
+pub fn Tagged::equal(Self, Self) -> Bool
 pub fn Tagged::new(tag~ : String, tags~ : Array[String]) -> Self
+pub fn Tagged::not_equal(Self, Self) -> Bool
+pub fn Tagged::to_json(Self) -> Json
+pub fn Tagged::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Tagged
 
 pub(all) struct Temperatures {
   temps : Array[Celsius]
   plain : String
 } derive(Eq, @debug.Debug)
+pub fn Temperatures::equal(Self, Self) -> Bool
 pub fn Temperatures::new(temps~ : Array[Celsius], plain~ : String) -> Self
+pub fn Temperatures::not_equal(Self, Self) -> Bool
+pub fn Temperatures::to_json(Self) -> Json
+pub fn Temperatures::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Temperatures
 
 pub(all) enum Tree {
   Leaf(Int)
   Node(Tree, Tree)
 } derive(Eq, @debug.Debug)
+pub fn Tree::equal(Self, Self) -> Bool
+pub fn Tree::not_equal(Self, Self) -> Bool
+pub fn Tree::to_json(Self) -> Json
+pub fn Tree::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Tree
 
 pub(all) struct Tuples {
@@ -447,7 +531,11 @@ pub(all) struct Tuples {
   pair : (Int, String)
   annotated : (Int, Double)
 } derive(Eq, @debug.Debug)
+pub fn Tuples::equal(Self, Self) -> Bool
 pub fn Tuples::new(unit_tuple~ : Unit, single~ : Int, pair~ : (Int, String), annotated~ : (Int, Double)) -> Self
+pub fn Tuples::not_equal(Self, Self) -> Bool
+pub fn Tuples::to_json(Self) -> Json
+pub fn Tuples::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Tuples
 
 // Type aliases
