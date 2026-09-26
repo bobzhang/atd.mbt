@@ -163,6 +163,8 @@ fn assoc_env(env : Array[(String, TypeExpr)], s : String) -> TypeExpr? {
 priv struct Expander {
   keep_builtins : Bool
   mut seqnum : Int
+  /// Specializations being created: original type name and location
+  stack : Array[(TypeName, Loc)]
   tbl : Map[TypeName, ExpandEntry]
 }
 
@@ -283,6 +285,10 @@ fn Expander::subst_type_name(
 }
 
 ///|
+/// Maximum nesting of the specializations created by the expansion.
+let max_expansion_depth : Int = 100
+
+///|
 fn Expander::create_type_def(
   self : Expander,
   loc : Loc,
@@ -293,6 +299,25 @@ fn Expander::create_type_def(
   n_param : Int,
   an0 : Annot,
 ) -> Unit raise AtdError {
+  // A specialization of a type that uses itself with ever-growing
+  // arguments (polymorphic recursion), e.g.
+  // `type 'a t = [ Next of 'a list t ]`, can't be expanded: it would
+  // create infinitely many types. Like upstream, the expansion would not
+  // terminate, so give up at an arbitrary depth.
+  if self.stack.length() >= max_expansion_depth {
+    // report the user-defined type that keeps being specialized
+    let (name, loc) = self.stack
+      .iter()
+      .filter(x => !predef_list.iter().any(p => p.0 == x.0))
+      .head()
+      .unwrap_or((orig_name, loc))
+    error_at(
+      loc,
+      "Cannot expand type \{name}: its definition leads to infinitely many specializations (polymorphic recursion)",
+    )
+  }
+  self.stack.push((orig_name, loc))
+  defer ignore(self.stack.pop())
   self.seqnum += 1
   let i = self.seqnum
   self.tbl[name] = { seqnum: i, n_param, orig: None, rewritten: None, }
@@ -390,7 +415,7 @@ fn expand_defs(
   keep_builtins~ : Bool,
   keep_poly~ : Bool,
 ) -> Array[TypeDef] raise AtdError {
-  let e : Expander = { keep_builtins, seqnum: 0, tbl: Map([]), }
+  let e : Expander = { keep_builtins, seqnum: 0, stack: [], tbl: Map([]), }
   for x in predef_list {
     let (k, n, opt_td) = x
     e.seqnum += 1
