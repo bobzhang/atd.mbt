@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/atd/atdcat"
+
+// Values
+pub fn run(Io, ArrayView[String]) -> Int
+
+// Errors
+
+// Types and methods
+pub(all) struct Io {
+  read_file : (String?) -> Bytes raise
+  write_file : (String, String) -> Unit raise
+  print_out : (String) -> Unit
+  print_err : (String) -> Unit
+}
+
+// Type aliases
+
+// Traits

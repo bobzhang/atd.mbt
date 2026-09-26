@@ -1,0 +1,63 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/atd/easy_format"
+
+import {
+  "bobzhang/atd/format",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub let label : LabelParam
+
+pub let list : ListParam
+
+pub fn to_formatter(@format.Formatter, T) -> Unit
+
+pub fn to_string(T) -> String
+
+// Errors
+
+// Types and methods
+pub(all) enum LabelBreak {
+  Auto
+  Always
+  AlwaysRec
+  Never
+} derive(Eq, @debug.Debug)
+
+pub(all) struct LabelParam {
+  label_break : LabelBreak
+  space_after_label : Bool
+  indent_after_label : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ListParam {
+  space_after_opening : Bool
+  space_after_separator : Bool
+  space_before_separator : Bool
+  separators_stick_left : Bool
+  space_before_closing : Bool
+  stick_to_label : Bool
+  align_closing : Bool
+  wrap_body : Wrap
+  indent_body : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) enum T {
+  Atom(String)
+  List((String, String, String, ListParam), Array[T])
+  Label((T, LabelParam), T)
+} derive(@debug.Debug)
+
+pub(all) enum Wrap {
+  WrapAtoms
+  AlwaysWrap
+  NeverWrap
+  ForceBreaks
+  ForceBreaksRec
+  NoBreaks
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits

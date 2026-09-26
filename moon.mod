@@ -6,7 +6,7 @@ readme = "README.md"
 
 repository = ""
 
-license = "MIT"
+license = "BSD-3-Clause"
 
 keywords = [ "atd", "json", "codegen", "types" ]
 

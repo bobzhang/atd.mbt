@@ -1,0 +1,233 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/atd/tests/everything"
+
+import {
+  "bobzhang/atd/runtime",
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn _int_float_parametrized_record_of_json(Json) -> IntFloatParametrizedRecord raise @runtime.JsonError
+
+pub fn _int_float_parametrized_record_of_string(StringView) -> IntFloatParametrizedRecord raise @runtime.JsonError
+
+pub fn _tuple_e1a4b40_of_json(Json) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @runtime.JsonError
+
+pub fn _tuple_e1a4b40_of_string(StringView) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @runtime.JsonError
+
+pub fn alias_of_json(Json) -> Array[Int] raise @runtime.JsonError
+
+pub fn alias_of_string(StringView) -> Array[Int] raise @runtime.JsonError
+
+pub fn anything_of_json(Json) -> Json raise @runtime.JsonError
+
+pub fn anything_of_string(StringView) -> Json raise @runtime.JsonError
+
+pub fn different_kinds_of_things_of_json(Json) -> DifferentKindsOfThings raise @runtime.JsonError
+
+pub fn different_kinds_of_things_of_string(StringView) -> DifferentKindsOfThings raise @runtime.JsonError
+
+pub fn foo_of_json(Json) -> Foo raise @runtime.JsonError
+
+pub fn foo_of_string(StringView) -> Foo raise @runtime.JsonError
+
+pub fn import__of_json(Json) -> Json raise @runtime.JsonError
+
+pub fn import__of_string(StringView) -> Json raise @runtime.JsonError
+
+pub fn import_default_of_json(Json) -> Json raise @runtime.JsonError
+
+pub fn import_default_of_string(StringView) -> Json raise @runtime.JsonError
+
+pub fn pair_of_json(Json) -> (String, Int) raise @runtime.JsonError
+
+pub fn pair_of_string(StringView) -> (String, Int) raise @runtime.JsonError
+
+pub fn read__int_float_parametrized_record(Json, @runtime.Path) -> IntFloatParametrizedRecord raise @runtime.JsonError
+
+pub fn read__tuple_e1a4b40(Json, @runtime.Path) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @runtime.JsonError
+
+pub fn read_alias(Json, @runtime.Path) -> Array[Int] raise @runtime.JsonError
+
+pub fn read_anything(Json, @runtime.Path) -> Json raise @runtime.JsonError
+
+pub fn read_different_kinds_of_things(Json, @runtime.Path) -> DifferentKindsOfThings raise @runtime.JsonError
+
+pub fn read_foo(Json, @runtime.Path) -> Foo raise @runtime.JsonError
+
+pub fn read_import_(Json, @runtime.Path) -> Json raise @runtime.JsonError
+
+pub fn read_import_default(Json, @runtime.Path) -> Json raise @runtime.JsonError
+
+pub fn read_pair(Json, @runtime.Path) -> (String, Int) raise @runtime.JsonError
+
+pub fn read_root(Json, @runtime.Path) -> Root raise @runtime.JsonError
+
+pub fn read_shape(Json, @runtime.Path) -> Shape raise @runtime.JsonError
+
+pub fn read_simple_record(Json, @runtime.Path) -> SimpleRecord raise @runtime.JsonError
+
+pub fn read_special_string(Json, @runtime.Path) -> String raise @runtime.JsonError
+
+pub fn read_this(Json, @runtime.Path) -> Int raise @runtime.JsonError
+
+pub fn root_of_json(Json) -> Root raise @runtime.JsonError
+
+pub fn root_of_string(StringView) -> Root raise @runtime.JsonError
+
+pub fn shape_of_json(Json) -> Shape raise @runtime.JsonError
+
+pub fn shape_of_string(StringView) -> Shape raise @runtime.JsonError
+
+pub fn simple_record_of_json(Json) -> SimpleRecord raise @runtime.JsonError
+
+pub fn simple_record_of_string(StringView) -> SimpleRecord raise @runtime.JsonError
+
+pub fn special_string_of_json(Json) -> String raise @runtime.JsonError
+
+pub fn special_string_of_string(StringView) -> String raise @runtime.JsonError
+
+pub fn string_of__int_float_parametrized_record(IntFloatParametrizedRecord, indent? : Int) -> String
+
+pub fn string_of__tuple_e1a4b40((DifferentKindsOfThings, DifferentKindsOfThings, Int), indent? : Int) -> String
+
+pub fn string_of_alias(Array[Int], indent? : Int) -> String
+
+pub fn string_of_anything(Json, indent? : Int) -> String
+
+pub fn string_of_different_kinds_of_things(DifferentKindsOfThings, indent? : Int) -> String
+
+pub fn string_of_foo(Foo, indent? : Int) -> String
+
+pub fn string_of_import_(Json, indent? : Int) -> String
+
+pub fn string_of_import_default(Json, indent? : Int) -> String
+
+pub fn string_of_pair((String, Int), indent? : Int) -> String
+
+pub fn string_of_root(Root, indent? : Int) -> String
+
+pub fn string_of_shape(Shape, indent? : Int) -> String
+
+pub fn string_of_simple_record(SimpleRecord, indent? : Int) -> String
+
+pub fn string_of_special_string(String, indent? : Int) -> String
+
+pub fn string_of_this(Int, indent? : Int) -> String
+
+pub fn this_of_json(Json) -> Int raise @runtime.JsonError
+
+pub fn this_of_string(StringView) -> Int raise @runtime.JsonError
+
+pub fn write__int_float_parametrized_record(IntFloatParametrizedRecord) -> Json
+
+pub fn write__tuple_e1a4b40((DifferentKindsOfThings, DifferentKindsOfThings, Int)) -> Json
+
+pub fn write_alias(Array[Int]) -> Json
+
+pub fn write_anything(Json) -> Json
+
+pub fn write_different_kinds_of_things(DifferentKindsOfThings) -> Json
+
+pub fn write_foo(Foo) -> Json
+
+pub fn write_import_(Json) -> Json
+
+pub fn write_import_default(Json) -> Json
+
+pub fn write_pair((String, Int)) -> Json
+
+pub fn write_root(Root) -> Json
+
+pub fn write_shape(Shape) -> Json
+
+pub fn write_simple_record(SimpleRecord) -> Json
+
+pub fn write_special_string(String) -> Json
+
+pub fn write_this(Int) -> Json
+
+// Errors
+
+// Types and methods
+pub(all) enum DifferentKindsOfThings {
+  Root
+  Thing(Int)
+  WOW
+  Amaze(Array[String])
+} derive(Eq, @debug.Debug)
+pub impl ToJson for DifferentKindsOfThings
+
+pub(all) struct Foo {
+  foo : String
+} derive(Eq, @debug.Debug)
+pub fn Foo::new(foo~ : String) -> Self
+pub impl ToJson for Foo
+
+pub(all) struct IntFloatParametrizedRecord {
+  field_a : Int
+  field_b : Array[Double]
+} derive(Eq, @debug.Debug)
+pub fn IntFloatParametrizedRecord::new(field_a~ : Int, field_b? : Array[Double]) -> Self
+pub impl ToJson for IntFloatParametrizedRecord
+
+pub(all) struct Root {
+  id : String
+  this : Int
+  items : Array[Array[Int]]
+  maybe : Int?
+  maybe2 : SimpleRecord?
+  extras : Array[Int]
+  answer : Int
+  aliased : Array[Int]
+  point : (Double, Double)
+  kinds : Array[DifferentKindsOfThings]
+  assoc1 : Array[(Double, Int)]
+  assoc2 : Array[(String, Int)]
+  assoc3 : Array[(Double, Int)]
+  assoc4 : Array[(String, Int)]
+  options : Array[Int?]
+  nullables : Array[Int?]
+  untyped_things : Array[Json]
+  foo : Foo?
+  parametrized_record : IntFloatParametrizedRecord
+  parametrized_tuple : (DifferentKindsOfThings, DifferentKindsOfThings, Int)
+  anything : Json
+  wrapped : Array[String]
+  ext_tag : String
+} derive(Eq, @debug.Debug)
+pub fn Root::new(id~ : String, this~ : Int, items~ : Array[Array[Int]], maybe? : Int, maybe2? : SimpleRecord, extras? : Array[Int], answer? : Int, aliased~ : Array[Int], point~ : (Double, Double), kinds~ : Array[DifferentKindsOfThings], assoc1~ : Array[(Double, Int)], assoc2~ : Array[(String, Int)], assoc3~ : Array[(Double, Int)], assoc4~ : Array[(String, Int)], options? : Array[Int?], nullables? : Array[Int?], untyped_things~ : Array[Json], foo~ : Foo?, parametrized_record~ : IntFloatParametrizedRecord, parametrized_tuple~ : (DifferentKindsOfThings, DifferentKindsOfThings, Int), anything~ : Json, wrapped~ : Array[String], ext_tag~ : String) -> Self
+pub impl ToJson for Root
+
+pub(all) enum Shape {
+  Circle(Double)
+  Square(Double)
+  Point
+} derive(Eq, @debug.Debug)
+pub impl ToJson for Shape
+
+pub(all) struct SimpleRecord {
+  str : String
+} derive(Eq, @debug.Debug)
+pub fn SimpleRecord::new(str~ : String) -> Self
+pub impl ToJson for SimpleRecord
+
+// Type aliases
+pub type Alias = Array[Int]
+
+pub using @builtin {type Json as Anything}
+
+pub using @builtin {type Json as Import}
+
+pub using @builtin {type Json as ImportDefault}
+
+pub type Pair = (String, Int)
+
+pub type SpecialString = String
+
+pub type This = Int
+
+pub type TupleE1a4b40 = (DifferentKindsOfThings, DifferentKindsOfThings, Int)
+
+// Traits

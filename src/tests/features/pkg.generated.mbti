@@ -1,0 +1,462 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/atd/tests/features"
+
+import {
+  "bobzhang/atd/runtime",
+  "moonbitlang/core/builtin",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn _int_boxed_of_json(Json) -> Json raise @runtime.JsonError
+
+pub fn _int_boxed_of_string(StringView) -> Json raise @runtime.JsonError
+
+pub fn _string_int_entry_of_json(Json) -> StringIntEntry raise @runtime.JsonError
+
+pub fn _string_int_entry_of_string(StringView) -> StringIntEntry raise @runtime.JsonError
+
+pub fn celsius_of_json(Json) -> Celsius raise @runtime.JsonError
+
+pub fn celsius_of_string(StringView) -> Celsius raise @runtime.JsonError
+
+pub fn color_of_json(Json) -> Color raise @runtime.JsonError
+
+pub fn color_of_string(StringView) -> Color raise @runtime.JsonError
+
+pub fn defaults_of_json(Json) -> Defaults raise @runtime.JsonError
+
+pub fn defaults_of_string(StringView) -> Defaults raise @runtime.JsonError
+
+pub fn documented_of_json(Json) -> Documented raise @runtime.JsonError
+
+pub fn documented_of_string(StringView) -> Documented raise @runtime.JsonError
+
+pub fn empty_record_of_json(Json) -> EmptyRecord raise @runtime.JsonError
+
+pub fn empty_record_of_string(StringView) -> EmptyRecord raise @runtime.JsonError
+
+pub fn forest_of_json(Json) -> Forest raise @runtime.JsonError
+
+pub fn forest_of_string(StringView) -> Forest raise @runtime.JsonError
+
+pub fn fruit_of_json(Json) -> Fruit raise @runtime.JsonError
+
+pub fn fruit_of_string(StringView) -> Fruit raise @runtime.JsonError
+
+pub fn inline_nested_b_of_json(Json) -> InlineNestedB raise @runtime.JsonError
+
+pub fn inline_nested_b_of_string(StringView) -> InlineNestedB raise @runtime.JsonError
+
+pub fn inline_nested_of_json(Json) -> InlineNested raise @runtime.JsonError
+
+pub fn inline_nested_of_string(StringView) -> InlineNested raise @runtime.JsonError
+
+pub fn inline_of_json(Json) -> Inline raise @runtime.JsonError
+
+pub fn inline_of_string(StringView) -> Inline raise @runtime.JsonError
+
+pub fn inline_point_of_json(Json) -> InlinePoint raise @runtime.JsonError
+
+pub fn inline_point_of_string(StringView) -> InlinePoint raise @runtime.JsonError
+
+pub fn int64s_of_json(Json) -> Int64s raise @runtime.JsonError
+
+pub fn int64s_of_string(StringView) -> Int64s raise @runtime.JsonError
+
+pub fn int_entries_of_json(Json) -> Array[StringIntEntry] raise @runtime.JsonError
+
+pub fn int_entries_of_string(StringView) -> Array[StringIntEntry] raise @runtime.JsonError
+
+pub fn maps_of_json(Json) -> Maps raise @runtime.JsonError
+
+pub fn maps_of_string(StringView) -> Maps raise @runtime.JsonError
+
+pub fn match_of_json(Json) -> Match raise @runtime.JsonError
+
+pub fn match_of_string(StringView) -> Match raise @runtime.JsonError
+
+pub fn no_derive_of_json(Json) -> NoDerive raise @runtime.JsonError
+
+pub fn no_derive_of_string(StringView) -> NoDerive raise @runtime.JsonError
+
+pub fn no_patch_of_json(Json) -> NoPatch raise @runtime.JsonError
+
+pub fn no_patch_of_string(StringView) -> NoPatch raise @runtime.JsonError
+
+pub fn option_like_of_json(Json) -> OptionLike raise @runtime.JsonError
+
+pub fn option_like_of_string(StringView) -> OptionLike raise @runtime.JsonError
+
+pub fn patch_of_json(Json) -> Patch raise @runtime.JsonError
+
+pub fn patch_of_string(StringView) -> Patch raise @runtime.JsonError
+
+pub fn raw_of_json(Json) -> Json raise @runtime.JsonError
+
+pub fn raw_of_string(StringView) -> Json raise @runtime.JsonError
+
+pub fn read__int_boxed(Json, @runtime.Path) -> Json raise @runtime.JsonError
+
+pub fn read__string_int_entry(Json, @runtime.Path) -> StringIntEntry raise @runtime.JsonError
+
+pub fn read_celsius(Json, @runtime.Path) -> Celsius raise @runtime.JsonError
+
+pub fn read_color(Json, @runtime.Path) -> Color raise @runtime.JsonError
+
+pub fn read_defaults(Json, @runtime.Path) -> Defaults raise @runtime.JsonError
+
+pub fn read_documented(Json, @runtime.Path) -> Documented raise @runtime.JsonError
+
+pub fn read_empty_record(Json, @runtime.Path) -> EmptyRecord raise @runtime.JsonError
+
+pub fn read_forest(Json, @runtime.Path) -> Forest raise @runtime.JsonError
+
+pub fn read_fruit(Json, @runtime.Path) -> Fruit raise @runtime.JsonError
+
+pub fn read_inline(Json, @runtime.Path) -> Inline raise @runtime.JsonError
+
+pub fn read_inline_nested(Json, @runtime.Path) -> InlineNested raise @runtime.JsonError
+
+pub fn read_inline_nested_b(Json, @runtime.Path) -> InlineNestedB raise @runtime.JsonError
+
+pub fn read_inline_point(Json, @runtime.Path) -> InlinePoint raise @runtime.JsonError
+
+pub fn read_int64s(Json, @runtime.Path) -> Int64s raise @runtime.JsonError
+
+pub fn read_int_entries(Json, @runtime.Path) -> Array[StringIntEntry] raise @runtime.JsonError
+
+pub fn read_maps(Json, @runtime.Path) -> Maps raise @runtime.JsonError
+
+pub fn read_match(Json, @runtime.Path) -> Match raise @runtime.JsonError
+
+pub fn read_no_derive(Json, @runtime.Path) -> NoDerive raise @runtime.JsonError
+
+pub fn read_no_patch(Json, @runtime.Path) -> NoPatch raise @runtime.JsonError
+
+pub fn read_option_like(Json, @runtime.Path) -> OptionLike raise @runtime.JsonError
+
+pub fn read_patch(Json, @runtime.Path) -> Patch raise @runtime.JsonError
+
+pub fn read_raw(Json, @runtime.Path) -> Json raise @runtime.JsonError
+
+pub fn read_string_list(Json, @runtime.Path) -> Array[String] raise @runtime.JsonError
+
+pub fn read_tagged(Json, @runtime.Path) -> Tagged raise @runtime.JsonError
+
+pub fn read_temperatures(Json, @runtime.Path) -> Temperatures raise @runtime.JsonError
+
+pub fn read_tree(Json, @runtime.Path) -> Tree raise @runtime.JsonError
+
+pub fn read_tuples(Json, @runtime.Path) -> Tuples raise @runtime.JsonError
+
+pub fn string_list_of_json(Json) -> Array[String] raise @runtime.JsonError
+
+pub fn string_list_of_string(StringView) -> Array[String] raise @runtime.JsonError
+
+pub fn string_of__int_boxed(Json, indent? : Int) -> String
+
+pub fn string_of__string_int_entry(StringIntEntry, indent? : Int) -> String
+
+pub fn string_of_celsius(Celsius, indent? : Int) -> String
+
+pub fn string_of_color(Color, indent? : Int) -> String
+
+pub fn string_of_defaults(Defaults, indent? : Int) -> String
+
+pub fn string_of_documented(Documented, indent? : Int) -> String
+
+pub fn string_of_empty_record(EmptyRecord, indent? : Int) -> String
+
+pub fn string_of_forest(Forest, indent? : Int) -> String
+
+pub fn string_of_fruit(Fruit, indent? : Int) -> String
+
+pub fn string_of_inline(Inline, indent? : Int) -> String
+
+pub fn string_of_inline_nested(InlineNested, indent? : Int) -> String
+
+pub fn string_of_inline_nested_b(InlineNestedB, indent? : Int) -> String
+
+pub fn string_of_inline_point(InlinePoint, indent? : Int) -> String
+
+pub fn string_of_int64s(Int64s, indent? : Int) -> String
+
+pub fn string_of_int_entries(Array[StringIntEntry], indent? : Int) -> String
+
+pub fn string_of_maps(Maps, indent? : Int) -> String
+
+pub fn string_of_match(Match, indent? : Int) -> String
+
+pub fn string_of_no_derive(NoDerive, indent? : Int) -> String
+
+pub fn string_of_no_patch(NoPatch, indent? : Int) -> String
+
+pub fn string_of_option_like(OptionLike, indent? : Int) -> String
+
+pub fn string_of_patch(Patch, indent? : Int) -> String
+
+pub fn string_of_raw(Json, indent? : Int) -> String
+
+pub fn string_of_string_list(Array[String], indent? : Int) -> String
+
+pub fn string_of_tagged(Tagged, indent? : Int) -> String
+
+pub fn string_of_temperatures(Temperatures, indent? : Int) -> String
+
+pub fn string_of_tree(Tree, indent? : Int) -> String
+
+pub fn string_of_tuples(Tuples, indent? : Int) -> String
+
+pub fn tagged_of_json(Json) -> Tagged raise @runtime.JsonError
+
+pub fn tagged_of_string(StringView) -> Tagged raise @runtime.JsonError
+
+pub fn temperatures_of_json(Json) -> Temperatures raise @runtime.JsonError
+
+pub fn temperatures_of_string(StringView) -> Temperatures raise @runtime.JsonError
+
+pub fn tree_of_json(Json) -> Tree raise @runtime.JsonError
+
+pub fn tree_of_string(StringView) -> Tree raise @runtime.JsonError
+
+pub fn tuples_of_json(Json) -> Tuples raise @runtime.JsonError
+
+pub fn tuples_of_string(StringView) -> Tuples raise @runtime.JsonError
+
+pub fn write__int_boxed(Json) -> Json
+
+pub fn write__string_int_entry(StringIntEntry) -> Json
+
+pub fn write_celsius(Celsius) -> Json
+
+pub fn write_color(Color) -> Json
+
+pub fn write_defaults(Defaults) -> Json
+
+pub fn write_documented(Documented) -> Json
+
+pub fn write_empty_record(EmptyRecord) -> Json
+
+pub fn write_forest(Forest) -> Json
+
+pub fn write_fruit(Fruit) -> Json
+
+pub fn write_inline(Inline) -> Json
+
+pub fn write_inline_nested(InlineNested) -> Json
+
+pub fn write_inline_nested_b(InlineNestedB) -> Json
+
+pub fn write_inline_point(InlinePoint) -> Json
+
+pub fn write_int64s(Int64s) -> Json
+
+pub fn write_int_entries(Array[StringIntEntry]) -> Json
+
+pub fn write_maps(Maps) -> Json
+
+pub fn write_match(Match) -> Json
+
+pub fn write_no_derive(NoDerive) -> Json
+
+pub fn write_no_patch(NoPatch) -> Json
+
+pub fn write_option_like(OptionLike) -> Json
+
+pub fn write_patch(Patch) -> Json
+
+pub fn write_raw(Json) -> Json
+
+pub fn write_string_list(Array[String]) -> Json
+
+pub fn write_tagged(Tagged) -> Json
+
+pub fn write_temperatures(Temperatures) -> Json
+
+pub fn write_tree(Tree) -> Json
+
+pub fn write_tuples(Tuples) -> Json
+
+// Errors
+
+// Types and methods
+pub(all) struct Celsius(Double) derive(Eq, @debug.Debug)
+pub fn Celsius::from_double(Double) -> Self
+pub fn Celsius::to_double(Self) -> Double
+
+pub(all) enum Color {
+  Red
+  Green
+  Blue
+} derive(Eq, @debug.Debug)
+pub impl ToJson for Color
+
+pub(all) struct Defaults {
+  b : Bool
+  i : Int
+  f : Double
+  s : String
+  l : Array[String]
+  o : Int?
+  u : Unit
+  j : Json
+  alias_default : Array[String]
+  custom : Array[Int]
+  custom_enum : Color
+} derive(Eq, @debug.Debug)
+pub fn Defaults::new(b? : Bool, i? : Int, f? : Double, s? : String, l? : Array[String], o? : Int?, u? : Unit, j? : Json, alias_default? : Array[String], custom? : Array[Int], custom_enum? : Color) -> Self
+pub impl ToJson for Defaults
+
+pub(all) enum Documented {
+  Documented(Int)
+  Undocumented
+} derive(Eq, @debug.Debug)
+pub impl ToJson for Documented
+
+pub(all) struct EmptyRecord {
+} derive(Eq, @debug.Debug)
+pub fn EmptyRecord::new() -> Self
+pub impl ToJson for EmptyRecord
+
+pub(all) struct Forest {
+  trees : Array[Tree]
+  parent : Forest?
+} derive(Eq, @debug.Debug)
+pub fn Forest::new(trees~ : Array[Tree], parent? : Self) -> Self
+pub impl ToJson for Forest
+
+pub(all) enum Fruit {
+  Apple
+  Banana
+  Other(String)
+} derive(Eq, @debug.Debug)
+pub impl ToJson for Fruit
+
+pub(all) enum Inline {
+  Point(InlinePoint)
+  Nested(Array[InlineNested])
+} derive(Eq, @debug.Debug)
+pub impl ToJson for Inline
+
+pub(all) enum InlineNested {
+  A
+  B(InlineNestedB)
+} derive(Eq, @debug.Debug)
+pub impl ToJson for InlineNested
+
+pub(all) struct InlineNestedB {
+  z : Int
+} derive(Eq, @debug.Debug)
+pub fn InlineNestedB::new(z~ : Int) -> Self
+pub impl ToJson for InlineNestedB
+
+pub(all) struct InlinePoint {
+  x : Double
+  y : Double
+} derive(Eq, @debug.Debug)
+pub fn InlinePoint::new(x~ : Double, y~ : Double) -> Self
+pub impl ToJson for InlinePoint
+
+pub(all) struct Int64s {
+  big : Int64
+  big_str : Int64
+  small_str : Int
+  rounded : Double
+  precise : Double
+} derive(Eq, @debug.Debug)
+pub fn Int64s::new(big~ : Int64, big_str~ : Int64, small_str~ : Int, rounded~ : Double, precise~ : Double) -> Self
+pub impl ToJson for Int64s
+
+pub(all) struct Maps {
+  by_name : Map[String, Int]
+  by_id : Map[Int, String]
+  pairs : Array[(String, Double)]
+} derive(Eq, @debug.Debug)
+pub fn Maps::new(by_name~ : Map[String, Int], by_id~ : Map[Int, String], pairs~ : Array[(String, Double)]) -> Self
+pub impl ToJson for Maps
+
+pub(all) struct Match {
+  match_ : Int
+  fn_ : String
+  kind : String
+  x_ : Bool
+  some_list : Array[Int]
+} derive(Eq, @debug.Debug)
+pub fn Match::new(match_~ : Int, fn_~ : String, kind~ : String, x_~ : Bool, some_list? : Array[Int]) -> Self
+pub impl ToJson for Match
+
+pub(all) struct NoDerive {
+  value : Celsius
+}
+pub fn NoDerive::new(value~ : Celsius) -> Self
+pub impl ToJson for NoDerive
+
+pub(all) struct NoPatch {
+  x : Int??
+} derive(Eq, @debug.Debug)
+pub fn NoPatch::new(x? : Int?) -> Self
+pub impl ToJson for NoPatch
+
+pub(all) enum OptionLike {
+  None_
+  Some_(Int)
+  Ok_
+  Different(Int, String, Bool)
+} derive(Eq, @debug.Debug)
+pub impl ToJson for OptionLike
+
+pub(all) struct Patch {
+  x : Int??
+  y : Int??
+  z : Int??
+} derive(Eq, @debug.Debug)
+pub fn Patch::new(x? : Int?, y? : Int?, z? : Int?) -> Self
+pub impl ToJson for Patch
+
+pub(all) struct StringIntEntry {
+  key : String
+  value : Int
+} derive(Eq, @debug.Debug)
+pub fn StringIntEntry::new(key~ : String, value~ : Int) -> Self
+pub impl ToJson for StringIntEntry
+
+pub(all) struct Tagged {
+  tag : String
+  tags : Array[String]
+} derive(Eq, @debug.Debug)
+pub fn Tagged::new(tag~ : String, tags~ : Array[String]) -> Self
+pub impl ToJson for Tagged
+
+pub(all) struct Temperatures {
+  temps : Array[Celsius]
+  plain : String
+} derive(Eq, @debug.Debug)
+pub fn Temperatures::new(temps~ : Array[Celsius], plain~ : String) -> Self
+pub impl ToJson for Temperatures
+
+pub(all) enum Tree {
+  Leaf(Int)
+  Node(Tree, Tree)
+} derive(Eq, @debug.Debug)
+pub impl ToJson for Tree
+
+pub(all) struct Tuples {
+  unit_tuple : Unit
+  single : Int
+  pair : (Int, String)
+  annotated : (Int, Double)
+} derive(Eq, @debug.Debug)
+pub fn Tuples::new(unit_tuple~ : Unit, single~ : Int, pair~ : (Int, String), annotated~ : (Int, Double)) -> Self
+pub impl ToJson for Tuples
+
+// Type aliases
+pub using @builtin {type Json as IntBoxed}
+
+pub type IntEntries = Array[StringIntEntry]
+
+pub using @builtin {type Json as Raw}
+
+pub type StringList = Array[String]
+
+// Traits

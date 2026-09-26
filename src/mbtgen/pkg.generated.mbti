@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/atd/mbtgen"
+
+import {
+  "bobzhang/atd",
+}
+
+// Values
+pub let annot_schema : Array[@atd.SchemaSection]
+
+pub fn generate(BytesView, atd_filename~ : String, pos_fname? : String, on_warning? : (String) -> Unit) -> String raise @atd.AtdError
+
+pub fn generate_module(@atd.Module, atd_filename~ : String) -> String raise @atd.AtdError
+
+pub let mbt_annot_schema_section : @atd.SchemaSection
+
+pub fn output_file_name(String) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

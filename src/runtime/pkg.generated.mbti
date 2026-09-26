@@ -1,0 +1,113 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/atd/runtime"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn[T] bad_json(String, Json, Path) -> T raise JsonError
+
+pub fn get_field(Map[String, Json], String, keep_nulls? : Bool) -> Json?
+
+pub fn[T] missing_field(String, String, Path) -> T raise JsonError
+
+pub fn parse(StringView) -> Json raise JsonError
+
+pub fn[K : Hash + Eq, V] read_assoc_array_into_map((Json, Path) -> K raise JsonError, (Json, Path) -> V raise JsonError) -> (Json, Path) -> Map[K, V] raise JsonError
+
+pub fn[T] read_assoc_object_into_array((Json, Path) -> T raise JsonError) -> (Json, Path) -> Array[(String, T)] raise JsonError
+
+pub fn[T] read_assoc_object_into_map((Json, Path) -> T raise JsonError) -> (Json, Path) -> Map[String, T] raise JsonError
+
+pub fn read_bool(Json, Path) -> Bool raise JsonError
+
+pub fn read_float(Json, Path) -> Double raise JsonError
+
+pub fn read_int(Json, Path) -> Int raise JsonError
+
+pub fn read_int64(Json, Path) -> Int64 raise JsonError
+
+pub fn read_int64_of_string(Json, Path) -> Int64 raise JsonError
+
+pub fn read_int_of_string(Json, Path) -> Int raise JsonError
+
+pub fn read_json(Json, Path) -> Json raise JsonError
+
+pub fn[T] read_list((Json, Path) -> T raise JsonError) -> (Json, Path) -> Array[T] raise JsonError
+
+pub fn[T] read_nullable((Json, Path) -> T raise JsonError) -> (Json, Path) -> T? raise JsonError
+
+pub fn read_object(Json, Path, String) -> Map[String, Json] raise JsonError
+
+pub fn[T] read_option((Json, Path) -> T raise JsonError) -> (Json, Path) -> T? raise JsonError
+
+pub fn[T] read_optional_field(Map[String, Json], String, (Json, Path) -> T raise JsonError, Path, keep_nulls? : Bool) -> T? raise JsonError
+
+pub fn[T] read_required_field(Map[String, Json], String, String, (Json, Path) -> T raise JsonError, Path) -> T raise JsonError
+
+pub fn read_single_field(Json) -> (String, Json)?
+
+pub fn read_string(Json, Path) -> String raise JsonError
+
+pub fn read_tuple(Json, Path, Int) -> Array[Json] raise JsonError
+
+pub fn read_unit(Json, Path) -> Unit raise JsonError
+
+pub fn stringify(Json, indent? : Int) -> String
+
+pub fn[T] write_assoc_array_to_object((T) -> Json) -> (Array[(String, T)]) -> Json
+
+pub fn[K, V] write_assoc_map_to_array((K) -> Json, (V) -> Json) -> (Map[K, V]) -> Json
+
+pub fn[T] write_assoc_map_to_object((T) -> Json) -> (Map[String, T]) -> Json
+
+pub fn write_bool(Bool) -> Json
+
+pub fn write_float(Double) -> Json
+
+pub fn write_float_as_int(Double) -> Json
+
+pub fn write_float_prec(Int) -> (Double) -> Json
+
+pub fn write_int(Int) -> Json
+
+pub fn write_int64(Int64) -> Json
+
+pub fn write_int64_to_string(Int64) -> Json
+
+pub fn write_int_to_string(Int) -> Json
+
+pub fn write_json(Json) -> Json
+
+pub fn[T] write_list((T) -> Json) -> (Array[T]) -> Json
+
+pub fn[T] write_nullable((T) -> Json) -> (T?) -> Json
+
+pub fn[T] write_option((T) -> Json) -> (T?) -> Json
+
+pub fn write_string(String) -> Json
+
+pub fn write_unit(Unit) -> Json
+
+// Errors
+pub(all) suberror JsonError {
+  JsonError(String)
+} derive(Eq, @debug.Debug)
+pub fn JsonError::message(Self) -> String
+pub impl Show for JsonError
+
+// Types and methods
+pub(all) enum Path {
+  Root
+  Key(Path, String)
+  Index(Path, Int)
+}
+pub fn Path::index(Self, Int) -> Self
+pub fn Path::key(Self, String) -> Self
+pub fn Path::to_string(Self) -> String
+pub impl Show for Path
+
+// Type aliases
+
+// Traits

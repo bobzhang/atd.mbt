@@ -1,0 +1,420 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/atd"
+
+import {
+  "bobzhang/atd/easy_format",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn annot_create_id() -> String
+
+pub fn annot_field(Array[AnnotSection], section~ : String, field~ : String) -> (Loc, String?)? raise AtdError
+
+pub fn annot_fields(Array[AnnotSection], section~ : String, field~ : String) -> Array[(Loc, String?)]
+
+pub fn[T] annot_get_field(Array[AnnotSection], parse~ : (String) -> T?, default~ : T, sections~ : Array[String], field~ : String) -> T raise AtdError
+
+pub fn[T] annot_get_fields(Array[AnnotSection], parse~ : (String) -> T?, sections~ : Array[String], field~ : String) -> Array[T] raise AtdError
+
+pub fn annot_get_flag(Array[AnnotSection], sections~ : Array[String], field~ : String) -> Bool raise AtdError
+
+pub fn annot_get_loc(Array[AnnotSection], sections~ : Array[String], field~ : String) -> Loc? raise AtdError
+
+pub fn[T] annot_get_opt_field(Array[AnnotSection], parse~ : (String) -> T?, sections~ : Array[String], field~ : String) -> T? raise AtdError
+
+pub fn annot_get_string(Array[AnnotSection], sections~ : Array[String], field~ : String) -> String? raise AtdError
+
+pub fn annot_has_field(Array[AnnotSection], sections~ : Array[String], field~ : String) -> Bool raise AtdError
+
+pub fn annot_has_section(Array[AnnotSection], String) -> Bool
+
+pub fn annot_merge(Array[AnnotSection]) -> Array[AnnotSection]
+
+pub fn annot_reset_ids() -> Unit
+
+pub fn annot_set_field(Array[AnnotSection], loc~ : Loc, section~ : String, field~ : String, String?) -> Array[AnnotSection]
+
+pub fn annot_validate(Array[SchemaSection], Any) -> Unit raise AtdError
+
+pub fn check_module(Module) -> Unit raise AtdError
+
+pub fn check_type_refs(Map[String, Import], ArrayView[TypeDef]) -> Unit raise AtdError
+
+pub fn compare_string_lists(ArrayView[String], ArrayView[String]) -> Int
+
+pub fn compare_strings(StringView, StringView) -> Int
+
+pub fn concatenate_into_lines(Array[String], max_length~ : Int) -> Array[String]
+
+pub fn default_format_annot(AnnotSection) -> @easy_format.T
+
+pub let default_jsonschema_version : JsonschemaVersion
+
+pub let doc_annot_schema : Array[SchemaSection]
+
+pub let dummy_loc : Loc
+
+pub let dummy_pos : Pos
+
+pub fn[T] error(String) -> T raise AtdError
+
+pub fn[T] error_at(Loc, String) -> T raise AtdError
+
+pub fn expand_inherit(Array[TypeDef], inherit_fields? : Bool, inherit_variants? : Bool) -> Array[TypeDef] raise AtdError
+
+pub fn expand_type_defs(Array[TypeDef], prefix? : String, keep_builtins? : Bool, keep_poly? : Bool, debug? : Bool) -> Array[TypeDef] raise AtdError
+
+pub fn format(Any, format_annot? : (AnnotSection) -> @easy_format.T) -> @easy_format.T
+
+pub fn get_construct(Map[TypeName, (Int, TypeDef?)], TypeName) -> (Int, TypeExpr)?
+
+pub fn get_construct_of_expr(Map[TypeName, (Int, TypeDef?)], TypeExpr) -> TypeExpr?
+
+pub fn get_doc(Loc, Array[AnnotSection]) -> Array[DocBlock]? raise AtdError
+
+pub fn get_json_adapter(Array[AnnotSection]) -> JsonAdapter raise AtdError
+
+pub fn get_json_cons(String, Array[AnnotSection]) -> String raise AtdError
+
+pub fn get_json_float(Array[AnnotSection]) -> JsonFloat raise AtdError
+
+pub fn get_json_fname(String, Array[AnnotSection]) -> String raise AtdError
+
+pub fn get_json_int(Array[AnnotSection]) -> JsonInt raise AtdError
+
+pub fn get_json_keep_nulls(Array[AnnotSection]) -> Bool raise AtdError
+
+pub fn get_json_list(Array[AnnotSection]) -> JsonList raise AtdError
+
+pub fn get_json_lowercase_tags(Array[AnnotSection]) -> Bool raise AtdError
+
+pub fn get_json_open_enum(Array[AnnotSection]) -> Bool raise AtdError
+
+pub fn get_json_precision(Array[AnnotSection]) -> Int? raise AtdError
+
+pub fn get_json_record(Array[AnnotSection]) -> JsonRecord raise AtdError
+
+pub fn get_json_sum(Array[AnnotSection]) -> JsonSum raise AtdError
+
+pub fn get_json_sum_repr(Array[AnnotSection]) -> JsonSumRepr raise AtdError
+
+pub fn get_original_definition(Map[TypeName, (Int, TypeDef?)], TypeName) -> (Int, TypeDef?)?
+
+pub fn html_of_doc(Array[DocBlock]) -> String
+
+pub fn iter_annot(Any, (NodeKind, Array[AnnotSection]) -> Unit raise AtdError) -> Unit raise AtdError
+
+pub let json_annot_schema : Array[SchemaSection]
+
+pub let jsonschema_annot_schema : Array[SchemaSection]
+
+pub fn jsonschema_of_module(Module, src_name~ : String, root_type~ : String, version? : JsonschemaVersion, xprop? : Bool) -> Json raise AtdError
+
+pub fn load_bytes(BytesView, annot_schema? : Array[SchemaSection], expand? : Bool, keep_builtins? : Bool, keep_poly? : Bool, xdebug? : Bool, inherit_fields? : Bool, inherit_variants? : Bool, pos_fname? : String, pos_lnum? : Int, on_warning? : (String) -> Unit) -> Module raise AtdError
+
+pub fn load_imports(ArrayView[Import]) -> Map[String, Import] raise AtdError
+
+pub fn load_string(String, annot_schema? : Array[SchemaSection], expand? : Bool, keep_builtins? : Bool, keep_poly? : Bool, xdebug? : Bool, inherit_fields? : Bool, inherit_variants? : Bool, pos_fname? : String, pos_lnum? : Int, on_warning? : (String) -> Unit) -> Module raise AtdError
+
+pub fn make_predef_table(ArrayView[TypeDef]) -> Map[TypeName, (Int, TypeDef?)] raise AtdError
+
+pub fn ocaml_escaped(StringView) -> String
+
+pub fn ocaml_quote(StringView) -> String
+
+pub fn parse_doc_text(Loc, String) -> Array[DocBlock] raise AtdError
+
+pub fn parse_module(BytesView, pos_fname? : String, pos_lnum? : Int) -> Module raise AtdError
+
+pub let predef_list : Array[(TypeName, Int, TypeDef?)]
+
+pub fn print_doc_text(Array[DocBlock]) -> String
+
+pub fn print_jsonschema(Module, src_name~ : String, root_type~ : String, version? : JsonschemaVersion, xprop? : Bool) -> String raise AtdError
+
+pub fn reflect_module(String, Module) -> String
+
+pub fn resolve_import(Map[String, Import], Loc, TypeName) -> ((Import, ImportedType?)?, String) raise AtdError
+
+pub fn rewrap_paragraph(String, max_length~ : Int) -> Array[String]
+
+pub fn split_on_blank(String) -> Array[String]
+
+pub fn string_of_loc(Loc) -> String
+
+pub fn string_of_type_inst(TypeName, Array[TypeExpr], Array[AnnotSection]) -> String
+
+pub fn to_string(Any, format_annot? : (AnnotSection) -> @easy_format.T) -> String
+
+pub fn[T, Id : Compare + Hash + Eq] topological_sort(ArrayView[(T, Array[Id])], (T) -> Id) -> Array[(Bool, Array[T])]
+
+pub fn tsort(Array[TypeDef], all_rec? : Bool) -> Array[(Bool, Array[TypeDef])]
+
+pub fn unused_import_warnings(Map[String, Import], ArrayView[TypeDef]) -> Array[String] raise AtdError
+
+pub let version : String
+
+pub fn visit(module_? : ((Module) -> Unit raise AtdError, Module) -> Unit raise AtdError, import_? : ((Import) -> Unit raise AtdError, Import) -> Unit raise AtdError, imported_type? : ((ImportedType) -> Unit raise AtdError, ImportedType) -> Unit raise AtdError, type_def? : ((TypeDef) -> Unit raise AtdError, TypeDef) -> Unit raise AtdError, type_expr? : ((TypeExpr) -> Unit raise AtdError, TypeExpr) -> Unit raise AtdError, variant? : ((Variant) -> Unit raise AtdError, Variant) -> Unit raise AtdError, cell? : ((Cell) -> Unit raise AtdError, Cell) -> Unit raise AtdError, field? : ((Field) -> Unit raise AtdError, Field) -> Unit raise AtdError) -> (Any) -> Unit raise AtdError
+
+// Errors
+pub(all) suberror AtdError {
+  AtdError(String)
+} derive(Eq, @debug.Debug)
+pub fn AtdError::message(Self) -> String
+pub impl Show for AtdError
+
+// Types and methods
+pub(all) struct AnnotField {
+  name : String
+  loc : Loc
+  value : String?
+} derive(Eq, @debug.Debug)
+
+pub(all) struct AnnotSection {
+  name : String
+  loc : Loc
+  fields : Array[AnnotField]
+} derive(Eq, @debug.Debug)
+
+pub(all) enum Any {
+  Module(Module)
+  Import(Import)
+  ImportedType(ImportedType)
+  TypeDef(TypeDef)
+  TypeExpr(TypeExpr)
+  Variant(Variant)
+  Cell(Cell)
+  Field(Field)
+}
+
+pub(all) struct Cell {
+  loc : Loc
+  expr : TypeExpr
+  annot : Array[AnnotSection]
+} derive(Eq, @debug.Debug)
+
+pub(all) enum DocBlock {
+  Paragraph(Array[DocInline])
+  Pre(Array[String])
+} derive(Eq, @debug.Debug)
+
+pub(all) enum DocInline {
+  Text(String)
+  Code(String)
+} derive(Eq, @debug.Debug)
+
+pub(all) enum Field {
+  Field(SimpleField)
+  Inherit(Loc, TypeExpr)
+} derive(Eq, @debug.Debug)
+
+pub(all) enum FieldKind {
+  Required
+  Optional
+  WithDefault
+} derive(Eq, @debug.Debug)
+pub fn FieldKind::is_required(Self) -> Bool
+
+pub(all) struct Import {
+  loc : Loc
+  path : Array[String]
+  annot : Array[AnnotSection]
+  alias_ : String?
+  name : String
+  types : Array[ImportedType]
+} derive(Eq, @debug.Debug)
+pub fn Import::new(loc~ : Loc, path~ : Array[String], annot~ : Array[AnnotSection], alias_? : String, types~ : Array[ImportedType]) -> Self
+
+pub(all) struct ImportedType {
+  params : Array[String]
+  name : String
+  annot : Array[AnnotSection]
+} derive(Eq, @debug.Debug)
+
+pub(all) struct JsonAdapter {
+  ocaml_adapter : OcamlAdapter?
+  java_adapter : String?
+} derive(Eq, @debug.Debug)
+
+pub(all) enum JsonFloat {
+  Float(Int?)
+  Int
+} derive(Eq, @debug.Debug)
+
+pub(all) enum JsonInt {
+  Int
+  String
+} derive(Eq, @debug.Debug)
+
+pub(all) enum JsonList {
+  Array
+  Object
+} derive(Eq, @debug.Debug)
+
+pub(all) struct JsonRecord {
+  json_keep_nulls : Bool
+  json_record_adapter : JsonAdapter
+} derive(Eq, @debug.Debug)
+
+pub(all) struct JsonSum {
+  json_sum_adapter : JsonAdapter
+  json_open_enum : Bool
+  json_lowercase_tags : Bool
+  json_sum_repr : JsonSumRepr
+} derive(Eq, @debug.Debug)
+
+pub(all) enum JsonSumRepr {
+  Array
+  Object
+} derive(Eq, @debug.Debug)
+
+pub(all) enum JsonschemaVersion {
+  Draft_2019_09
+  Draft_2020_12
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Loc {
+  start : Pos
+  end_ : Pos
+} derive(Eq, @debug.Debug)
+pub fn Loc::compare(Self, Self) -> Int
+pub fn Loc::new(Pos, Pos) -> Self
+
+pub(all) struct Module {
+  head : (Loc, Array[AnnotSection])
+  imports : Array[Import]
+  type_defs : Array[TypeDef]
+} derive(Eq, @debug.Debug)
+pub fn Module::map_all_annot(Self, (Array[AnnotSection]) -> Array[AnnotSection]) -> Self
+pub fn Module::map_type_exprs(Self, (TypeExpr) -> TypeExpr) -> Self
+pub fn Module::remove_wrap_constructs(Self) -> Self
+pub fn Module::use_only_name_variant(Self) -> Self
+pub fn Module::use_only_specific_variants(Self) -> Self
+
+pub(all) enum NodeKind {
+  ModuleHead
+  Import
+  ImportedType
+  TypeDef
+  TypeExpr
+  Variant
+  Cell
+  Field
+} derive(Eq, @debug.Debug)
+
+pub(all) struct OcamlAdapter {
+  normalize : String
+  restore : String
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Pos {
+  fname : String
+  lnum : Int
+  bol : Int
+  cnum : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SchemaSection {
+  section : String
+  fields : Array[(NodeKind, String)]
+} derive(@debug.Debug)
+
+pub(all) struct SimpleField {
+  loc : Loc
+  name : String
+  kind : FieldKind
+  annot : Array[AnnotSection]
+  expr : TypeExpr
+} derive(Eq, @debug.Debug)
+
+pub(all) struct TypeDef {
+  loc : Loc
+  name : TypeName
+  param : Array[String]
+  annot : Array[AnnotSection]
+  value : TypeExpr
+  orig : TypeDef?
+} derive(Eq, @debug.Debug)
+
+pub(all) enum TypeExpr {
+  Sum(Loc, Array[Variant], Array[AnnotSection])
+  Record(Loc, Array[Field], Array[AnnotSection])
+  Tuple(Loc, Array[Cell], Array[AnnotSection])
+  List(Loc, TypeExpr, Array[AnnotSection])
+  Option(Loc, TypeExpr, Array[AnnotSection])
+  Nullable(Loc, TypeExpr, Array[AnnotSection])
+  Shared(Loc, TypeExpr, Array[AnnotSection])
+  Wrap(Loc, TypeExpr, Array[AnnotSection])
+  Name(Loc, TypeInst, Array[AnnotSection])
+  Tvar(Loc, String)
+} derive(Eq, @debug.Debug)
+pub fn TypeExpr::annot(Self) -> Array[AnnotSection]
+pub fn TypeExpr::extract_type_names(Self, ignorable? : Array[TypeName]) -> Array[TypeName]
+pub fn[A] TypeExpr::fold(Self, A, (Self, A) -> A raise AtdError) -> A raise AtdError
+pub fn TypeExpr::is_parametrized(Self) -> Bool
+pub fn TypeExpr::loc(Self) -> Loc
+pub fn TypeExpr::map_annot(Self, (Array[AnnotSection]) -> Array[AnnotSection] raise AtdError) -> Self raise AtdError
+pub fn TypeExpr::map_deep(Self, (Self) -> Self) -> Self
+pub fn TypeExpr::set_loc(Self, Loc) -> Self
+
+pub(all) struct TypeInst {
+  loc : Loc
+  name : TypeName
+  args : Array[TypeExpr]
+} derive(Eq, @debug.Debug)
+
+pub(all) struct TypeName {
+  path : Array[String]
+} derive(Eq, Hash, @debug.Debug)
+pub fn TypeName::basename(Self) -> String
+pub fn TypeName::is_simple(Self, String) -> Bool
+pub fn TypeName::new(Array[String]) -> Self
+pub fn TypeName::simple(String) -> Self
+pub fn TypeName::split(Self) -> (String?, String) raise AtdError
+pub fn TypeName::to_string(Self) -> String
+pub impl Compare for TypeName
+pub impl Show for TypeName
+
+pub struct UniqueNames {
+  reserved_identifiers : Map[String, Unit]
+  reserved_prefixes : Array[String]
+  safe_prefix : String
+  translations : Map[String, String]
+  reverse_translations : Map[String, String]
+}
+pub fn UniqueNames::all(Self) -> Array[(String, String)]
+pub fn UniqueNames::create(Self, String) -> String
+pub fn UniqueNames::new(reserved_identifiers~ : Array[String], reserved_prefixes~ : Array[String], safe_prefix~ : String) -> Self
+pub fn UniqueNames::reverse_translate(Self, String) -> String?
+pub fn UniqueNames::translate(Self, String, preferred_translation? : String) -> String
+pub fn UniqueNames::translate_only(Self, String) -> String?
+
+pub(all) enum Variant {
+  Variant(Loc, String, Array[AnnotSection], TypeExpr?)
+  Inherit(Loc, TypeExpr)
+} derive(Eq, @debug.Debug)
+
+pub(all) struct VisitorHooks {
+  module_ : ((Module) -> Unit raise AtdError, Module) -> Unit raise AtdError
+  import_ : ((Import) -> Unit raise AtdError, Import) -> Unit raise AtdError
+  imported_type : ((ImportedType) -> Unit raise AtdError, ImportedType) -> Unit raise AtdError
+  type_def : ((TypeDef) -> Unit raise AtdError, TypeDef) -> Unit raise AtdError
+  type_expr : ((TypeExpr) -> Unit raise AtdError, TypeExpr) -> Unit raise AtdError
+  variant : ((Variant) -> Unit raise AtdError, Variant) -> Unit raise AtdError
+  cell : ((Cell) -> Unit raise AtdError, Cell) -> Unit raise AtdError
+  field : ((Field) -> Unit raise AtdError, Field) -> Unit raise AtdError
+}
+
+// Type aliases
+pub type Annot = Array[AnnotSection]
+
+pub type Doc = Array[DocBlock]
+
+pub type Imports = Map[String, Import]
+
+pub type PredefTable = Map[TypeName, (Int, TypeDef?)]
+
+pub type Schema = Array[SchemaSection]
+
+// Traits
