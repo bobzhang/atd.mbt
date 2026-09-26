@@ -253,12 +253,7 @@ async fn main {
     ]),
   )
   // command-line usage
-  for args in [
-    ["-help"],
-    ["--help"],
-    ["-bogus"],
-    ["-o"],
-  ] {
+  for args in [["-help"], ["--help"], ["-bogus"], ["-o"]] {
     cases.push(run_reference(reference, upstream, args))
   }
   generate("upstream", cases, inputs)
