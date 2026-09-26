@@ -71,17 +71,41 @@ async fn run(args : ArrayView[String]) -> Unit {
     @stdio.stderr.write("atdmbt: option '-o' requires a single input file.\n")
     raise Exit(2)
   }
+  // Check the destinations, then generate all the code before writing
+  // anything, so that an error doesn't leave some files updated.
+  let destinations : Map[String, String] = Map([])
   for input in inputs {
+    let dst = match output {
+      Some(path) => path
+      None => @mbtgen.output_file_name(input)
+    }
+    match destinations.get(dst) {
+      Some(other) => {
+        @stdio.stderr.write(
+          "atdmbt: '\{other}' and '\{input}' would both be written to '\{dst}'.\n",
+        )
+        raise Exit(2)
+      }
+      None => destinations[dst] = input
+    }
+  }
+  let results = []
+  for dst, input in destinations {
     let src = @fs.read_file(input).binary()
     let basename = match input.rev_find("/") {
       Some(i) => input.view(start_offset=i + 1).to_owned()
       None => input
     }
-    let code = @mbtgen.generate(src, atd_filename=basename, pos_fname=input)
-    match output {
-      Some("-") => @stdio.stdout.write(code)
-      Some(path) => @fs.write_file(path, code)
-      None => @fs.write_file(@mbtgen.output_file_name(input), code)
+    results.push(
+      (dst, @mbtgen.generate(src, atd_filename=basename, pos_fname=input)),
+    )
+  }
+  for r in results {
+    let (dst, code) = r
+    if dst == "-" {
+      @stdio.stdout.write(code)
+    } else {
+      @fs.write_file(dst, code)
     }
   }
 }

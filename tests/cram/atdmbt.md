@@ -139,3 +139,20 @@ File "bad.atd", line 1, characters 24-27:
 Invalid or misplaced annotation <mbt ... bad... >
 [1]
 ```
+
+Two input files can't be written to the same output file, and no file is
+written if one of the inputs is invalid:
+
+```mooncram
+$ mkdir -p a b && echo 'type t = int' > a/Foo.atd && echo 'type u = string' > b/foo.atd && atdmbt.exe a/Foo.atd b/foo.atd 2>&1
+atdmbt: 'a/Foo.atd' and 'b/foo.atd' would both be written to 'foo.mbt'.
+[2]
+```
+
+```mooncram
+$ echo 'type v = x' > invalid.atd && atdmbt.exe a/Foo.atd invalid.atd 2>&1; for f in foo.mbt invalid.mbt; do test -e $f && echo "$f was written" || echo "$f was not written"; done
+File "invalid.atd", line 1, characters 8-10:
+Undefined type x
+foo.mbt was not written
+invalid.mbt was not written
+```

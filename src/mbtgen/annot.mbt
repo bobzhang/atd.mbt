@@ -8,8 +8,9 @@ pub let mbt_annot_schema_section : @atd.SchemaSection = {
   fields: [
     // package alias for an imported ATD module
     (Import, "name"),
-    // MoonBit name of an imported type
+    // MoonBit name of an imported type, and base name of its functions
     (ImportedType, "name"),
+    (ImportedType, "functions"),
     // traits to derive for records and sum types, e.g. "Eq, Debug"
     (TypeDef, "derive"),
     // alternative representations: "map" for lists, "int64" for int

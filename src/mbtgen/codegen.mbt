@@ -110,15 +110,30 @@ fn Env::writer_name(self : Env, atd_name : String) -> String {
 }
 
 ///|
-/// Reader of a type imported from another ATD module, assuming that its
-/// functions have the default names.
-fn imported_reader_name(atd_name : String) -> String {
-  "read_" + sanitize(atd_name)
-}
-
-///|
-fn imported_writer_name(atd_name : String) -> String {
-  "write_" + sanitize(atd_name)
+/// Base name of the functions of a type imported from another ATD module:
+/// `<mbt functions="...">` on the imported type, or the name that atdmbt
+/// gives it by default.
+fn Env::imported_fun_base(
+  self : Env,
+  loc : @atd.Loc,
+  name : @atd.TypeName,
+) -> String raise @atd.AtdError {
+  match @atd.resolve_import(self.imports, loc, name) {
+    (Some((_, Some(it))), base_name) =>
+      match get_mbt_string(it.annot, "functions") {
+        Some(f) => {
+          if !is_lowercase_ident(f) {
+            @atd.error_at(
+              loc,
+              "invalid base name of MoonBit functions \{mbt_string_literal(f)}",
+            )
+          }
+          f
+        }
+        None => sanitize(base_name)
+      }
+    (_, base_name) => sanitize(base_name)
+  }
 }
 
 ///|
@@ -365,8 +380,8 @@ fn Env::reader(self : Env, e : @atd.TypeExpr) -> String raise @atd.AtdError {
       }
     Name(loc, { name, .. }, an) =>
       match self.resolve(loc, name) {
-        (Some(alias_), base_name) =>
-          "@\{alias_}.\{imported_reader_name(base_name)}"
+        (Some(alias_), _) =>
+          "@\{alias_}.read_\{self.imported_fun_base(loc, name)}"
         (None, base_name) => {
           if self.abstract_poly.contains(base_name) {
             return "\{rt}.read_json"
@@ -467,8 +482,8 @@ fn Env::writer(self : Env, e : @atd.TypeExpr) -> String raise @atd.AtdError {
       }
     Name(loc, { name, .. }, an) =>
       match self.resolve(loc, name) {
-        (Some(alias_), base_name) =>
-          "@\{alias_}.\{imported_writer_name(base_name)}"
+        (Some(alias_), _) =>
+          "@\{alias_}.write_\{self.imported_fun_base(loc, name)}"
         (None, base_name) => {
           if self.abstract_poly.contains(base_name) {
             return "\{rt}.write_json"

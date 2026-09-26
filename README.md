@@ -177,7 +177,7 @@ keywords or builtin names (renamed, e.g. `match` → `match_`, `Some` →
 | Annotation | Position | Meaning |
 |---|---|---|
 | `<mbt name="alias">` | `from m <mbt name="alias"> import ...` | package alias of an imported module (default: the module's local name) |
-| `<mbt name="T">` | `from m import t <mbt name="T">` | MoonBit name of an imported type, if not the default |
+| `<mbt name="T" functions="f">` | `from m import t <mbt name="T" functions="f">` | MoonBit name of an imported type and base name of its functions (`read_f`, `write_f`), if not the defaults |
 | `<mbt name="n">` | field, variant | MoonBit name of a field or constructor |
 | `<mbt default="expr">` | `~field` | default value, a MoonBit expression |
 | `<mbt repr="map">` | `(k * v) list` | represent as `Map[K, V]` |
@@ -191,8 +191,8 @@ keywords or builtin names (renamed, e.g. `match` → `match_`, `Some` →
 `@foo.read_t` and written with `@foo.write_t`. These are the names that
 atdmbt gives by default to the type `t` of `foo.atd` (names of builtin types
 such as `Json` get an underscore, e.g. `Json_`); if the names were
-adjusted to avoid a conflict in `foo.atd`, give the type name with
-`<mbt name="...">` on the imported type. The MoonBit package
+adjusted to avoid a conflict in `foo.atd`, give them with
+`<mbt name="..." functions="...">` on the imported type. The MoonBit package
 containing the code generated from `foo.atd` must be imported in `moon.pkg`
 with the alias `foo`, or the alias given by `<mbt name="...">`.
 

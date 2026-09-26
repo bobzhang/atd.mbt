@@ -519,3 +519,28 @@ test "types used as keys of maps derive Hash" {
     ),
   )
 }
+
+///|
+test "names of imported types and functions can be given explicitly" {
+  let code = gen(
+    (
+      #|from ext import a <mbt name="A_" functions="a__">
+      #|type t = { x: ext.a }
+    ),
+  )
+  inspect(
+    code
+    .split("\n")
+    .filter(l => l.contains("@ext"))
+    .map(l => l.to_owned())
+    .collect()
+    .join("\n"),
+    content=(
+      #|//     "<module>/ext" @ext,
+      #|  x : @ext.A_
+      #|  x~ : @ext.A_,
+      #|  o["x"] = @ext.write_a__(x.x)
+      #|    x: @atd_runtime.read_required_field(o, "t", "x", @ext.read_a__, path),
+    ),
+  )
+}
