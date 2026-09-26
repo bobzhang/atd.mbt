@@ -1,3 +1,4 @@
+///|
 // Regenerate the MoonBit code of the test fixtures (src/tests/*/*.atd)
 // with atdmbt, then format it.
 //

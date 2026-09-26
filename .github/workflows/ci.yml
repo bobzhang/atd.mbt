@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: ${{ matrix.os }} (moonbit ${{ matrix.moonbit-version }})
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.moonbit-version == 'nightly' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            moonbit-version: latest
+          - os: macos-latest
+            moonbit-version: latest
+          - os: ubuntu-latest
+            moonbit-version: nightly
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- "${{ matrix.moonbit-version }}"
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Show MoonBit version
+        run: moon version --all
+
+      - name: Update the registry index
+        run: moon update
+
+      - name: Check formatting
+        run: |
+          moon fmt --check
+          moon fmt --check scripts/*.mbtx
+
+      - name: Check (deny warnings, all backends)
+        run: moon check --deny-warn --target all
+
+      - name: Check generated interfaces
+        run: |
+          moon info
+          git diff --exit-code -- '*.mbti'
+
+      - name: Test (wasm-gc)
+        run: moon test --target wasm-gc
+
+      - name: Test (wasm)
+        run: moon test --target wasm
+
+      - name: Test (js)
+        run: moon test --target js
+
+      - name: Test (native)
+        run: moon test --target native
+
+      - name: Build the command-line tools (wasm, as used by moonx)
+        run: |
+          moon build --target wasm src/cmd/atdcat src/cmd/atdmbt
+          echo 'type t = { x : int list }' > /tmp/t.atd
+          moon run --target wasm src/cmd/atdcat -- -x /tmp/t.atd
+
+      - name: Cram tests (CLI documentation in tests/cram)
+        run: moon cram test tests/cram
+
+      - name: Check that the generated test fixtures are up to date
+        run: |
+          moonx scripts/regen_fixtures.mbtx
+          git diff --exit-code

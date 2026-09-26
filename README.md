@@ -1,5 +1,7 @@
 # atd.mbt — ATD for MoonBit
 
+[![CI](https://github.com/bobzhang/atd.mbt/actions/workflows/ci.yml/badge.svg)](https://github.com/bobzhang/atd.mbt/actions/workflows/ci.yml)
+
 A MoonBit port of [ATD](https://github.com/ahrefs/atd) (Adaptable Type
 Definitions), a syntax for defining cross-language data types used to
 generate type-safe JSON serializers and deserializers. It also adds a
@@ -45,7 +47,7 @@ moon build --target native   # _build/native/debug/build/cmd/{atdcat,atdmbt}/*.e
 ## atdcat
 
 `atdcat` checks, pretty-prints and transforms ATD files, exactly like the
-upstream tool:
+upstream tool (more examples in [tests/cram/atdcat.md](tests/cram/atdcat.md)):
 
 ```bash
 atdcat foo.atd                    # check and pretty-print
@@ -56,6 +58,8 @@ atdcat -help                      # all options
 ```
 
 ## atdmbt: MoonBit code generation
+
+More examples in [tests/cram/atdmbt.md](tests/cram/atdmbt.md).
 
 ```bash
 atdmbt foo.atd          # creates foo.mbt
@@ -240,8 +244,15 @@ Tests:
 
 ```bash
 moon test                                  # also with --target native|js|wasm
+moon cram test tests/cram                  # CLI documentation, see below
 moonx scripts/regen_fixtures.mbtx          # regenerate the code of src/tests/*
 ```
+
+[`tests/cram/atdcat.md`](tests/cram/atdcat.md) and
+[`tests/cram/atdmbt.md`](tests/cram/atdmbt.md) document the command-line
+tools with examples that are checked by `moon cram test`; after changing the
+tools, update the expected outputs with
+`moon-cram update -r -y tests/cram` (with the tools on `PATH`).
 
 The compatibility tests and the fuzzer need a reference `atdcat` built from
 `.repos/atd` with dune (it needs easy-format, menhir, re, yojson and

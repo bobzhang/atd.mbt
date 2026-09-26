@@ -1,3 +1,4 @@
+///|
 // Differential fuzzing of atdcat: mutate the ATD files of the upstream
 // repository and compare the outputs of the MoonBit atdcat and of the
 // reference OCaml atdcat.
@@ -49,7 +50,12 @@ async fn find_files(dir : String, suffix : String) -> Array[String] {
 
 ///|
 fn is_space(b : Byte) -> Bool {
-  b == b' ' || b == b'\t' || b == b'\n' || b == b'\r' || b == b'\x0C' || b == b'\x0B'
+  b == b' ' ||
+  b == b'\t' ||
+  b == b'\n' ||
+  b == b'\r' ||
+  b == b'\x0C' ||
+  b == b'\x0B'
 }
 
 ///|
@@ -148,7 +154,9 @@ async fn main {
     "_build/native/debug/build/cmd/atdcat/atdcat.exe"
   }
   // the seed of ChaCha8 must have 32 bytes
-  let seed_bytes = @utf8.encode((seed + String::make(32, '_')).view(end_offset=32))
+  let seed_bytes = @utf8.encode(
+    (seed + String::make(32, '_')).view(end_offset=32),
+  )
   let rand = @random.Rand::chacha8(seed=seed_bytes)
   let sources = []
   for path in find_files(".repos/atd", ".atd") {
@@ -165,7 +173,9 @@ async fn main {
       let actual = run(mbt_atdcat, [..opts, path])
       if expected != actual {
         diffs += 1
-        @stdio.stdout.write("=== difference with options [\{opts.join(" ")}]:\n")
+        @stdio.stdout.write(
+          "=== difference with options [\{opts.join(" ")}]:\n",
+        )
         @stdio.stdout.write(src)
         @stdio.stdout.write("\n")
       }

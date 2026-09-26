@@ -1,0 +1,74 @@
+# atdmbt
+
+`atdmbt` generates MoonBit types and JSON readers and writers from ATD
+files. For `foo.atd`, it creates `foo.mbt` in the current directory; `-o`
+chooses another output file, and `-o -` prints the code.
+
+These examples are executed by `moon cram test tests/cram`. With `moonx`,
+use `moonx bobzhang/atd/cmd/atdmbt` in place of `atdmbt.exe`.
+
+## Generating code
+
+```mooncram
+$ cat > shapes.atd <<'EOF'
+> type point = { x : float; ~y <mbt default="1.0"> : float }
+> type shape = [ Dot | Circle of (point * float) ] <json repr="object">
+> EOF
+```
+
+The generated code depends on the runtime package
+`bobzhang/atd/runtime`, which the `moon.pkg` of the package containing the
+code must import with the alias `atd_runtime`:
+
+```mooncram
+$ head -n 16 shapes.mbt
+[1]
+```
+
+Records become structs with a constructor taking labelled arguments, and
+sum types become enums:
+
+```mooncram
+$ sed -n '/^pub(all) struct Point/,/^}/p;/^pub fn Point::new/,/^}/p;/^pub(all) enum Shape/,/^}/p' shapes.mbt
+[1]
+```
+
+Each type has a JSON writer and reader, and convenience functions:
+
+```mooncram
+$ grep '^pub fn\|^pub impl' shapes.mbt
+[2]
+```
+
+The code follows the JSON conventions of ATD: here, the sum type uses
+`<json repr="object">`, so `Circle` is written as `{"Circle": ...}`:
+
+```mooncram
+$ sed -n '/^pub fn write_shape/,/^}/p' shapes.mbt
+[1]
+```
+
+## MoonBit-specific annotations
+
+`<mbt ...>` annotations tune the generated code: here, a map, 64-bit
+integers, a renamed field and a custom type for a `wrap` construct.
+
+```mooncram
+$ cat > options.atd <<'EOF'
+> type date = string wrap <mbt t="Date" wrap="Date::parse" unwrap="Date::to_string">
+> type account = {
+>   id : int <mbt repr="int64">;
+>   type_ <mbt name="kind"> : string;
+>   created : date;
+>   scores : (string * int) list <json repr="object"> <mbt repr="map">;
+> }
+> EOF
+```
+
+## Errors
+
+Unsupported constructs are reported with their location:
+
+```mooncram
+$ echo 'type t = t list' > recursive.atd
+```
