@@ -51,19 +51,82 @@ pub fn json_string_of_number(x : Double, repr : String?) -> String {
 }
 
 ///|
-fn is_atom(x : Json) -> Bool {
+/// A JSON value like Yojson's: objects are association lists, which
+/// preserve the order and the duplicates of their keys.
+pub(all) enum Value {
+  Null
+  Bool(Bool)
+  Int(Int64)
+  Float(Double)
+  String(String)
+  List(Array[Value])
+  Assoc(Array[(String, Value)])
+} derive(Eq, Debug)
+
+///|
+/// Convert from MoonBit's `Json`.
+pub fn Value::of_json(x : Json) -> Value {
   match x {
-    Null | True | False | Number(_) | String(_) => true
-    Array(l) => l.is_empty()
-    Object(l) => l.is_empty()
+    Null => Null
+    True => Bool(true)
+    False => Bool(false)
+    Number(n, repr=Some(r)) =>
+      // keep the exact representation of integers
+      if r.iter().all(c => (c >= '0' && c <= '9') || c == '-') &&
+        n == n.floor() &&
+        n.abs() < 9.0e18 {
+        Int(n.to_int64())
+      } else {
+        Float(n)
+      }
+    Number(n, repr=None) =>
+      if n == n.floor() && n.abs() < 1.0e15 {
+        Int(n.to_int64())
+      } else {
+        Float(n)
+      }
+    String(s) => String(s)
+    Array(l) => List(l.map(Value::of_json))
+    Object(m) =>
+      Assoc(m.iter().map(kv => (kv.0, Value::of_json(kv.1))).collect())
+  }
+}
+
+///|
+/// Convert to MoonBit's `Json`. Duplicate keys of objects are lost: the
+/// last value is kept.
+pub fn Value::to_json(self : Value) -> Json {
+  match self {
+    Null => Json::null()
+    Bool(b) => Json::boolean(b)
+    Int(n) => Json::number(n.to_double(), repr=n.to_string())
+    Float(x) => Json::number(x)
+    String(s) => Json::string(s)
+    List(l) => Json::array(l.map(Value::to_json))
+    Assoc(l) => {
+      let m : Map[String, Json] = Map([])
+      for kv in l {
+        m[kv.0] = kv.1.to_json()
+      }
+      Json::object(m)
+    }
+  }
+}
+
+///|
+fn is_atom(x : Value) -> Bool {
+  match x {
+    Null | Bool(_) | Int(_) | Float(_) | String(_) => true
+    List(l) => l.is_empty()
+    Assoc(l) => l.is_empty()
   }
 }
 
 ///|
 fn pp_list(
   out : @format.Formatter,
-  l : ArrayView[Json],
-  f : (Json) -> Unit,
+  l : ArrayView[Value],
+  f : (Value) -> Unit,
 ) -> Unit {
   for i, x in l {
     if i > 0 {
@@ -75,15 +138,15 @@ fn pp_list(
 }
 
 ///|
-fn format(out : @format.Formatter, inside_box : Bool, x : Json) -> Unit {
+fn format(out : @format.Formatter, inside_box : Bool, x : Value) -> Unit {
   match x {
     Null => out.print_string("null")
-    True => out.print_string("true")
-    False => out.print_string("false")
-    Number(n, repr~) => out.print_string(json_string_of_number(n, repr))
+    Bool(b) => out.print_string(if b { "true" } else { "false" })
+    Int(n) => out.print_string(n.to_string())
+    Float(x) => out.print_string(json_string_of_number(x, None))
     String(s) => out.print_string(json_string_of_string(s))
-    Array([]) => out.print_string("[]")
-    Array(l) => {
+    List([]) => out.print_string("[]")
+    List(l) => {
       if !inside_box {
         out.open_hvbox(2)
       }
@@ -102,44 +165,46 @@ fn format(out : @format.Formatter, inside_box : Bool, x : Json) -> Unit {
         out.close_box()
       }
     }
-    Object(l) =>
-      if l.is_empty() {
-        out.print_string("{}")
-      } else {
-        if !inside_box {
-          out.open_hvbox(2)
-        }
-        out.print_string("{")
-        out.print_break(1, 0)
-        let mut first = true
-        for k, v in l {
-          if !first {
-            out.print_string(",")
-            out.print_space()
-          }
-          first = false
-          out.open_hvbox(2)
-          out.print_string(json_string_of_string(k))
-          out.print_string(": ")
-          format(out, true, v)
-          out.close_box()
-        }
-        out.print_break(1, -2)
-        out.print_string("}")
-        if !inside_box {
-          out.close_box()
-        }
+    Assoc([]) => out.print_string("{}")
+    Assoc(l) => {
+      if !inside_box {
+        out.open_hvbox(2)
       }
+      out.print_string("{")
+      out.print_break(1, 0)
+      for i, kv in l {
+        if i > 0 {
+          out.print_string(",")
+          out.print_space()
+        }
+        out.open_hvbox(2)
+        out.print_string(json_string_of_string(kv.0))
+        out.print_string(": ")
+        format(out, true, kv.1)
+        out.close_box()
+      }
+      out.print_break(1, -2)
+      out.print_string("}")
+      if !inside_box {
+        out.close_box()
+      }
+    }
   }
 }
 
 ///|
 /// Pretty-print JSON data like `Yojson.Safe.pretty_to_string`.
-pub fn pretty_to_string(x : Json) -> String {
+pub fn pretty_to_string(x : Value) -> String {
   let out = @format.Formatter::new()
   out.open_hvbox(2)
   format(out, true, x)
   out.close_box()
   out.print_flush()
   out.contents()
+}
+
+///|
+/// Pretty-print MoonBit's `Json` like `Yojson.Safe.pretty_to_string`.
+pub fn pretty_json_to_string(x : Json) -> String {
+  pretty_to_string(Value::of_json(x))
 }

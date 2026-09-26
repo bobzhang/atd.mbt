@@ -3,6 +3,7 @@ package "bobzhang/atd"
 
 import {
   "bobzhang/atd/easy_format",
+  "bobzhang/atd/yojson",
   "moonbitlang/core/debug",
 }
 
@@ -109,7 +110,7 @@ pub let json_annot_schema : Array[SchemaSection]
 
 pub let jsonschema_annot_schema : Array[SchemaSection]
 
-pub fn jsonschema_of_module(Module, src_name~ : String, root_type~ : String, version? : JsonschemaVersion, xprop? : Bool) -> Json raise AtdError
+pub fn jsonschema_of_module(Module, src_name~ : String, root_type~ : String, version? : JsonschemaVersion, xprop? : Bool) -> @yojson.Value raise AtdError
 
 pub fn load_bytes(BytesView, annot_schema? : Array[SchemaSection], expand? : Bool, keep_builtins? : Bool, keep_poly? : Bool, xdebug? : Bool, inherit_fields? : Bool, inherit_variants? : Bool, pos_fname? : String, pos_lnum? : Int, on_warning? : (String) -> Unit) -> Module raise AtdError
 

@@ -233,6 +233,12 @@ Known, intentional differences:
   U+FFFD.
 - `atdcat -version` prints the version of this port.
 
+Known upstream limitations of `atdcat -jsonschema`, kept for compatibility:
+a recursive root type refers to `#/definitions/<root>`, which is not
+defined (the root is not repeated in `definitions`), and `t nullable` loses
+its nullability when `t` is a type name (e.g. `type a = int` then
+`a nullable`).
+
 ## Development
 
 The upstream sources are used for reference and for generating the

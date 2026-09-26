@@ -29,13 +29,13 @@ priv enum JsType {
   JMap(JsType)
   Union(Array[JsType])
   JNullable(JsType)
-  Const(Json, Array[(String, Json)])
+  Const(@yojson.Value, Array[(String, @yojson.Value)])
   JAny
 }
 
 ///|
 priv struct JsObject {
-  properties : Array[(String, JsType, Array[(String, Json)])]
+  properties : Array[(String, JsType, Array[(String, @yojson.Value)])]
   required : Array[String]
   xprop : Bool
 }
@@ -64,10 +64,10 @@ fn trans_description_simple(loc : Loc, an : Annot) -> String? raise AtdError {
 fn trans_description(
   loc : Loc,
   an : Annot,
-) -> Array[(String, Json)] raise AtdError {
+) -> Array[(String, @yojson.Value)] raise AtdError {
   match trans_description_simple(loc, an) {
     None => []
-    Some(doc) => [("description", Json::string(doc))]
+    Some(doc) => [("description", @yojson.Value::String(doc))]
   }
 }
 
@@ -82,11 +82,11 @@ fn trans_type_expr(xprop : Bool, x : TypeExpr) -> JsType raise AtdError {
             let json_name = get_json_cons(name, an)
             let descr = trans_description(loc, an)
             match opt_e {
-              None => cases.push(Const(Json::string(json_name), descr))
+              None => cases.push(Const(@yojson.Value::String(json_name), descr))
               Some(e) =>
                 cases.push(
                   JTuple([
-                    Const(Json::string(json_name), descr),
+                    Const(@yojson.Value::String(json_name), descr),
                     trans_type_expr(xprop, e),
                   ]),
                 )
@@ -189,21 +189,26 @@ fn trans_def(xprop : Bool, x : TypeDef) -> JsDef raise AtdError {
 }
 
 ///|
-fn make_type_property(is_nullable : Bool, name : String) -> (String, Json) {
+fn make_type_property(
+  is_nullable : Bool,
+  name : String,
+) -> (String, @yojson.Value) {
   if is_nullable {
-    ("type", Json::array([Json::string(name), Json::string("null")]))
+    (
+      "type",
+      @yojson.Value::List([
+        @yojson.Value::String(name),
+        @yojson.Value::String("null"),
+      ]),
+    )
   } else {
-    ("type", Json::string(name))
+    ("type", @yojson.Value::String(name))
   }
 }
 
 ///|
-fn assoc(l : Array[(String, Json)]) -> Json {
-  let m : Map[String, Json] = Map([])
-  for x in l {
-    m[x.0] = x.1
-  }
-  Json::object(m)
+fn assoc(l : Array[(String, @yojson.Value)]) -> @yojson.Value {
+  Assoc(l)
 }
 
 ///|
@@ -211,9 +216,9 @@ fn type_expr_to_assoc(
   x : JsType,
   version : JsonschemaVersion,
   is_nullable? : Bool = false,
-) -> Array[(String, Json)] {
+) -> Array[(String, @yojson.Value)] {
   match x {
-    Ref(s) => [("$ref", Json::string(s))]
+    Ref(s) => [("$ref", @yojson.Value::String(s))]
     Null => [make_type_property(false, "null")]
     Boolean => [make_type_property(is_nullable, "boolean")]
     Integer => [make_type_property(is_nullable, "integer")]
@@ -228,16 +233,18 @@ fn type_expr_to_assoc(
     JTuple(xs) => {
       let res = [
         make_type_property(is_nullable, "array"),
-        ("minItems", Json::number(xs.length().to_double())),
+        ("minItems", @yojson.Value::Int(xs.length().to_int64())),
       ]
-      let items = Json::array(xs.map(x => type_expr_to_json(x, version)))
+      let items = @yojson.Value::List(
+        xs.map(x => type_expr_to_json(x, version)),
+      )
       match version {
         Draft_2020_12 => {
-          res.push(("items", Json::boolean(false)))
+          res.push(("items", @yojson.Value::Bool(false)))
           res.push(("prefixItems", items))
         }
         Draft_2019_09 => {
-          res.push(("additionalItems", Json::boolean(false)))
+          res.push(("additionalItems", @yojson.Value::Bool(false)))
           res.push(("items", items))
         }
       }
@@ -249,10 +256,13 @@ fn type_expr_to_assoc(
       })
       let res = [
         make_type_property(is_nullable, "object"),
-        ("required", Json::array(x.required.map(Json::string))),
+        (
+          "required",
+          @yojson.Value::List(x.required.map(s => @yojson.Value::String(s))),
+        ),
       ]
       if !x.xprop {
-        res.push(("additionalProperties", Json::boolean(false)))
+        res.push(("additionalProperties", @yojson.Value::Bool(false)))
       }
       res.push(("properties", assoc(properties)))
       res
@@ -266,7 +276,9 @@ fn type_expr_to_assoc(
       [
         (
           "oneOf",
-          Json::array(xs.map(x => type_expr_to_json(x, version, is_nullable~))),
+          @yojson.Value::List(
+            xs.map(x => type_expr_to_json(x, version, is_nullable~)),
+          ),
         ),
       ]
     JNullable(x) => type_expr_to_assoc(x, version, is_nullable=true)
@@ -283,8 +295,8 @@ fn type_expr_to_json(
   x : JsType,
   version : JsonschemaVersion,
   is_nullable? : Bool = false,
-  descr? : Array[(String, Json)] = [],
-) -> Json {
+  descr? : Array[(String, @yojson.Value)] = [],
+) -> @yojson.Value {
   let l = descr.copy()
   l.append(type_expr_to_assoc(x, version, is_nullable~))
   assoc(l)
@@ -294,10 +306,10 @@ fn type_expr_to_json(
 fn def_to_assoc(
   x : JsDef,
   version : JsonschemaVersion,
-) -> Array[(String, Json)] {
+) -> Array[(String, @yojson.Value)] {
   let l = match x.description {
     None => []
-    Some(d) => [("description", Json::string(d))]
+    Some(d) => [("description", @yojson.Value::String(d))]
   }
   l.append(type_expr_to_assoc(x.type_expr, version))
   l
@@ -315,15 +327,19 @@ pub let jsonschema_annot_schema : Schema = [
 /// - `src_name`: name of the source, mentioned in the description.
 /// - `root_type`: name of the type that describes the root JSON value.
 /// - `xprop`: whether to allow extra properties in JSON objects.
+///
+/// `inherit` statements are expanded if needed. The result is a Yojson-like
+/// value, whose objects preserve the order and duplicates of their keys;
+/// convert it with `@yojson.Value::to_json` if needed.
 pub fn jsonschema_of_module(
   module_ : Module,
   src_name~ : String,
   root_type~ : String,
   version? : JsonschemaVersion = default_jsonschema_version,
   xprop? : Bool = true,
-) -> Json raise AtdError {
+) -> @yojson.Value raise AtdError {
   let defs = []
-  for d in module_.type_defs {
+  for d in expand_inherit(module_.type_defs) {
     defs.push(trans_def(xprop, d))
   }
   let root_defs = defs.filter(x => x.name == root_type)
@@ -348,8 +364,8 @@ pub fn jsonschema_of_module(
     Draft_2020_12 => "https://json-schema.org/draft/2020-12/schema"
   }
   let fields = [
-    ("$schema", Json::string(version_url)),
-    ("title", Json::string(root_def.name)),
+    ("$schema", @yojson.Value::String(version_url)),
+    ("title", @yojson.Value::String(root_def.name)),
   ]
   fields.append(def_to_assoc(root_def, version))
   fields.push(

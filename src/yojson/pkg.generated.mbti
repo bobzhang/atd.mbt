@@ -1,16 +1,33 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "bobzhang/atd/yojson"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn json_string_of_number(Double, String?) -> String
 
 pub fn json_string_of_string(String) -> String
 
-pub fn pretty_to_string(Json) -> String
+pub fn pretty_json_to_string(Json) -> String
+
+pub fn pretty_to_string(Value) -> String
 
 // Errors
 
 // Types and methods
+pub(all) enum Value {
+  Null
+  Bool(Bool)
+  Int(Int64)
+  Float(Double)
+  String(String)
+  List(Array[Value])
+  Assoc(Array[(String, Value)])
+} derive(Eq, @debug.Debug)
+pub fn Value::of_json(Json) -> Self
+pub fn Value::to_json(Self) -> Json
 
 // Type aliases
 
