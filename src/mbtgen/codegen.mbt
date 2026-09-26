@@ -401,6 +401,56 @@ fn Env::writer(self : Env, e : @atd.TypeExpr) -> String raise @atd.AtdError {
 }
 
 ///|
+/// An expression writing `arg`, a simple expression (evaluated several
+/// times for tuples), as JSON.
+fn Env::write_expr(
+  self : Env,
+  e : @atd.TypeExpr,
+  arg : String,
+) -> String raise @atd.AtdError {
+  match e {
+    Tuple(_, cells, _) if cells.length() >= 2 => {
+      let items = []
+      for i, c in cells {
+        items.push(self.write_expr(c.expr, "\{arg}.\{i}"))
+      }
+      "Json::array([\{items.join(", ")}])"
+    }
+    Wrap(_, e, an) if is_transparent_wrap(an) => self.write_expr(e, arg)
+    _ => apply(self.writer(e), arg)
+  }
+}
+
+///|
+/// Write the components of a tuple given as separate variables.
+fn Env::write_tuple_vars(
+  self : Env,
+  cells : Array[@atd.Cell],
+  vars : Array[String],
+) -> String raise @atd.AtdError {
+  let items = []
+  for i, c in cells {
+    items.push(self.write_expr(c.expr, vars[i]))
+  }
+  "Json::array([\{items.join(", ")}])"
+}
+
+///|
+/// An expression reading the JSON value `x`, a variable, found at path
+/// `path`, a simple expression.
+fn Env::read_expr(
+  self : Env,
+  e : @atd.TypeExpr,
+  x : String,
+  path : String,
+) -> String raise @atd.AtdError {
+  match e {
+    Wrap(_, e, an) if is_transparent_wrap(an) => self.read_expr(e, x, path)
+    _ => apply(self.reader(e), "\{x}, \{path}")
+  }
+}
+
+///|
 /// The implicit default value of a type, if any.
 fn Env::default_value(
   self : Env,

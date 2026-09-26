@@ -1,0 +1,139 @@
+(*
+   ATD definitions exercising the features of atdmbt.
+*)
+
+<doc text="Test module for atdmbt.">
+
+from ext_types <mbt name="ext"> import tag
+
+(* Keywords and special names as field names and type names *)
+type match = {
+  match: int;
+  fn: string;
+  type_ <mbt name="kind">: string;
+  x' : bool;
+  ~some_list: int list;
+}
+
+(* Constructors that shouldn't shadow builtin ones *)
+type option_like = [
+  | None
+  | Some of int
+  | Ok
+  | Other <mbt name="Different"> <json name="other"> of (int * string * bool)
+]
+
+type int64s = {
+  big: int <mbt repr="int64">;
+  big_str: int <mbt repr="int64"> <json repr="string">;
+  small_str: int <json repr="string">;
+  rounded: float <json repr="int">;
+  precise: float <json precision="2">;
+}
+
+type maps = {
+  by_name: (string * int) list <json repr="object"> <mbt repr="map">;
+  by_id: (int * string) list <mbt repr="map">;
+  pairs: (string * float) list <json repr="object">;
+}
+
+(* Inline records and sums are lifted into named types *)
+type inline = [
+  | Point of { x: float; y: float }
+  | Nested of [ A | B of { z: int } ] list
+]
+
+(* Recursive types *)
+type tree = [
+  | Leaf of int
+  | Node of (tree * tree)
+]
+
+type forest = {
+  trees: tree list;
+  ?parent: forest option;
+}
+
+(* Defaults *)
+type defaults = {
+  ~b: bool;
+  ~i: int;
+  ~f: float;
+  ~s: string;
+  ~l: string list;
+  ~o: int nullable;
+  ~u: unit;
+  ~j: abstract;
+  ~alias_default: string_list;
+  ~custom <mbt default="[1, 2, 3]">: int list;
+  ~custom_enum <mbt default="Color::Red">: color;
+}
+
+type string_list = string list
+
+type color = [ Red | Green | Blue ]
+
+(* Nulls: see atdgen's documentation of keep_nulls *)
+type patch = {
+  ?x: int nullable option;
+  ?y: int nullable option;
+  ?z: int nullable option;
+} <json keep_nulls>
+
+type no_patch = {
+  ?x: int nullable option;
+}
+
+(* Open enums *)
+type fruit = [
+  | Apple
+  | Banana
+  | Other of string
+] <json open_enum>
+
+(* Tuples *)
+type tuples = {
+  unit_tuple: ();
+  single: (int);
+  pair: (int * string);
+  annotated: (<note text="first">: int * float);
+}
+
+(* Wrapped types with a custom MoonBit representation *)
+type celsius = float wrap <mbt t="Celsius" wrap="Celsius::from_double" unwrap="Celsius::to_double">
+
+type temperatures = {
+  temps: celsius list;
+  plain: string wrap;
+}
+
+(* Polymorphic types are monomorphized *)
+type ('k, 'v) entry = { key: 'k; value: 'v }
+type int_entries = (string, int) entry list
+type 'a boxed = abstract
+type raw = int boxed
+
+(* Imported types *)
+type tagged = {
+  tag: ext_types.tag;
+  tags: ext_types.tag list;
+}
+
+(* Derive override *)
+type no_derive <mbt derive=""> = {
+  value: celsius;
+}
+
+type empty_record = {}
+
+type documented
+  <doc text="A documented type.
+
+Second paragraph with {{code}}.
+{{{
+preformatted
+  text
+}}}"> = [
+  | Documented <doc text="A documented case."> of int
+  | Undocumented
+]

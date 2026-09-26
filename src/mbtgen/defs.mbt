@@ -236,16 +236,22 @@ fn Env::gen_record(
   // writer
   out.push("///|")
   out.push("pub fn \{writer_name(atd_name)}(x : \{type_name}) -> Json {")
+  if infos.is_empty() {
+    out.push("  ignore(x)")
+  }
   out.push("  let o : Map[String, Json] = Map([])")
   for f in infos {
     let key = mbt_string_literal(f.json_name)
-    let w = self.writer(f.value_type)
     match f.kind {
       Required | WithDefault =>
-        out.push("  o[\{key}] = \{apply(w, "x." + f.mbt_name)}")
+        out.push(
+          "  o[\{key}] = \{self.write_expr(f.value_type, "x." + f.mbt_name)}",
+        )
       Optional => {
         out.push("  match x.\{f.mbt_name} {")
-        out.push("    Some(v) => o[\{key}] = \{apply(w, "v")}")
+        out.push(
+          "    Some(v) => o[\{key}] = \{self.write_expr(f.value_type, "v")}",
+        )
         out.push("    None => ()")
         out.push("  }")
       }
@@ -278,7 +284,9 @@ fn Env::gen_record(
         )
       WithDefault => {
         out.push("    \{f.mbt_name}: match \{rt}.get_field(o, \{key}\{kn}) {")
-        out.push("      Some(v) => \{apply(r, "v, path.key(" + key + ")")}")
+        out.push(
+          "      Some(v) => \{self.read_expr(f.value_type, "v", "path.key(" + key + ")")}",
+        )
         out.push("      None => \{f.default.unwrap()}")
         out.push("    },")
       }
@@ -333,8 +341,10 @@ fn Env::gen_sum(
         Some(e) => {
           let n = c.arg_types.length()
           let vars = Array::makei(n, i => "v\{i}")
-          let value = if n == 1 { "v0" } else { "(" + vars.join(", ") + ")" }
-          let payload = apply(self.writer(e), value)
+          let payload = match unwrap(e) {
+            Tuple(_, cells, _) if n >= 2 => self.write_tuple_vars(cells, vars)
+            _ => self.write_expr(e, "v0")
+          }
           let json = if object_repr {
             "Json::object(Map::from_array([(\{mbt_string_literal(c.json_name)}, \{payload})]))"
           } else {
@@ -381,13 +391,16 @@ fn Env::gen_sum(
   }
   fn make(c : CaseInfo, v : String, p : String) -> String raise @atd.AtdError {
     let e = c.payload.unwrap()
-    let value = apply(self.reader(e), "\{v}, \{p}")
     let n = c.arg_types.length()
-    if n == 1 {
-      "\{type_name}::\{c.mbt_name}(\{value})"
-    } else {
-      let args = Array::makei(n, i => "t.\{i}").join(", ")
-      "{ let t = \{value}; \{type_name}::\{c.mbt_name}(\{args}) }"
+    match unwrap(e) {
+      Tuple(_, cells, _) if n >= 2 => {
+        let args = []
+        for i, cell in cells {
+          args.push(self.read_expr(cell.expr, "a[\{i}]", "p.index(\{i})"))
+        }
+        "{ let p = \{p}; let a = \{rt}.read_tuple(\{v}, p, \{n}); \{type_name}::\{c.mbt_name}(\{args.join(", ")}) }"
+      }
+      _ => "\{type_name}::\{c.mbt_name}(\{self.read_expr(e, v, p)})"
     }
   }
 
@@ -430,20 +443,24 @@ fn Env::gen_alias(
 ) -> Unit raise @atd.AtdError {
   let atd_name = d.name.to_string()
   let type_name = self.type_name(atd_name)
-  out.push("///|")
-  out.append(doc_comment(d.loc, d.annot))
-  out.push("pub type \{type_name} = \{self.type_of_expr(e)}")
-  out.push("")
+  let target = self.type_of_expr(e)
+  // `type foo = ... wrap <mbt t="Foo">` refers to an existing type `Foo`
+  if target != type_name {
+    out.push("///|")
+    out.append(doc_comment(d.loc, d.annot))
+    out.push("pub type \{type_name} = \{target}")
+    out.push("")
+  }
   out.push("///|")
   out.push("pub fn \{writer_name(atd_name)}(x : \{type_name}) -> Json {")
-  out.push("  \{apply(self.writer(e), "x")}")
+  out.push("  \{self.write_expr(e, "x")}")
   out.push("}")
   out.push("")
   out.push("///|")
   out.push(
     "pub fn \{reader_name(atd_name)}(x : Json, path : \{rt}.Path) -> \{type_name} raise \{rt}.JsonError {",
   )
-  out.push("  \{apply(self.reader(e), "x, path")}")
+  out.push("  \{self.read_expr(e, "x", "path")}")
   out.push("}")
   out.push("")
 }

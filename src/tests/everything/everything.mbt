@@ -320,9 +320,10 @@ pub fn write_root(x : Root) -> Json {
   o["extras"] = @atd_runtime.write_list(@atd_runtime.write_int)(x.extras)
   o["answer"] = @atd_runtime.write_int(x.answer)
   o["aliased"] = write_alias(x.aliased)
-  o["point"] = ((x : (Double, Double)) => {
-    Json::array([@atd_runtime.write_float(x.0), @atd_runtime.write_float(x.1)])
-  })(x.point)
+  o["point"] = Json::array([
+    @atd_runtime.write_float(x.point.0),
+    @atd_runtime.write_float(x.point.1),
+  ])
   o["kinds"] = @atd_runtime.write_list(write_different_kinds_of_things)(x.kinds)
   o["assoc1"] = @atd_runtime.write_list((x : (Double, Int)) => {
     Json::array([@atd_runtime.write_float(x.0), @atd_runtime.write_int(x.1)])
@@ -628,9 +629,7 @@ pub type Pair = (String, Int)
 
 ///|
 pub fn write_pair(x : Pair) -> Json {
-  ((x : (String, Int)) => {
-    Json::array([@atd_runtime.write_string(x.0), @atd_runtime.write_int(x.1)])
-  })(x)
+  Json::array([@atd_runtime.write_string(x.0), @atd_runtime.write_int(x.1)])
 }
 
 ///|
@@ -916,13 +915,11 @@ pub type TupleE1a4b40 = (DifferentKindsOfThings, DifferentKindsOfThings, Int)
 
 ///|
 pub fn write__tuple_e1a4b40(x : TupleE1a4b40) -> Json {
-  ((x : (DifferentKindsOfThings, DifferentKindsOfThings, Int)) => {
-    Json::array([
-      write_different_kinds_of_things(x.0),
-      write_different_kinds_of_things(x.1),
-      @atd_runtime.write_int(x.2),
-    ])
-  })(x)
+  Json::array([
+    write_different_kinds_of_things(x.0),
+    write_different_kinds_of_things(x.1),
+    @atd_runtime.write_int(x.2),
+  ])
 }
 
 ///|

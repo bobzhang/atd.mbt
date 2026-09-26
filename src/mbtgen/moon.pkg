@@ -1,3 +1,7 @@
 import {
   "bobzhang/atd",
 }
+
+import {
+  "moonbitlang/core/encoding/utf8",
+} for "test"
