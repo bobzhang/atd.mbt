@@ -115,7 +115,8 @@ test "generated code" {
       #|
       #|///|
       #|/// Create a value of type `Point`.
-      #|pub fn Point::new(
+      #|#alias(new, deprecated="Use `Point(...)` instead")
+      #|pub fn Point::Point(
       #|  x~ : Double,
       #|  y? : Double = 1.0,
       #|) -> Point {
@@ -341,7 +342,7 @@ test "optional field of an aliased option type" {
       #|  x : Int?
       #|pub extend T with Eq::{equal, not_equal}
       #|pub extend T with Debug::{to_repr}
-      #|pub fn T::new(
+      #|pub fn T::T(
       #|  x? : Int,
       #|  T::{ x }
       #|pub fn write_t(x : T) -> Json {

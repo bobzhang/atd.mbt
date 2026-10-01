@@ -166,8 +166,9 @@ pub impl ToJson for DifferentKindsOfThings
 pub(all) struct Foo {
   foo : String
 } derive(Eq, @debug.Debug)
+#alias(new, deprecated)
+pub fn Foo::Foo(foo~ : String) -> Self
 pub fn Foo::equal(Self, Self) -> Bool
-pub fn Foo::new(foo~ : String) -> Self
 pub fn Foo::not_equal(Self, Self) -> Bool
 pub fn Foo::to_json(Self) -> Json
 pub fn Foo::to_repr(Self) -> @debug.Repr
@@ -177,8 +178,9 @@ pub(all) struct IntFloatParametrizedRecord {
   field_a : Int
   field_b : Array[Double]
 } derive(Eq, @debug.Debug)
+#alias(new, deprecated)
+pub fn IntFloatParametrizedRecord::IntFloatParametrizedRecord(field_a~ : Int, field_b? : Array[Double]) -> Self
 pub fn IntFloatParametrizedRecord::equal(Self, Self) -> Bool
-pub fn IntFloatParametrizedRecord::new(field_a~ : Int, field_b? : Array[Double]) -> Self
 pub fn IntFloatParametrizedRecord::not_equal(Self, Self) -> Bool
 pub fn IntFloatParametrizedRecord::to_json(Self) -> Json
 pub fn IntFloatParametrizedRecord::to_repr(Self) -> @debug.Repr
@@ -209,8 +211,9 @@ pub(all) struct Root {
   wrapped : Array[String]
   ext_tag : String
 } derive(Eq, @debug.Debug)
+#alias(new, deprecated)
+pub fn Root::Root(id~ : String, this~ : Int, items~ : Array[Array[Int]], maybe? : Int, maybe2? : SimpleRecord, extras? : Array[Int], answer? : Int, aliased~ : Array[Int], point~ : (Double, Double), kinds~ : Array[DifferentKindsOfThings], assoc1~ : Array[(Double, Int)], assoc2~ : Array[(String, Int)], assoc3~ : Array[(Double, Int)], assoc4~ : Array[(String, Int)], options? : Array[Int?], nullables? : Array[Int?], untyped_things~ : Array[Json], foo~ : Foo?, parametrized_record~ : IntFloatParametrizedRecord, parametrized_tuple~ : (DifferentKindsOfThings, DifferentKindsOfThings, Int), anything~ : Json, wrapped~ : Array[String], ext_tag~ : String) -> Self
 pub fn Root::equal(Self, Self) -> Bool
-pub fn Root::new(id~ : String, this~ : Int, items~ : Array[Array[Int]], maybe? : Int, maybe2? : SimpleRecord, extras? : Array[Int], answer? : Int, aliased~ : Array[Int], point~ : (Double, Double), kinds~ : Array[DifferentKindsOfThings], assoc1~ : Array[(Double, Int)], assoc2~ : Array[(String, Int)], assoc3~ : Array[(Double, Int)], assoc4~ : Array[(String, Int)], options? : Array[Int?], nullables? : Array[Int?], untyped_things~ : Array[Json], foo~ : Foo?, parametrized_record~ : IntFloatParametrizedRecord, parametrized_tuple~ : (DifferentKindsOfThings, DifferentKindsOfThings, Int), anything~ : Json, wrapped~ : Array[String], ext_tag~ : String) -> Self
 pub fn Root::not_equal(Self, Self) -> Bool
 pub fn Root::to_json(Self) -> Json
 pub fn Root::to_repr(Self) -> @debug.Repr
@@ -230,8 +233,9 @@ pub impl ToJson for Shape
 pub(all) struct SimpleRecord {
   str : String
 } derive(Eq, @debug.Debug)
+#alias(new, deprecated)
+pub fn SimpleRecord::SimpleRecord(str~ : String) -> Self
 pub fn SimpleRecord::equal(Self, Self) -> Bool
-pub fn SimpleRecord::new(str~ : String) -> Self
 pub fn SimpleRecord::not_equal(Self, Self) -> Bool
 pub fn SimpleRecord::to_json(Self) -> Json
 pub fn SimpleRecord::to_repr(Self) -> @debug.Repr
