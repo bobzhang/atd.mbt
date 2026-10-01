@@ -122,7 +122,7 @@ pub fn generate_module(
     local_module_names.push(package_alias(i))
   }
   let env : Env = {
-    type_names: @atd.UniqueNames::new(
+    type_names: @atd.UniqueNames(
       reserved_identifiers=[..mbt_reserved_type_names, ..local_module_names],
       reserved_prefixes=[],
       safe_prefix="",

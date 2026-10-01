@@ -100,7 +100,8 @@ fn initialize_scan_stack(stack : Array[ScanElem]) -> Unit {
 ///|
 /// Create a new formatter with the default OCaml settings
 /// (margin 78, minimum space left 10).
-pub fn Formatter::new(margin? : Int = 78) -> Formatter {
+#alias(new, deprecated="Use `Formatter(...)` instead")
+pub fn Formatter::Formatter(margin? : Int = 78) -> Formatter {
   let queue = @deque.Deque([])
   let sys_tok = { size: size_unknown, token: Begin(0, HOVBox), length: 0, }
   queue.push_back(sys_tok)

@@ -8,10 +8,11 @@ pub fn utf8_length(StringView) -> Int
 
 // Types and methods
 type Formatter
+#alias(new, deprecated)
+pub fn Formatter::Formatter(margin? : Int) -> Self
 pub fn Formatter::close_box(Self) -> Unit
 pub fn Formatter::contents(Self) -> String
 pub fn Formatter::force_newline(Self) -> Unit
-pub fn Formatter::new(margin? : Int) -> Self
 pub fn Formatter::open_box(Self, Int) -> Unit
 pub fn Formatter::open_hbox(Self) -> Unit
 pub fn Formatter::open_hovbox(Self, Int) -> Unit

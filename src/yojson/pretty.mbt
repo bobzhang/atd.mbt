@@ -195,7 +195,7 @@ fn format(out : @format.Formatter, inside_box : Bool, x : Value) -> Unit {
 ///|
 /// Pretty-print JSON data like `Yojson.Safe.pretty_to_string`.
 pub fn pretty_to_string(x : Value) -> String {
-  let out = @format.Formatter::new()
+  let out = @format.Formatter()
   out.open_hvbox(2)
   format(out, true, x)
   out.close_box()

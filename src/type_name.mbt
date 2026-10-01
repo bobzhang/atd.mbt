@@ -11,7 +11,8 @@ pub(all) struct TypeName {
 
 ///|
 /// Build a type name from its path components.
-pub fn TypeName::new(path : Array[String]) -> TypeName {
+#alias(new, deprecated="Use `TypeName(...)` instead")
+pub fn TypeName::TypeName(path : Array[String]) -> TypeName {
   { path, }
 }
 

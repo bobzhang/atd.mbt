@@ -13,7 +13,8 @@ pub struct UniqueNames {
 
 ///|
 /// Create a registry.
-pub fn UniqueNames::new(
+#alias(new, deprecated="Use `UniqueNames(...)` instead")
+pub fn UniqueNames::UniqueNames(
   reserved_identifiers~ : Array[String],
   reserved_prefixes~ : Array[String],
   safe_prefix~ : String,

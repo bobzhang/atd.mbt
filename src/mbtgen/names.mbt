@@ -106,7 +106,7 @@ fn mbt_string_literal(s : String) -> String {
 ///|
 /// A fresh registry for names of fields or constructors.
 fn member_names(reserved : Array[String]) -> @atd.UniqueNames {
-  @atd.UniqueNames::new(
+  @atd.UniqueNames(
     reserved_identifiers=reserved,
     reserved_prefixes=[],
     safe_prefix="",

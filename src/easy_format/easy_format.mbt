@@ -445,7 +445,7 @@ pub fn to_formatter(fmt : @format.Formatter, x : T) -> Unit {
 ///|
 /// Pretty-print a tree into a string, like `Easy_format.Pretty.to_string`.
 pub fn to_string(x : T) -> String {
-  let fmt = @format.Formatter::new()
+  let fmt = @format.Formatter()
   to_formatter(fmt, x)
   fmt.contents()
 }

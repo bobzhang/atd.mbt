@@ -33,7 +33,8 @@ pub let dummy_loc : Loc = { start: dummy_pos, end_: dummy_pos, }
 
 ///|
 /// Build a location from two positions.
-pub fn Loc::new(start : Pos, end_ : Pos) -> Loc {
+#alias(new, deprecated="Use `Loc(...)` instead")
+pub fn Loc::Loc(start : Pos, end_ : Pos) -> Loc {
   { start, end_, }
 }
 

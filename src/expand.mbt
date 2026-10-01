@@ -528,7 +528,7 @@ fn standardize_type_names(
       reserved_identifiers.push(x.name.to_string())
     }
   }
-  let registry = UniqueNames::new(
+  let registry = UniqueNames(
     reserved_identifiers~,
     reserved_prefixes=[],
     safe_prefix="",

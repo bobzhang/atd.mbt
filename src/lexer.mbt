@@ -46,7 +46,7 @@ priv struct Lexer {
 }
 
 ///|
-fn Lexer::new(src : Bytes, fname~ : String, lnum~ : Int) -> Lexer {
+fn Lexer::Lexer(src : Bytes, fname~ : String, lnum~ : Int) -> Lexer {
   {
     src,
     fname,
@@ -80,7 +80,7 @@ fn Lexer::newline(self : Lexer) -> Unit {
 
 ///|
 fn[T] Lexer::error(self : Lexer, msg : String) -> T raise AtdError {
-  let loc = Loc::new(self.start, self.curr_pos())
+  let loc = Loc(self.start, self.curr_pos())
   error(string_of_loc(loc) + "\n" + msg)
 }
 
@@ -190,12 +190,12 @@ fn Lexer::token(self : Lexer) -> (Token, Loc) raise AtdError {
     match simple {
       Some(tok) => {
         self.pos += 1
-        return (tok, Loc::new(self.start, self.curr_pos()))
+        return (tok, Loc(self.start, self.curr_pos()))
       }
       None => ()
     }
     if c == -1 {
-      return (Eof, Loc::new(self.start, self.curr_pos()))
+      return (Eof, Loc(self.start, self.curr_pos()))
     }
     if c == '(' {
       // "(*"
@@ -218,7 +218,7 @@ fn Lexer::token(self : Lexer) -> (Token, Loc) raise AtdError {
     if n > 0 {
       let s = self.substring(self.pos, self.pos + n)
       self.pos += n
-      return (keyword_or_lident(s), Loc::new(self.start, self.curr_pos()))
+      return (keyword_or_lident(s), Loc(self.start, self.curr_pos()))
     }
     if is_upper(c) {
       let mut n = 1
@@ -227,25 +227,25 @@ fn Lexer::token(self : Lexer) -> (Token, Loc) raise AtdError {
       }
       let s = self.substring(self.pos, self.pos + n)
       self.pos += n
-      return (Uident(s), Loc::new(self.start, self.curr_pos()))
+      return (Uident(s), Loc(self.start, self.curr_pos()))
     }
     if c == '\'' {
       let n = self.lident_length(1)
       if n > 0 {
         let s = self.substring(self.pos + 1, self.pos + 1 + n)
         self.pos += 1 + n
-        return (Tident(s), Loc::new(self.start, self.curr_pos()))
+        return (Tident(s), Loc(self.start, self.curr_pos()))
       }
       self.pos += 1
       let s = self.string(false)
       // like ocamllex, the start of the token is the start of the last
       // lexeme matched by the string rule, i.e. the closing quote
-      return (StringLit(s), Loc::new(self.start, self.curr_pos()))
+      return (StringLit(s), Loc(self.start, self.curr_pos()))
     }
     if c == '"' {
       self.pos += 1
       let s = self.string(true)
-      return (StringLit(s), Loc::new(self.start, self.curr_pos()))
+      return (StringLit(s), Loc(self.start, self.curr_pos()))
     }
     self.pos += 1
     let bytes = Bytes::from_array([c.to_byte()])
