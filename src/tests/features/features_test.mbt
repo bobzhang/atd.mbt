@@ -9,7 +9,7 @@ fn error_message(f : () -> Unit raise @atd_runtime.JsonError) -> String raise {
 
 ///|
 test "keywords as field names" {
-  let x = @features.Match(match_=1, fn_="f", kind="k", x_=true)
+  let x = @features.Match::new(match_=1, fn_="f", kind="k", x_=true)
   let s = @features.string_of_match(x)
   inspect(
     s,
@@ -44,7 +44,7 @@ test "constructors not shadowing builtin ones" {
 
 ///|
 test "64-bit integers and numeric representations" {
-  let x = @features.Int64s(
+  let x = @features.Int64s::new(
     big=9007199254740993L,
     big_str=-9223372036854775808L,
     small_str=42,
@@ -80,7 +80,7 @@ test "64-bit integers and numeric representations" {
 test "maps" {
   let by_name : Map[String, Int] = { "a": 1, "b": 2 }
   let by_id : Map[Int, String] = { 1: "x", 2: "y" }
-  let x = @features.Maps(by_name~, by_id~, pairs=[("p", 1.5), ("q", 2)])
+  let x = @features.Maps::new(by_name~, by_id~, pairs=[("p", 1.5), ("q", 2)])
   let s = @features.string_of_maps(x)
   inspect(
     s,
@@ -93,14 +93,14 @@ test "maps" {
 
 ///|
 test "lifted inline types" {
-  let x : @features.Inline = Point(@features.InlinePoint(x=1, y=2))
+  let x : @features.Inline = Point(@features.InlinePoint::new(x=1, y=2))
   inspect(
     @features.string_of_inline(x),
     content=(
       #|["Point",{"x":1,"y":2}]
     ),
   )
-  let y : @features.Inline = Nested([A, B(@features.InlineNestedB(z=3))])
+  let y : @features.Inline = Nested([A, B(@features.InlineNestedB::new(z=3))])
   let s = @features.string_of_inline(y)
   inspect(
     s,
@@ -114,7 +114,10 @@ test "lifted inline types" {
 ///|
 test "recursive types" {
   let t : @features.Tree = Node(Leaf(1), Node(Leaf(2), Leaf(3)))
-  let f = @features.Forest(trees=[t], parent=@features.Forest(trees=[Leaf(0)]))
+  let f = @features.Forest::new(
+    trees=[t],
+    parent=@features.Forest::new(trees=[Leaf(0)]),
+  )
   let s = @features.string_of_forest(f)
   inspect(
     s,
@@ -146,7 +149,7 @@ test "default values" {
       #|}
     ),
   )
-  assert_eq(d, @features.Defaults())
+  assert_eq(d, @features.Defaults::new())
   // null means "missing"
   let d2 = @features.defaults_of_string("{\"i\": null, \"custom\": [4]}")
   assert_eq(d2.i, 0)
@@ -208,7 +211,7 @@ test "open enums" {
 
 ///|
 test "tuples" {
-  let x = @features.Tuples(
+  let x = @features.Tuples::new(
     unit_tuple=(),
     single=1,
     pair=(2, "two"),
@@ -238,7 +241,10 @@ test "tuples" {
 
 ///|
 test "wrapped types" {
-  let x = @features.Temperatures(temps=[@features.Celsius(21.5)], plain="abc")
+  let x = @features.Temperatures::new(
+    temps=[@features.Celsius(21.5)],
+    plain="abc",
+  )
   let s = @features.string_of_temperatures(x)
   inspect(
     s,
@@ -251,7 +257,9 @@ test "wrapped types" {
 
 ///|
 test "monomorphized polymorphic types" {
-  let l : @features.IntEntries = [@features.StringIntEntry(key="a", value=1)]
+  let l : @features.IntEntries = [
+    @features.StringIntEntry::new(key="a", value=1),
+  ]
   let s = @features.string_of_int_entries(l)
   inspect(
     s,
@@ -266,7 +274,7 @@ test "monomorphized polymorphic types" {
 
 ///|
 test "imported types" {
-  let x = @features.Tagged(tag="t", tags=["a", "b"])
+  let x = @features.Tagged::new(tag="t", tags=["a", "b"])
   let s = @features.string_of_tagged(x)
   inspect(
     s,
@@ -280,12 +288,12 @@ test "imported types" {
 ///|
 test "empty record" {
   inspect(
-    @features.string_of_empty_record(@features.EmptyRecord()),
+    @features.string_of_empty_record(@features.EmptyRecord::new()),
     content="{}",
   )
   assert_eq(
     @features.empty_record_of_string("{\"ignored\": 1}"),
-    @features.EmptyRecord(),
+    @features.EmptyRecord::new(),
   )
 }
 

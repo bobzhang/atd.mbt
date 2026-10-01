@@ -10,8 +10,7 @@
 //   the composable JSON writer and reader;
 // - `foo_of_json`, `foo_of_string` and `string_of_foo` for convenience;
 // - an implementation of `ToJson` for structs and enums;
-// - `Foo(...)` (`Foo::Foo`) for records, with labelled arguments and
-//   defaults, plus the deprecated alias `Foo::new`.
+// - `Foo::new(...)` for records, with labelled arguments and defaults.
 //
 // The generated code depends on the package `bobzhang/atd/runtime`,
 // imported with the alias `@atd_runtime`.

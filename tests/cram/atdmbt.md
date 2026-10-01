@@ -50,12 +50,12 @@ Records become structs with a constructor taking labelled arguments, and
 sum types become enums:
 
 ```mooncram
-$ sed -n '/^pub(all) struct Point/,/^}/p;/^pub fn Point::Point/,/^}/p;/^pub(all) enum Shape/,/^}/p' shapes.mbt
+$ sed -n '/^pub(all) struct Point/,/^}/p;/^pub fn Point::new/,/^}/p;/^pub(all) enum Shape/,/^}/p' shapes.mbt
 pub(all) struct Point {
   x : Double
   y : Double
 } derive(Eq, Debug)
-pub fn Point::Point(
+pub fn Point::new(
   x~ : Double,
   y? : Double = 1.0,
 ) -> Point {
@@ -71,7 +71,7 @@ Each type has a JSON writer and reader, and convenience functions:
 
 ```mooncram
 $ grep '^pub fn\|^pub impl' shapes.mbt
-pub fn Point::Point(
+pub fn Point::new(
 pub fn write_point(x : Point) -> Json {
 pub fn read_point(x : Json, path : @atd_runtime.Path) -> Point raise @atd_runtime.JsonError {
 pub fn point_of_json(x : Json) -> Point raise @atd_runtime.JsonError {
