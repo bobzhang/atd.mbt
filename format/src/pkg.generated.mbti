@@ -1,0 +1,178 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/format"
+
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/list",
+}
+
+// Values
+pub fn asprintf(String, ArrayView[Arg]) -> String
+
+pub fn char_escaped(Char) -> String
+
+pub fn check_format(String) -> Unit raise Failure
+
+pub fn check_geometry(Geometry) -> Bool
+
+pub let default_stag_functions : StagFunctions
+
+pub fn dprintf(String, ArrayView[Arg]) -> (Formatter) -> Unit
+
+pub fn format_float_c(Double, Char, Int, sign? : Char, alt? : Bool) -> String
+
+pub fn hexstring_of_float(Double, Int, Char) -> String
+
+pub fn[T] kasprintf((String) -> T, String, ArrayView[Arg]) -> T
+
+pub fn sprintf(String, ArrayView[Arg]) -> String
+
+pub fn string_escaped(StringView) -> String
+
+pub fn string_of_float(Double) -> String
+
+pub fn utf8_length(StringView) -> Int
+
+// Errors
+pub(all) suberror InvalidArgument {
+  InvalidArgument(String)
+} derive(Eq, @debug.Debug)
+pub fn InvalidArgument::equal(Self, Self) -> Bool
+pub fn InvalidArgument::not_equal(Self, Self) -> Bool
+pub fn InvalidArgument::to_repr(Self) -> @debug.Repr
+
+// Types and methods
+pub(all) enum Arg {
+  Int(Int)
+  Int32(Int)
+  Int64(Int64)
+  Float(Double)
+  String(String)
+  Char(Char)
+  Bool(Bool)
+  Print((Formatter) -> Unit)
+  Format(String)
+}
+
+pub struct Formatter {
+  // private fields
+}
+pub fn Formatter::Formatter((StringView) -> Unit, flush? : () -> Unit) -> Self
+pub fn Formatter::close_box(Self) -> Unit
+pub fn Formatter::close_stag(Self) -> Unit
+pub fn Formatter::close_tag(Self) -> Unit
+pub fn Formatter::close_tbox(Self) -> Unit
+pub fn Formatter::force_newline(Self) -> Unit
+pub fn Formatter::get_ellipsis_text(Self) -> String
+pub fn Formatter::get_geometry(Self) -> Geometry
+pub fn Formatter::get_margin(Self) -> Int
+pub fn Formatter::get_mark_tags(Self) -> Bool
+pub fn Formatter::get_max_boxes(Self) -> Int
+pub fn Formatter::get_max_indent(Self) -> Int
+pub fn Formatter::get_out_functions(Self) -> OutFunctions
+pub fn Formatter::get_print_tags(Self) -> Bool
+pub fn Formatter::get_stag_functions(Self) -> StagFunctions
+pub fn[T] Formatter::kprintf(Self, (Self) -> T, String, ArrayView[Arg]) -> T
+pub fn Formatter::of_buffer(StringBuilder) -> Self
+pub fn Formatter::of_out_functions(OutFunctions) -> Self
+pub fn Formatter::of_symbolic_output_buffer(SymbolicOutputBuffer) -> Self
+pub fn Formatter::open_box(Self, Int) -> Unit
+pub fn Formatter::open_hbox(Self) -> Unit
+pub fn Formatter::open_hovbox(Self, Int) -> Unit
+pub fn Formatter::open_hvbox(Self, Int) -> Unit
+pub fn Formatter::open_stag(Self, Stag) -> Unit
+pub fn Formatter::open_tag(Self, String) -> Unit
+pub fn Formatter::open_tbox(Self) -> Unit
+pub fn Formatter::open_vbox(Self, Int) -> Unit
+pub fn Formatter::over_max_boxes(Self) -> Bool
+pub fn[T] Formatter::print_array(Self, pp_sep? : (Self) -> Unit, (Self, T) -> Unit, ArrayView[T]) -> Unit
+pub fn Formatter::print_as(Self, Int, String) -> Unit
+pub fn Formatter::print_bool(Self, Bool) -> Unit
+pub fn Formatter::print_break(Self, Int, Int) -> Unit
+pub fn Formatter::print_char(Self, Char) -> Unit
+pub fn Formatter::print_custom_break(Self, fits~ : (String, Int, String), breaks~ : (String, Int, String)) -> Unit
+pub fn Formatter::print_cut(Self) -> Unit
+pub fn Formatter::print_float(Self, Double) -> Unit
+pub fn Formatter::print_flush(Self) -> Unit
+pub fn Formatter::print_if_newline(Self) -> Unit
+pub fn Formatter::print_int(Self, Int) -> Unit
+pub fn[T] Formatter::print_iter(Self, pp_sep? : (Self) -> Unit, (Self, T) -> Unit, Iter[T]) -> Unit
+pub fn[T] Formatter::print_list(Self, pp_sep? : (Self) -> Unit, (Self, T) -> Unit, @list.List[T]) -> Unit
+pub fn Formatter::print_newline(Self) -> Unit
+pub fn Formatter::print_nothing(Self) -> Unit
+pub fn[T] Formatter::print_option(Self, none? : (Self) -> Unit, (Self, T) -> Unit, T?) -> Unit
+pub fn[T, E] Formatter::print_result(Self, ok~ : (Self, T) -> Unit, error~ : (Self, E) -> Unit, Result[T, E]) -> Unit
+pub fn Formatter::print_space(Self) -> Unit
+pub fn Formatter::print_string(Self, String) -> Unit
+pub fn Formatter::print_tab(Self) -> Unit
+pub fn Formatter::print_tbreak(Self, Int, Int) -> Unit
+pub fn Formatter::print_text(Self, String) -> Unit
+pub fn Formatter::printf(Self, String, ArrayView[Arg]) -> Unit
+pub fn Formatter::safe_set_geometry(Self, max_indent~ : Int, margin~ : Int) -> Unit
+pub fn Formatter::set_ellipsis_text(Self, String) -> Unit
+pub fn Formatter::set_geometry(Self, max_indent~ : Int, margin~ : Int) -> Unit raise InvalidArgument
+pub fn Formatter::set_margin(Self, Int) -> Unit
+pub fn Formatter::set_mark_tags(Self, Bool) -> Unit
+pub fn Formatter::set_max_boxes(Self, Int) -> Unit
+pub fn Formatter::set_max_indent(Self, Int) -> Unit
+pub fn Formatter::set_out_functions(Self, OutFunctions) -> Unit
+pub fn Formatter::set_print_tags(Self, Bool) -> Unit
+pub fn Formatter::set_stag_functions(Self, StagFunctions) -> Unit
+pub fn Formatter::set_tab(Self) -> Unit
+pub fn Formatter::set_tags(Self, Bool) -> Unit
+pub fn Formatter::update_geometry(Self, (Geometry) -> Geometry) -> Unit
+
+pub(all) struct Geometry {
+  max_indent : Int
+  margin : Int
+} derive(Eq, @debug.Debug)
+pub fn Geometry::equal(Self, Self) -> Bool
+pub fn Geometry::not_equal(Self, Self) -> Bool
+pub fn Geometry::to_repr(Self) -> @debug.Repr
+
+pub(all) struct OutFunctions {
+  out_string : (StringView) -> Unit
+  out_flush : () -> Unit
+  out_newline : () -> Unit
+  out_spaces : (Int) -> Unit
+  out_indent : (Int) -> Unit
+}
+
+pub(all) enum Stag {
+  StringTag(String)
+  OtherTag(String)
+} derive(Eq, @debug.Debug)
+pub fn Stag::equal(Self, Self) -> Bool
+pub fn Stag::not_equal(Self, Self) -> Bool
+pub fn Stag::to_repr(Self) -> @debug.Repr
+
+pub(all) struct StagFunctions {
+  mark_open_stag : (Stag) -> String
+  mark_close_stag : (Stag) -> String
+  print_open_stag : (Stag) -> Unit
+  print_close_stag : (Stag) -> Unit
+}
+
+pub struct SymbolicOutputBuffer {
+  // private fields
+}
+pub fn SymbolicOutputBuffer::SymbolicOutputBuffer() -> Self
+pub fn SymbolicOutputBuffer::add(Self, SymbolicOutputItem) -> Unit
+pub fn SymbolicOutputBuffer::clear(Self) -> Unit
+pub fn SymbolicOutputBuffer::flush(Self) -> Array[SymbolicOutputItem]
+pub fn SymbolicOutputBuffer::get(Self) -> Array[SymbolicOutputItem]
+
+pub(all) enum SymbolicOutputItem {
+  OutputFlush
+  OutputNewline
+  OutputString(String)
+  OutputSpaces(Int)
+  OutputIndent(Int)
+} derive(Eq, @debug.Debug)
+pub fn SymbolicOutputItem::equal(Self, Self) -> Bool
+pub fn SymbolicOutputItem::not_equal(Self, Self) -> Bool
+pub fn SymbolicOutputItem::to_repr(Self) -> @debug.Repr
+
+// Type aliases
+
+// Traits

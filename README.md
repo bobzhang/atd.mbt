@@ -12,13 +12,17 @@ What's included:
 | Package | Description |
 |---|---|
 | `bobzhang/atd` (`src/`) | The ATD library: lexer, parser, AST, annotations, semantic checks, `inherit` expansion, monomorphization, pretty-printing, documentation format, JSON Schema export. Port of upstream `atd/src`. |
-| `bobzhang/atd/format` | Port of the pretty-printing engine of OCaml's `Format` module. |
 | `bobzhang/atd/easy_format` | Port of the `easy-format` library. |
 | `bobzhang/atd/yojson` | Yojson-compatible JSON pretty-printer. |
 | `bobzhang/atd/atdcat` | The `atdcat` tool as a library. |
 | `bobzhang/atd/mbtgen` | The MoonBit code generator. |
 | `bobzhang/atd/runtime` | Runtime library used by the generated MoonBit code. |
 | `cmd/atdcat`, `cmd/atdmbt` | Command-line tools (wasm and native), runnable with `moonx`. |
+
+The pretty-printing relies on [`bobzhang/format`](format/README.md)
+(`format/`), a faithful port of OCaml's `Format` module, including
+printf-like format strings, published as a separate module. The two modules
+are developed together in a `moon.work` workspace.
 
 ## Installation
 
@@ -216,7 +220,9 @@ The port aims at byte-for-byte compatibility with the OCaml implementation
 their locations, generated type names and JSON Schema output:
 
 - OCaml's `Format` and `easy-format` are ported faithfully, and all offsets
-  are computed on UTF-8 bytes like in OCaml.
+  are computed on UTF-8 bytes like in OCaml. `bobzhang/format` passes the
+  `Format` tests of the OCaml testsuite and is fuzzed against OCaml's
+  `Format` (`scripts/fuzz_format.mbtx`).
 - The hand-written parser replaces Menhir and reproduces its locations and
   its error messages, including Menhir's error-recovery behavior that
   selects messages such as `Expecting '='`.
@@ -243,6 +249,11 @@ its nullability when `t` is a type name (e.g. `type a = int` then
 `a nullable`).
 
 ## Development
+
+The repository is a `moon.work` workspace with three modules: `bobzhang/atd`
+(the root), `bobzhang/format` (`format/`) and the unpublished fuzzer of the
+latter (`format/fuzz`). Commands run at the root apply to the whole
+workspace, and `bobzhang/atd` uses the local `bobzhang/format`.
 
 The upstream sources are used for reference and for generating the
 compatibility tests; clone them into `.repos` (ignored by git):
@@ -278,6 +289,26 @@ moon build --target native
 moonx scripts/fuzz_atdcat.mbtx path/to/atdcat.exe 1000
 ```
 
+The differential fuzzer of `bobzhang/format` only needs OCaml 4.14
+(`ocamlopt`); see [format/fuzz/README.md](format/fuzz/README.md):
+
+```bash
+moonx scripts/fuzz_format.mbtx 1000
+```
+
+To publish, publish `bobzhang/format` first when it has changed, then
+`bobzhang/atd` with `moon publish` at the root (`.moonignore` keeps the
+workspace files and `format/` out of its package). Since the ignore files of
+the root also apply to `format/`, publish `bobzhang/format` from a copy:
+
+```bash
+rm -rf /tmp/format && cp -R format /tmp/format && (cd /tmp/format && moon publish)
+```
+
 ## License
 
 BSD-3-Clause, like the upstream ATD project; see [LICENSE.md](LICENSE.md).
+
+`bobzhang/format` (`format/`) is a derivative work of OCaml's standard
+library and is distributed under its license, the LGPL 2.1 with the OCaml
+linking exception; see [format/LICENSE](format/LICENSE).

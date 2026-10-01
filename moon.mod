@@ -15,6 +15,7 @@ description = "A MoonBit port of ATD (Adaptable Type Definitions) with a MoonBit
 import {
   "moonbitlang/x@0.5.5",
   "moonbitlang/async@0.22.4",
+  "bobzhang/format@0.1.0",
 }
 
 source = "src"

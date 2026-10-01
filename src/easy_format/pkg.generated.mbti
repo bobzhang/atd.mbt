@@ -2,7 +2,7 @@
 package "bobzhang/atd/easy_format"
 
 import {
-  "bobzhang/atd/format",
+  "bobzhang/format",
   "moonbitlang/core/debug",
 }
 

@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/deque",
+  "moonbitlang/core/list",
+  "moonbitlang/core/bigint",
+  "moonbitlang/core/string",
+}
+
+import {
+  "moonbitlang/core/double",
+} for "test"

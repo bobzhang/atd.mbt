@@ -1,5 +1,0 @@
-import {
-  "moonbitlang/core/deque",
-}
-
-warnings = "-implicit_impl_as_method"

@@ -1,0 +1,543 @@
+///|
+// Differential fuzzing of the format module: generate random scripts of
+// pretty-printing operations (boxes, break hints, tabulations, tags,
+// printf with random format strings, ...), run them with OCaml's Format
+// and with bobzhang/format, and compare the outputs.
+//
+// Usage, from the root of the repository, with OCaml (`ocamlopt`) on PATH:
+//
+//   moonx scripts/fuzz_format.mbtx [count] [seed]
+//
+// This builds the two drivers: format/fuzz/driver.ml with OCaml's Format and
+// the bobzhang/format_fuzz module of the workspace (format/fuzz). See
+// format/fuzz/README.md for the format of the scripts.
+
+import {
+  "moonbitlang/async@0.22.4",
+  "moonbitlang/async@0.22.4/fs",
+  "moonbitlang/async@0.22.4/process",
+  "moonbitlang/async@0.22.4/stdio",
+  "moonbitlang/core/env",
+  "moonbitlang/core/random",
+  "moonbitlang/core/double",
+  "moonbitlang/core/string",
+  "moonbitlang/core/encoding/utf8",
+}
+
+///|
+let mbt_driver = "_build/native/debug/build/bobzhang/format_fuzz/format_fuzz.exe"
+
+///|
+/// Build the drivers; return the path of the OCaml one.
+async fn build_drivers(tmp : String) -> String {
+  // compile the OCaml driver in a temporary directory, to keep the source
+  // tree clean
+  @fs.write_file(
+    tmp + "/driver.ml",
+    @fs.read_file("format/fuzz/driver.ml").binary(),
+  )
+  let code = @process.run(
+    "ocamlopt",
+    ["driver.ml", "-o", "driver.exe"],
+    cwd=tmp,
+  )
+  if code != 0 {
+    raise Failure("cannot compile format/fuzz/driver.ml")
+  }
+  let code = @process.run(
+    "moon",
+    ["build", "--target", "native", "-q"],
+    cwd="format/fuzz",
+  )
+  if code != 0 {
+    raise Failure("cannot build format/fuzz")
+  }
+  tmp + "/driver.exe"
+}
+
+///|
+let words : Array[String] = [
+  "", "a", "foo", "bar", "hello", "x", "longer_identifier", "é", "日本語", "ab cd",
+  "a\tb", "a\nb", ",", ";", "<>", "\"q\"", "\\", "'",
+]
+
+///|
+fn hex(s : String) -> String {
+  if s == "" {
+    return "-"
+  }
+  let buf = StringBuilder()
+  for b in @utf8.encode(s) {
+    let n = b.to_int()
+    buf.write_char("0123456789abcdef"[n >> 4].unsafe_to_char())
+    buf.write_char("0123456789abcdef"[n & 15].unsafe_to_char())
+  }
+  buf.to_string()
+}
+
+///|
+fn[T] pick(rand : @random.Rand, a : Array[T]) -> T {
+  a[rand.int(limit=a.length())]
+}
+
+///|
+fn word(rand : @random.Rand) -> String {
+  pick(rand, words)
+}
+
+///|
+fn small(rand : @random.Rand, lo : Int, hi : Int) -> Int {
+  lo + rand.int(limit=hi - lo + 1)
+}
+
+///|
+fn int32_value(rand : @random.Rand) -> Int {
+  match rand.int(limit=5) {
+    0 => small(rand, -20, 20)
+    1 => pick(rand, [0, 1, -1, 42, -42, 2147483647, -2147483648, 1000000])
+    _ => rand.int(limit=2000000) - 1000000
+  }
+}
+
+///|
+fn int64_value(rand : @random.Rand) -> Int64 {
+  match rand.int(limit=4) {
+    0 => small(rand, -20, 20).to_int64()
+    1 =>
+      pick(rand, [
+        0L, -1L, 9223372036854775807L, -9223372036854775808L, 4294967296L, 1234567890123L,
+      ])
+    _ => rand.int64()
+  }
+}
+
+///|
+let interesting_floats : Array[Double] = [
+  0.0, -0.0, 1.0, -1.0, 0.5, 42.42, 3.141592653589793, 1.0e300, -1.0e-300, 5.0e-324,
+  2.2250738585072014e-308, 1.7976931348623157e308, 0.1, 123456.789, 9007199254740993.0,
+  1.0e21, 1.0e-5, 0.000123, 999999.5, 0.05, 2.5, 1.5, 100.0, 1.0e15, 1.0e16, @double.infinity,
+  @double.neg_infinity, @double.not_a_number,
+]
+
+///|
+fn float_bits(rand : @random.Rand, nan? : Bool = true) -> String {
+  let x = if rand.int(limit=3) == 0 {
+    // random bits, but not a negative NaN (printed as "-nan" by glibc)
+    let x = rand.int64().reinterpret_as_double()
+    if x.is_nan() {
+      if nan {
+        @double.not_a_number
+      } else {
+        0.0
+      }
+    } else {
+      x
+    }
+  } else {
+    let x = pick(rand, interesting_floats)
+    if x.is_nan() {
+      if nan {
+        // OCaml's `nan`
+        0x7FF0000000000001L.reinterpret_as_double()
+      } else {
+        0.0
+      }
+    } else {
+      x
+    }
+  }
+  x.reinterpret_as_uint64().to_string(radix=16)
+}
+
+///|
+/// Generate a conversion and its arguments.
+fn conversion(rand : @random.Rand, args : Array[String], depth : Int) -> String {
+  let buf = StringBuilder()
+  buf.write_char('%')
+  let conv = pick(rand, [
+    "d", "i", "u", "x", "X", "o", "ld", "lu", "lx", "Ld", "Lx", "LX", "nd", "nu",
+    "s", "S", "c", "C", "f", "e", "E", "g", "G", "F", "h", "H", "b", "B", "a", "t",
+    "!", "%", "@", ",", "{", "(", "l", "n", "N",
+  ])
+  if conv is ("{" | "(") && depth > 0 {
+    buf.write_string("s")
+    args.push("s:" + hex(word(rand)))
+    return buf.to_string()
+  }
+  // flags
+  let flags = []
+  for flag in ['-', '0', '+', '#', ' '] {
+    if rand.int(limit=6) == 0 {
+      buf.write_char(flag)
+      flags.push(flag)
+    }
+  }
+  // padding and precision; '*' is not allowed for %c (nor for %{ and %()
+  let star_ok = !(conv is ("c" | "{" | "("))
+  // in legacy mode, '0' without '-' nor width is a padding of width 0
+  let mut width_given = flags.contains('0') && !flags.contains('-')
+  let mut width_star = None
+  match rand.int(limit=6) {
+    0 | 1 => {
+      // a leading '0' would be a flag
+      buf.write_string(small(rand, 1, 25).to_string())
+      width_given = true
+    }
+    2 if star_ok => {
+      buf.write_char('*')
+      width_given = true
+      width_star = Some("i:" + small(rand, -15, 15).to_string())
+    }
+    _ => ()
+  }
+  let mut prec_star = None
+  match rand.int(limit=7) {
+    0 | 1 => {
+      buf.write_char('.')
+      buf.write_string(small(rand, 0, 20).to_string())
+    }
+    2 => buf.write_char('.')
+    3 if star_ok => {
+      buf.write_string(".*")
+      prec_star = Some("i:" + small(rand, -5, 20).to_string())
+    }
+    _ => ()
+  }
+  buf.write_string(conv)
+  let s = buf.to_string()
+  // the integer arguments of '*', in legacy mode: integers and floats take
+  // the width and the precision; strings and booleans take the width, or
+  // the precision when there is no width; the others take nothing
+  match conv {
+    "d"
+    | "i"
+    | "u"
+    | "x"
+    | "X"
+    | "o"
+    | "ld"
+    | "lu"
+    | "lx"
+    | "Ld"
+    | "Lx"
+    | "LX"
+    | "nd"
+    | "nu"
+    | "f"
+    | "e"
+    | "E"
+    | "g"
+    | "G"
+    | "F"
+    | "h"
+    | "H" => {
+      if width_star is Some(a) {
+        args.push(a)
+      }
+      if prec_star is Some(a) {
+        args.push(a)
+      }
+    }
+    "s" | "S" | "b" | "B" =>
+      if width_given {
+        if width_star is Some(a) {
+          args.push(a)
+        }
+      } else if prec_star is Some(a) {
+        args.push(a)
+      }
+    _ => ()
+  }
+  match conv {
+    "d" | "i" | "u" | "x" | "X" | "o" | "N" =>
+      args.push("i:" + int32_value(rand).to_string())
+    "l" | "n" => {
+      args.push("i:" + int32_value(rand).to_string())
+      // followed by an integer conversion, this would be e.g. `%lx`
+      return s + "/"
+    }
+    "ld" | "lu" | "lx" => args.push("l:" + int32_value(rand).to_string())
+    "Ld" | "Lx" | "LX" => args.push("L:" + int64_value(rand).to_string())
+    "nd" | "nu" => args.push("n:" + int64_value(rand).to_string())
+    "s" | "S" => args.push("s:" + hex(word(rand)))
+    "c" | "C" => args.push("c:" + small(rand, 0, 127).to_string())
+    "f" | "e" | "E" | "g" | "G" | "F" | "h" | "H" => {
+      // with '+' or ' ', the sign of NaN depends on the C library: "nan"
+      // on macOS, "+nan" (as in C99) with glibc
+      let signed = s.contains("+") || s.contains(" ")
+      args.push(
+        "f:" +
+        float_bits(rand, nan=!(signed && conv is ("f" | "e" | "E" | "g" | "G"))),
+      )
+    }
+    "b" | "B" => args.push("b:" + (if rand.boolean() { "1" } else { "0" }))
+    "a" => args.push("a:" + hex(word(rand)))
+    "t" => args.push("t:" + hex(word(rand)))
+    "{" => {
+      let sub_args = []
+      let sub = format_string(rand, sub_args, depth + 1)
+      args.push("F:" + hex(sub))
+      return s + sub + "%}"
+    }
+    "(" => {
+      // the format given as argument must have the same type as the
+      // sub-format: use the same conversions with other literals
+      let convs = []
+      for _ in 0..<small(rand, 0, 3) {
+        convs.push(pick(rand, ["%d", "%s", "%c", "%B", "%f", "%x"]))
+      }
+      let sub = convs.join("-")
+      let arg = convs
+        .map(c => word(rand).replace_all(old="%", new="%%") + c)
+        .join("")
+      args.push("P:" + hex(arg))
+      for c in convs {
+        match c {
+          "%d" | "%x" => args.push("i:" + int32_value(rand).to_string())
+          "%s" => args.push("s:" + hex(word(rand)))
+          "%c" => args.push("c:" + small(rand, 32, 126).to_string())
+          "%B" => args.push("b:1")
+          _ => args.push("f:" + float_bits(rand))
+        }
+      }
+      return s + sub + "%)"
+    }
+    _ => ()
+  }
+  s
+}
+
+///|
+/// Generate a format string and its arguments.
+fn format_string(
+  rand : @random.Rand,
+  args : Array[String],
+  depth : Int,
+) -> String {
+  let buf = StringBuilder()
+  for _ in 0..<small(rand, 1, 8) {
+    match rand.int(limit=10) {
+      0 | 1 | 2 => {
+        let w = word(rand)
+        // '%' starts a conversion, and '@' followed by '[' or '{' and
+        // '<' may make an invalid box description
+        buf.write_string(
+          w.replace_all(old="%", new="%%").replace_all(old="<", new="("),
+        )
+      }
+      3 | 4 | 5 => {
+        let directive = pick(rand, [
+          "@[", "@[<hov 2>", "@[<v 0>", "@[<b>", "@[<h>", "@[<hv 1>", "@[<hov -1>",
+          "@]", "@]", "@ ", "@ ", "@,", "@;", "@;<1 2>", "@;<0 -1>", "@;<2>", "@?",
+          "@\n", "@.", "@<3>", "@<0>", "@{<t>", "@}", "@@", "@%%", "@x", "@<", "@;<x",
+          "@[<v 2>", "@<-2>", "@{", "@[<hov %d>", "@{<%s>",
+        ])
+        buf.write_string(directive)
+        // the arguments of the box and tag descriptions
+        match directive {
+          "@[<hov %d>" => args.push("i:" + small(rand, 0, 4).to_string())
+          "@{<%s>" => args.push("s:" + hex(pick(rand, ["t", "u", ""])))
+          _ => ()
+        }
+      }
+      _ => buf.write_string(conversion(rand, args, depth))
+    }
+  }
+  buf.to_string()
+}
+
+///|
+/// The characters inserted by `mutate`.
+let mutations : Array[String] = [
+  "%", "@", "[", "]", "{", "}", "(", ")", "<", ">", ".", "*", "-", "+", "#", " ",
+  "0", "1", "9", "d", "s", "l", "L", "n", "N", "c", "C", "f", "F", "a", "t", "!",
+  ",", "_", "%{", "%}", "%(", "%)", "%_", "%l", "@[<", "@{<", "@;<", "@<", "é",
+  "r", "[", "^", "\n",
+]
+
+///|
+/// Insert, delete or replace a few characters of a format string.
+fn mutate(rand : @random.Rand, fmt : String) -> String {
+  let chars : Array[String] = fmt.iter().map(c => c.to_string()).collect()
+  for _ in 0..<small(rand, 1, 3) {
+    let i = rand.int(limit=chars.length() + 1)
+    match rand.int(limit=3) {
+      0 if i < chars.length() => ignore(chars.remove(i))
+      1 if i < chars.length() => chars[i] = pick(rand, mutations)
+      _ => chars.insert(i, pick(rand, mutations))
+    }
+  }
+  chars.join("")
+}
+
+///|
+fn script(rand : @random.Rand) -> String {
+  let ops = []
+  if rand.boolean() {
+    ops.push("margin \{small(rand, 1, 100)}")
+  }
+  if rand.int(limit=4) == 0 {
+    ops.push("max_indent \{small(rand, 0, 80)}")
+  }
+  if rand.int(limit=5) == 0 {
+    ops.push("max_boxes \{small(rand, 0, 8)}")
+    ops.push("ellipsis \{hex(pick(rand, ["...", "*", ""]))}")
+  }
+  if rand.int(limit=4) == 0 {
+    ops.push("mark_tags 1")
+  }
+  for _ in 0..<small(rand, 1, 60) {
+    let op = match rand.int(limit=30) {
+      0 | 1 | 2 =>
+        "box \{pick(rand, ["b", "h", "v", "hv", "hov"])} \{small(rand, -2, 6)}"
+      3 | 4 => "close"
+      5 | 6 | 7 => "str \{hex(word(rand))}"
+      8 => "as \{small(rand, -2, 10)} \{hex(word(rand))}"
+      9 => "int \{int32_value(rand)}"
+      10 => "char \{small(rand, 32, 126)}"
+      11 => "float \{float_bits(rand)}"
+      12 | 13 => "break \{small(rand, -1, 4)} \{small(rand, -2, 4)}"
+      14 =>
+        "custom \{hex(word(rand))} \{small(rand, 0, 3)} \{hex(word(rand))} \{hex(word(rand))} \{small(rand, -1, 3)} \{hex(word(rand))}"
+      15 | 16 => pick(rand, ["space", "cut"])
+      17 =>
+        pick(rand, ["force_newline", "if_newline", "flush", "newline", "bool 1"])
+      18 => pick(rand, ["tbox", "tclose", "set_tab", "tab", "set_tab"])
+      19 => "tbreak \{small(rand, 0, 3)} \{small(rand, -1, 3)}"
+      20 => pick(rand, ["tag \{hex(pick(rand, ["t", "u", ""]))}", "ctag"])
+      21 =>
+        "text \{hex(["a b", "hello world  x", "line\nbreak here", word(rand)] |> pick(rand, _))}"
+      22 | 23 => {
+        // a random mutation of a format string, only parsed
+        let fmt = format_string(rand, [], 0)
+        "check \{hex(mutate(rand, fmt))}"
+      }
+      _ => {
+        let args = []
+        let fmt = format_string(rand, args, 0)
+        ["printf", hex(fmt), ..args].join(" ")
+      }
+    }
+    ops.push(op)
+  }
+  ops.join("\n") + "\n"
+}
+
+///|
+/// The message of an exception `Failure` or `Invalid_argument` reported by
+/// OCaml.
+fn ocaml_error_message(err : String) -> String? {
+  for
+    prefix in [
+      "Fatal error: exception Failure(\"", "Fatal error: exception Invalid_argument(\"",
+    ] {
+    if err.has_prefix(prefix) && err.has_suffix("\")") {
+      return Some(
+        err
+        .view(start_offset=prefix.length(), end_offset=err.length() - 2)
+        .to_owned(),
+      )
+    }
+  }
+  None
+}
+
+///|
+async fn run(exe : String, path : String) -> (Int, Bytes, String) {
+  let (code, out, err) = @process.collect_output(
+    exe,
+    [],
+    stdin=@process.redirect_from_file(path),
+  )
+  (code, out.binary(), err.text())
+}
+
+///|
+async fn main {
+  let args = @env.args()
+  let count = if args.length() > 1 { @string.parse_int(args[1]) } else { 1000 }
+  let seed = if args.length() > 2 { args[2] } else { "0" }
+  // the seed of ChaCha8 must have 32 bytes
+  let seed_bytes = @utf8.encode(
+    (seed + String::make(32, '_')).view(end_offset=32),
+  )
+  let rand = @random.Rand::chacha8(seed=seed_bytes)
+  let tmp = @fs.tmpdir(prefix="format-fuzz")
+  let reference_driver = build_drivers(tmp)
+  let path = tmp + "/script.txt"
+  let mut diffs = 0
+  let mut skipped = 0
+  let rejections : Map[String, Int] = Map([])
+  for i in 0..<count {
+    let src = script(rand)
+    @fs.write_file(path, src)
+    let (code, expected, err) = run(reference_driver, path)
+    if code != 0 {
+      // OCaml rejected the script (e.g. an invalid format string)
+      skipped += 1
+      let reason = match err.split("\n").next() {
+        Some(line) if line != "" => line.to_owned()
+        _ => "exit code \{code}"
+      }
+      if !rejections.contains(reason) && code < 0 {
+        // a crash means the arguments don't match the format: a bug of the
+        // generator
+        @stdio.stdout.write("=== OCaml crashed on script \{i}:\n\{src}")
+      }
+      rejections[reason] = rejections.get(reason).unwrap_or(0) + 1
+      // invalid formats must be rejected by bobzhang/format as well, with
+      // the same message
+      if code > 0 {
+        // `abort` prints its message on stdout
+        let (mbt_code, mbt_out, _) = run(mbt_driver, path)
+        let mbt_reason = @utf8.decode_lossy(mbt_out)
+          .split("\n")
+          .next()
+          .unwrap_or("")
+          .to_owned()
+        if mbt_code == 0 || ocaml_error_message(reason) != Some(mbt_reason) {
+          diffs += 1
+          @stdio.stdout.write(
+            "=== script \{i} rejected by OCaml (\{reason}), MoonBit: \{mbt_reason} (exit code \{mbt_code})\n\{src}",
+          )
+        }
+      }
+      continue
+    }
+    let valid_utf8 = try {
+      ignore(@utf8.decode(expected))
+      true
+    } catch {
+      _ => false
+    }
+    if !valid_utf8 {
+      // OCaml printed invalid UTF-8 (e.g. the first byte of a character in
+      // an error message), which a MoonBit string can't contain
+      skipped += 1
+      continue
+    }
+    let (code, actual, _) = run(mbt_driver, path)
+    if code != 0 || expected != actual {
+      diffs += 1
+      @stdio.stdout.write("=== difference for script \{i}:\n")
+      @stdio.stdout.write(src)
+      @stdio.stdout.write("--- OCaml:\n")
+      @stdio.stdout.write(expected)
+      @stdio.stdout.write("\n--- MoonBit (exit code \{code}):\n")
+      @stdio.stdout.write(actual)
+      @stdio.stdout.write("\n")
+      if diffs >= 5 {
+        break
+      }
+    }
+  }
+  for reason, n in rejections {
+    @stdio.stdout.write("rejected by OCaml (\{n}): \{reason}\n")
+  }
+  @stdio.stdout.write(
+    "\{diffs} differences (\{skipped} scripts rejected by OCaml)\n",
+  )
+  if diffs > 0 {
+    raise Failure("differences found")
+  }
+}

@@ -1,0 +1,6 @@
+_build/
+target/
+.mooncakes/
+*.log
+# The differential fuzzer is a separate workspace member, not published
+/fuzz/

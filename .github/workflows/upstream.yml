@@ -2,7 +2,8 @@ name: Upstream compatibility
 
 # Build the reference OCaml atdcat at the upstream commit this port follows,
 # check that the compatibility tests embedded in src/atdcat are up to date
-# with it, and run a bounded differential fuzzing session.
+# with it, and run bounded differential fuzzing sessions of atdcat and of the
+# format module (against OCaml's Format).
 
 on:
   push:
@@ -56,3 +57,6 @@ jobs:
         run: |
           moon build --target native src/cmd/atdcat
           moonx scripts/fuzz_atdcat.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe" 300 "$GITHUB_RUN_ID"
+
+      - name: Differential fuzzing of the format module
+        run: opam exec -- moonx scripts/fuzz_format.mbtx 3000 "$GITHUB_RUN_ID"

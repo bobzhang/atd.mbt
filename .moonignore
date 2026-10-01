@@ -1,0 +1,10 @@
+.repos/
+_build/
+target/
+.mooncakes/
+*.log
+*.md.new
+# The format module is a separate workspace member, published on its own
+/format/
+# The workspace is for development only
+/moon.work

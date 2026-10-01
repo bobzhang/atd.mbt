@@ -1,5 +1,5 @@
 import {
-  "bobzhang/atd/format",
+  "bobzhang/format",
   "bobzhang/atd/easy_format",
   "bobzhang/atd/yojson",
   "moonbitlang/x/crypto",
