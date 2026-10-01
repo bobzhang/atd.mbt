@@ -1,7 +1,7 @@
 ///|
 /// The value used by the atdts test suite (`test_atdts.ts`).
 fn sample_root() -> @everything.Root raise {
-  @everything.Root::new(
+  @everything.Root(
     id="abc",
     this=100,
     items=[[], [1, 2]],
@@ -27,10 +27,9 @@ fn sample_root() -> @everything.Root raise {
       Json::number(123),
     ],
     foo=None,
-    parametrized_record=@everything.IntFloatParametrizedRecord::new(
-      field_a=42,
-      field_b=[9.9, 8.8],
-    ),
+    parametrized_record=@everything.IntFloatParametrizedRecord(field_a=42, field_b=[
+      9.9, 8.8,
+    ]),
     parametrized_tuple=(
       @everything.DifferentKindsOfThings::WOW,
       @everything.DifferentKindsOfThings::WOW,

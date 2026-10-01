@@ -280,10 +280,11 @@ fn Env::gen_record(
   // constructor
   out.push("///|")
   out.push("/// Create a value of type `\{type_name}`.")
+  out.push("#alias(new, deprecated=\"Use `\{type_name}(...)` instead\")")
   if infos.is_empty() {
-    out.push("pub fn \{type_name}::new() -> \{type_name} {")
+    out.push("pub fn \{type_name}::\{type_name}() -> \{type_name} {")
   } else {
-    out.push("pub fn \{type_name}::new(")
+    out.push("pub fn \{type_name}::\{type_name}(")
     for f in infos {
       let t = self.type_of_expr(f.value_type)
       match f.kind {

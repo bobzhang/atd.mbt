@@ -34,7 +34,8 @@ pub extend Match with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Match`.
-pub fn Match::new(
+#alias(new, deprecated="Use `Match(...)` instead")
+pub fn Match::Match(
   match_~ : Int,
   fn_~ : String,
   kind~ : String,
@@ -215,7 +216,8 @@ pub extend Int64s with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Int64s`.
-pub fn Int64s::new(
+#alias(new, deprecated="Use `Int64s(...)` instead")
+pub fn Int64s::Int64s(
   big~ : Int64,
   big_str~ : Int64,
   small_str~ : Int,
@@ -303,7 +305,8 @@ pub extend Maps with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Maps`.
-pub fn Maps::new(
+#alias(new, deprecated="Use `Maps(...)` instead")
+pub fn Maps::Maps(
   by_name~ : Map[String, Int],
   by_id~ : Map[Int, String],
   pairs~ : Array[(String, Double)],
@@ -468,7 +471,8 @@ pub extend InlinePoint with Debug::{to_repr}
 
 ///|
 /// Create a value of type `InlinePoint`.
-pub fn InlinePoint::new(x~ : Double, y~ : Double) -> InlinePoint {
+#alias(new, deprecated="Use `InlinePoint(...)` instead")
+pub fn InlinePoint::InlinePoint(x~ : Double, y~ : Double) -> InlinePoint {
   InlinePoint::{ x, y, }
 }
 
@@ -540,7 +544,8 @@ pub extend InlineNestedB with Debug::{to_repr}
 
 ///|
 /// Create a value of type `InlineNestedB`.
-pub fn InlineNestedB::new(z~ : Int) -> InlineNestedB {
+#alias(new, deprecated="Use `InlineNestedB(...)` instead")
+pub fn InlineNestedB::InlineNestedB(z~ : Int) -> InlineNestedB {
   InlineNestedB::{ z, }
 }
 
@@ -746,7 +751,8 @@ pub extend Forest with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Forest`.
-pub fn Forest::new(trees~ : Array[Tree], parent? : Forest) -> Forest {
+#alias(new, deprecated="Use `Forest(...)` instead")
+pub fn Forest::Forest(trees~ : Array[Tree], parent? : Forest) -> Forest {
   Forest::{ trees, parent, }
 }
 
@@ -829,7 +835,8 @@ pub extend Defaults with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Defaults`.
-pub fn Defaults::new(
+#alias(new, deprecated="Use `Defaults(...)` instead")
+pub fn Defaults::Defaults(
   b? : Bool = false,
   i? : Int = 0,
   f? : Double = 0.0,
@@ -1062,7 +1069,8 @@ pub extend Patch with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Patch`.
-pub fn Patch::new(x? : Int?, y? : Int?, z? : Int?) -> Patch {
+#alias(new, deprecated="Use `Patch(...)` instead")
+pub fn Patch::Patch(x? : Int?, y? : Int?, z? : Int?) -> Patch {
   Patch::{ x, y, z, }
 }
 
@@ -1155,7 +1163,8 @@ pub extend NoPatch with Debug::{to_repr}
 
 ///|
 /// Create a value of type `NoPatch`.
-pub fn NoPatch::new(x? : Int?) -> NoPatch {
+#alias(new, deprecated="Use `NoPatch(...)` instead")
+pub fn NoPatch::NoPatch(x? : Int?) -> NoPatch {
   NoPatch::{ x, }
 }
 
@@ -1294,7 +1303,8 @@ pub extend Tuples with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Tuples`.
-pub fn Tuples::new(
+#alias(new, deprecated="Use `Tuples(...)` instead")
+pub fn Tuples::Tuples(
   unit_tuple~ : Unit,
   single~ : Int,
   pair~ : (Int, String),
@@ -1447,7 +1457,8 @@ pub extend Temperatures with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Temperatures`.
-pub fn Temperatures::new(
+#alias(new, deprecated="Use `Temperatures(...)` instead")
+pub fn Temperatures::Temperatures(
   temps~ : Array[Celsius],
   plain~ : String,
 ) -> Temperatures {
@@ -1599,7 +1610,8 @@ pub extend Tagged with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Tagged`.
-pub fn Tagged::new(tag~ : @ext.Tag, tags~ : Array[@ext.Tag]) -> Tagged {
+#alias(new, deprecated="Use `Tagged(...)` instead")
+pub fn Tagged::Tagged(tag~ : @ext.Tag, tags~ : Array[@ext.Tag]) -> Tagged {
   Tagged::{ tag, tags, }
 }
 
@@ -1665,7 +1677,8 @@ pub(all) struct NoDerive {
 
 ///|
 /// Create a value of type `NoDerive`.
-pub fn NoDerive::new(value~ : Celsius) -> NoDerive {
+#alias(new, deprecated="Use `NoDerive(...)` instead")
+pub fn NoDerive::NoDerive(value~ : Celsius) -> NoDerive {
   NoDerive::{ value, }
 }
 
@@ -1729,7 +1742,8 @@ pub extend EmptyRecord with Debug::{to_repr}
 
 ///|
 /// Create a value of type `EmptyRecord`.
-pub fn EmptyRecord::new() -> EmptyRecord {
+#alias(new, deprecated="Use `EmptyRecord(...)` instead")
+pub fn EmptyRecord::EmptyRecord() -> EmptyRecord {
   EmptyRecord::{ }
 }
 
@@ -1866,7 +1880,11 @@ pub extend StringIntEntry with Debug::{to_repr}
 
 ///|
 /// Create a value of type `StringIntEntry`.
-pub fn StringIntEntry::new(key~ : String, value~ : Int) -> StringIntEntry {
+#alias(new, deprecated="Use `StringIntEntry(...)` instead")
+pub fn StringIntEntry::StringIntEntry(
+  key~ : String,
+  value~ : Int,
+) -> StringIntEntry {
   StringIntEntry::{ key, value, }
 }
 
