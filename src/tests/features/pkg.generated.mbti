@@ -312,9 +312,8 @@ pub(all) struct Defaults {
   custom : Array[Int]
   custom_enum : Color
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Defaults::Defaults(b? : Bool, i? : Int, f? : Double, s? : String, l? : Array[String], o? : Int?, u? : Unit, j? : Json, alias_default? : Array[String], custom? : Array[Int], custom_enum? : Color) -> Self
 pub fn Defaults::equal(Self, Self) -> Bool
+pub fn Defaults::new(b? : Bool, i? : Int, f? : Double, s? : String, l? : Array[String], o? : Int?, u? : Unit, j? : Json, alias_default? : Array[String], custom? : Array[Int], custom_enum? : Color) -> Self
 pub fn Defaults::not_equal(Self, Self) -> Bool
 pub fn Defaults::to_json(Self) -> Json
 pub fn Defaults::to_repr(Self) -> @debug.Repr
@@ -332,9 +331,8 @@ pub impl ToJson for Documented
 
 pub(all) struct EmptyRecord {
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn EmptyRecord::EmptyRecord() -> Self
 pub fn EmptyRecord::equal(Self, Self) -> Bool
+pub fn EmptyRecord::new() -> Self
 pub fn EmptyRecord::not_equal(Self, Self) -> Bool
 pub fn EmptyRecord::to_json(Self) -> Json
 pub fn EmptyRecord::to_repr(Self) -> @debug.Repr
@@ -344,9 +342,8 @@ pub(all) struct Forest {
   trees : Array[Tree]
   parent : Forest?
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Forest::Forest(trees~ : Array[Tree], parent? : Self) -> Self
 pub fn Forest::equal(Self, Self) -> Bool
+pub fn Forest::new(trees~ : Array[Tree], parent? : Self) -> Self
 pub fn Forest::not_equal(Self, Self) -> Bool
 pub fn Forest::to_json(Self) -> Json
 pub fn Forest::to_repr(Self) -> @debug.Repr
@@ -386,9 +383,8 @@ pub impl ToJson for InlineNested
 pub(all) struct InlineNestedB {
   z : Int
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn InlineNestedB::InlineNestedB(z~ : Int) -> Self
 pub fn InlineNestedB::equal(Self, Self) -> Bool
+pub fn InlineNestedB::new(z~ : Int) -> Self
 pub fn InlineNestedB::not_equal(Self, Self) -> Bool
 pub fn InlineNestedB::to_json(Self) -> Json
 pub fn InlineNestedB::to_repr(Self) -> @debug.Repr
@@ -398,9 +394,8 @@ pub(all) struct InlinePoint {
   x : Double
   y : Double
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn InlinePoint::InlinePoint(x~ : Double, y~ : Double) -> Self
 pub fn InlinePoint::equal(Self, Self) -> Bool
+pub fn InlinePoint::new(x~ : Double, y~ : Double) -> Self
 pub fn InlinePoint::not_equal(Self, Self) -> Bool
 pub fn InlinePoint::to_json(Self) -> Json
 pub fn InlinePoint::to_repr(Self) -> @debug.Repr
@@ -413,9 +408,8 @@ pub(all) struct Int64s {
   rounded : Double
   precise : Double
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Int64s::Int64s(big~ : Int64, big_str~ : Int64, small_str~ : Int, rounded~ : Double, precise~ : Double) -> Self
 pub fn Int64s::equal(Self, Self) -> Bool
+pub fn Int64s::new(big~ : Int64, big_str~ : Int64, small_str~ : Int, rounded~ : Double, precise~ : Double) -> Self
 pub fn Int64s::not_equal(Self, Self) -> Bool
 pub fn Int64s::to_json(Self) -> Json
 pub fn Int64s::to_repr(Self) -> @debug.Repr
@@ -426,9 +420,8 @@ pub(all) struct Maps {
   by_id : Map[Int, String]
   pairs : Array[(String, Double)]
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Maps::Maps(by_name~ : Map[String, Int], by_id~ : Map[Int, String], pairs~ : Array[(String, Double)]) -> Self
 pub fn Maps::equal(Self, Self) -> Bool
+pub fn Maps::new(by_name~ : Map[String, Int], by_id~ : Map[Int, String], pairs~ : Array[(String, Double)]) -> Self
 pub fn Maps::not_equal(Self, Self) -> Bool
 pub fn Maps::to_json(Self) -> Json
 pub fn Maps::to_repr(Self) -> @debug.Repr
@@ -441,9 +434,8 @@ pub(all) struct Match {
   x_ : Bool
   some_list : Array[Int]
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Match::Match(match_~ : Int, fn_~ : String, kind~ : String, x_~ : Bool, some_list? : Array[Int]) -> Self
 pub fn Match::equal(Self, Self) -> Bool
+pub fn Match::new(match_~ : Int, fn_~ : String, kind~ : String, x_~ : Bool, some_list? : Array[Int]) -> Self
 pub fn Match::not_equal(Self, Self) -> Bool
 pub fn Match::to_json(Self) -> Json
 pub fn Match::to_repr(Self) -> @debug.Repr
@@ -452,17 +444,15 @@ pub impl ToJson for Match
 pub(all) struct NoDerive {
   value : Celsius
 }
-#alias(new, deprecated)
-pub fn NoDerive::NoDerive(value~ : Celsius) -> Self
+pub fn NoDerive::new(value~ : Celsius) -> Self
 pub fn NoDerive::to_json(Self) -> Json
 pub impl ToJson for NoDerive
 
 pub(all) struct NoPatch {
   x : Int??
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn NoPatch::NoPatch(x? : Int?) -> Self
 pub fn NoPatch::equal(Self, Self) -> Bool
+pub fn NoPatch::new(x? : Int?) -> Self
 pub fn NoPatch::not_equal(Self, Self) -> Bool
 pub fn NoPatch::to_json(Self) -> Json
 pub fn NoPatch::to_repr(Self) -> @debug.Repr
@@ -485,9 +475,8 @@ pub(all) struct Patch {
   y : Int??
   z : Int??
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Patch::Patch(x? : Int?, y? : Int?, z? : Int?) -> Self
 pub fn Patch::equal(Self, Self) -> Bool
+pub fn Patch::new(x? : Int?, y? : Int?, z? : Int?) -> Self
 pub fn Patch::not_equal(Self, Self) -> Bool
 pub fn Patch::to_json(Self) -> Json
 pub fn Patch::to_repr(Self) -> @debug.Repr
@@ -497,9 +486,8 @@ pub(all) struct StringIntEntry {
   key : String
   value : Int
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn StringIntEntry::StringIntEntry(key~ : String, value~ : Int) -> Self
 pub fn StringIntEntry::equal(Self, Self) -> Bool
+pub fn StringIntEntry::new(key~ : String, value~ : Int) -> Self
 pub fn StringIntEntry::not_equal(Self, Self) -> Bool
 pub fn StringIntEntry::to_json(Self) -> Json
 pub fn StringIntEntry::to_repr(Self) -> @debug.Repr
@@ -509,9 +497,8 @@ pub(all) struct Tagged {
   tag : String
   tags : Array[String]
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Tagged::Tagged(tag~ : String, tags~ : Array[String]) -> Self
 pub fn Tagged::equal(Self, Self) -> Bool
+pub fn Tagged::new(tag~ : String, tags~ : Array[String]) -> Self
 pub fn Tagged::not_equal(Self, Self) -> Bool
 pub fn Tagged::to_json(Self) -> Json
 pub fn Tagged::to_repr(Self) -> @debug.Repr
@@ -521,9 +508,8 @@ pub(all) struct Temperatures {
   temps : Array[Celsius]
   plain : String
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Temperatures::Temperatures(temps~ : Array[Celsius], plain~ : String) -> Self
 pub fn Temperatures::equal(Self, Self) -> Bool
+pub fn Temperatures::new(temps~ : Array[Celsius], plain~ : String) -> Self
 pub fn Temperatures::not_equal(Self, Self) -> Bool
 pub fn Temperatures::to_json(Self) -> Json
 pub fn Temperatures::to_repr(Self) -> @debug.Repr
@@ -545,9 +531,8 @@ pub(all) struct Tuples {
   pair : (Int, String)
   annotated : (Int, Double)
 } derive(Eq, @debug.Debug)
-#alias(new, deprecated)
-pub fn Tuples::Tuples(unit_tuple~ : Unit, single~ : Int, pair~ : (Int, String), annotated~ : (Int, Double)) -> Self
 pub fn Tuples::equal(Self, Self) -> Bool
+pub fn Tuples::new(unit_tuple~ : Unit, single~ : Int, pair~ : (Int, String), annotated~ : (Int, Double)) -> Self
 pub fn Tuples::not_equal(Self, Self) -> Bool
 pub fn Tuples::to_json(Self) -> Json
 pub fn Tuples::to_repr(Self) -> @debug.Repr

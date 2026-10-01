@@ -183,8 +183,7 @@ pub extend SimpleRecord with Debug::{to_repr}
 
 ///|
 /// Create a value of type `SimpleRecord`.
-#alias(new, deprecated="Use `SimpleRecord(...)` instead")
-pub fn SimpleRecord::SimpleRecord(str~ : String) -> SimpleRecord {
+pub fn SimpleRecord::new(str~ : String) -> SimpleRecord {
   SimpleRecord::{ str, }
 }
 
@@ -274,8 +273,7 @@ pub extend Root with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Root`.
-#alias(new, deprecated="Use `Root(...)` instead")
-pub fn Root::Root(
+pub fn Root::new(
   id~ : String,
   this~ : This,
   items~ : Array[Array[Int]],
@@ -716,8 +714,7 @@ pub extend Foo with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Foo`.
-#alias(new, deprecated="Use `Foo(...)` instead")
-pub fn Foo::Foo(foo~ : String) -> Foo {
+pub fn Foo::new(foo~ : String) -> Foo {
   Foo::{ foo, }
 }
 
@@ -895,8 +892,7 @@ pub extend IntFloatParametrizedRecord with Debug::{to_repr}
 
 ///|
 /// Create a value of type `IntFloatParametrizedRecord`.
-#alias(new, deprecated="Use `IntFloatParametrizedRecord(...)` instead")
-pub fn IntFloatParametrizedRecord::IntFloatParametrizedRecord(
+pub fn IntFloatParametrizedRecord::new(
   field_a~ : Int,
   field_b? : Array[Double] = [],
 ) -> IntFloatParametrizedRecord {

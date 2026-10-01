@@ -91,7 +91,7 @@ pub(all) struct Point {
   y : Double
 } derive(Eq, Debug)
 
-pub fn Point::Point(x~ : Double, y? : Double = 1.0) -> Point
+pub fn Point::new(x~ : Double, y? : Double = 1.0) -> Point
 
 pub(all) enum Shape {
   Dot
@@ -107,7 +107,7 @@ pub impl ToJson for Shape
 ```
 
 ```mbt nocheck
-let s = string_of_shape(Circle(Point(x=0), 2.5))
+let s = string_of_shape(Circle(Point::new(x=0), 2.5))
 // ["Circle",[{"x":0,"y":1},2.5]]
 let shape = shape_of_string(s)
 ```
@@ -115,9 +115,8 @@ let shape = shape_of_string(s)
 For each ATD type `foo`:
 
 - `Foo` is a `struct` for records, an `enum` for sum types and a type alias
-  otherwise. Records get a constructor `Foo(...)` with labelled arguments,
-  optional for the optional fields and the fields with a default value
-  (`Foo::new` remains as a deprecated alias).
+  otherwise. Records get a `Foo::new` constructor with labelled arguments,
+  optional for the optional fields and the fields with a default value.
 - `write_foo` and `read_foo` are the composable JSON writer and reader;
   `foo_of_string` parses JSON with `@atd_runtime.parse`, which keeps the
   exact text of numbers so that integers are validated and 64-bit integers
