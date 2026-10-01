@@ -151,7 +151,7 @@ async fn main {
   let mbt_atdcat = if args.length() > 4 {
     args[4]
   } else {
-    "_build/native/debug/build/cmd/atdcat/atdcat.exe"
+    "_build/native/debug/build/bobzhang/atd/cmd/atdcat/atdcat.exe"
   }
   // the seed of ChaCha8 must have 32 bytes
   let seed_bytes = @utf8.encode(

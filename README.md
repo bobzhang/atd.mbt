@@ -45,7 +45,7 @@ From a clone of the repository:
 
 ```bash
 moon run src/cmd/atdcat -- foo.atd
-moon build --target native   # _build/native/debug/build/cmd/{atdcat,atdmbt}/*.exe
+moon build --target native   # _build/native/debug/build/bobzhang/atd/cmd/{atdcat,atdmbt}/*.exe
 ```
 
 ## atdcat

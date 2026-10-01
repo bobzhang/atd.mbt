@@ -24,7 +24,9 @@ async fn check(cmd : String, args : Array[String], cwd? : String = ".") -> Unit 
 ///|
 async fn main {
   check("moon", ["build", "--target", "native", "src/cmd/atdmbt"])
-  let atdmbt = @fs.realpath("_build/native/debug/build/cmd/atdmbt/atdmbt.exe")
+  let atdmbt = @fs.realpath(
+    "_build/native/debug/build/bobzhang/atd/cmd/atdmbt/atdmbt.exe",
+  )
   for dir in @fs.readdir("src/tests", sort=true) {
     let dir = "src/tests/" + dir
     if @fs.kind(dir) is Directory {
