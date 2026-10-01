@@ -30,7 +30,7 @@ priv struct Parser {
 }
 
 ///|
-fn Parser::new(lexer : Lexer) -> Parser raise Error {
+fn Parser::Parser(lexer : Lexer) -> Parser raise Error {
   let init = lexer.curr_pos()
   let (tok, tok_loc) = lexer.token()
   { lexer, tok, tok_loc, last_end: init, }
@@ -113,7 +113,7 @@ fn Parser::asection(self : Parser) -> AnnotSection raise Error {
     self.fail_with("Expecting '>'")
   }
   self.advance()
-  { name, loc: Loc::new(start, self.last_end), fields, }
+  { name, loc: Loc(start, self.last_end), fields, }
 }
 
 ///|
@@ -130,12 +130,12 @@ fn Parser::afield(self : Parser) -> AnnotField raise Error {
     match self.tok {
       StringLit(s) => {
         self.advance()
-        { name, loc: Loc::new(start, self.last_end), value: Some(s), }
+        { name, loc: Loc(start, self.last_end), value: Some(s), }
       }
       _ => self.fail()
     }
   } else {
-    { name, loc: Loc::new(start, self.last_end), value: None, }
+    { name, loc: Loc(start, self.last_end), value: None, }
   }
 }
 
@@ -144,7 +144,7 @@ fn Parser::afield(self : Parser) -> AnnotField raise Error {
 fn Parser::module_(self : Parser) -> Module raise Error {
   let an_start = if self.tok is Lt { self.tok_loc.start } else { self.last_end }
   let an = self.annot()
-  let head_loc = Loc::new(an_start, self.last_end)
+  let head_loc = Loc(an_start, self.last_end)
   let imports = []
   while self.tok is From {
     imports.push(self.from_import())
@@ -187,13 +187,7 @@ fn Parser::from_import(self : Parser) -> Import raise Error {
     self.advance()
     types.push(self.imported_type_item())
   }
-  Import::new(
-    loc=Loc::new(start, self.last_end),
-    path~,
-    annot~,
-    alias_?,
-    types~,
-  )
+  Import::new(loc=Loc(start, self.last_end), path~, annot~, alias_?, types~)
 }
 
 ///|
@@ -281,7 +275,7 @@ fn Parser::type_def(self : Parser) -> TypeDef raise Error {
   }
   let value = self.type_expr(TopDef)
   let orig : TypeDef = {
-    loc: Loc::new(start, self.last_end),
+    loc: Loc(start, self.last_end),
     name: TypeName::simple(name),
     param,
     annot,
@@ -322,7 +316,7 @@ fn Parser::type_expr(self : Parser, ctx : Ctx) -> TypeExpr raise Error {
       if self.tok is ClBrack {
         self.advance()
         let a = self.annot()
-        Sum(Loc::new(start, self.last_end), [], a)
+        Sum(Loc(start, self.last_end), [], a)
       } else {
         let l = self.variant_list()
         if !(self.tok is ClBrack) {
@@ -330,7 +324,7 @@ fn Parser::type_expr(self : Parser, ctx : Ctx) -> TypeExpr raise Error {
         }
         self.advance()
         let a = self.annot()
-        Sum(Loc::new(start, self.last_end), l, a)
+        Sum(Loc(start, self.last_end), l, a)
       }
     }
     OpCurl => {
@@ -338,7 +332,7 @@ fn Parser::type_expr(self : Parser, ctx : Ctx) -> TypeExpr raise Error {
       if self.tok is ClCurl {
         self.advance()
         let a = self.annot()
-        Record(Loc::new(start, self.last_end), [], a)
+        Record(Loc(start, self.last_end), [], a)
       } else {
         let l = self.field_list()
         if !(self.tok is ClCurl) {
@@ -346,7 +340,7 @@ fn Parser::type_expr(self : Parser, ctx : Ctx) -> TypeExpr raise Error {
         }
         self.advance()
         let a = self.annot()
-        Record(Loc::new(start, self.last_end), l, a)
+        Record(Loc(start, self.last_end), l, a)
       }
     }
     OpParen =>
@@ -356,7 +350,7 @@ fn Parser::type_expr(self : Parser, ctx : Ctx) -> TypeExpr raise Error {
       }
     Tident(s) => {
       self.advance()
-      Tvar(Loc::new(start, self.last_end), s)
+      Tvar(Loc(start, self.last_end), s)
     }
     Lident(_) | From | ImportKw | As =>
       // empty type_args: the production starts at the end of the previous
@@ -398,7 +392,7 @@ fn Parser::paren(self : Parser) -> Paren raise Error {
   let finish_tuple = (cells : Array[Cell]) => {
     self.advance() // CL_PAREN
     let a = self.annot()
-    PTuple(Tuple(Loc::new(start, self.last_end), cells, a))
+    PTuple(Tuple(Loc(start, self.last_end), cells, a))
   }
   if self.tok is ClParen {
     // empty cartesian product
@@ -468,14 +462,11 @@ fn Parser::annot_expr(self : Parser, first~ : Bool) -> (Cell, Bool) raise Error 
           ErrorFollow
         },
       )
-      ({ loc: Loc::new(start, self.last_end), expr: x, annot: a, }, true)
+      ({ loc: Loc(start, self.last_end), expr: x, annot: a, }, true)
     }
     _ => {
       let x = self.type_expr(if first { ParenFirst } else { ErrorFollow })
-      (
-        { loc: Loc::new(x.loc().start, self.last_end), expr: x, annot: [], },
-        false,
-      )
+      ({ loc: Loc(x.loc().start, self.last_end), expr: x, annot: [], }, false)
     }
   }
 }
@@ -494,10 +485,10 @@ fn Parser::type_inst_rest(
     self.advance()
     path.push(self.lident_or_kw())
   }
-  let inst_loc = Loc::new(start, self.last_end)
+  let inst_loc = Loc(start, self.last_end)
   let a = self.annot()
-  let loc = Loc::new(start, self.last_end)
-  let name = TypeName::new(path)
+  let loc = Loc(start, self.last_end)
+  let name = TypeName(path)
   let inst : TypeInst = { loc: inst_loc, name, args, }
   if path is ["list" | "option" | "nullable" | "shared" | "wrap"] &&
     !self.can_reduce(ctx) {
@@ -570,15 +561,15 @@ fn Parser::variant(self : Parser) -> Variant raise Error {
           self.fail_with("Expecting type expression after 'of'")
         }
         let t = self.type_expr(ErrorFollow)
-        Variant(Loc::new(start, self.last_end), x, a, Some(t))
+        Variant(Loc(start, self.last_end), x, a, Some(t))
       } else {
-        Variant(Loc::new(start, self.last_end), x, a, None)
+        Variant(Loc(start, self.last_end), x, a, None)
       }
     }
     InheritKw => {
       self.advance()
       let t = self.type_expr(ErrorFollow)
-      Inherit(Loc::new(start, self.last_end), t)
+      Inherit(Loc(start, self.last_end), t)
     }
     _ => self.fail()
   }
@@ -611,7 +602,7 @@ fn Parser::field(self : Parser) -> Field raise Error {
     InheritKw => {
       self.advance()
       let t = self.type_expr(ErrorFollow)
-      return Inherit(Loc::new(start, self.last_end), t)
+      return Inherit(Loc(start, self.last_end), t)
     }
     Question => {
       self.advance()
@@ -633,7 +624,7 @@ fn Parser::field(self : Parser) -> Field raise Error {
     self.fail_with("Expecting type expression after ':'")
   }
   let t = self.type_expr(ErrorFollow)
-  Field({ loc: Loc::new(start, self.last_end), name, kind, annot: a, expr: t, })
+  Field({ loc: Loc(start, self.last_end), name, kind, annot: a, expr: t, })
 }
 
 ///|
@@ -644,15 +635,15 @@ pub fn parse_module(
   pos_fname? : String = "",
   pos_lnum? : Int = 1,
 ) -> Module raise AtdError {
-  let lexer = Lexer::new(src.to_owned(), fname=pos_fname, lnum=pos_lnum)
-  let parser = Parser::new(lexer) catch {
+  let lexer = Lexer(src.to_owned(), fname=pos_fname, lnum=pos_lnum)
+  let parser = Parser(lexer) catch {
     AtdError(_) as e => raise e
     _ => abort("unexpected error")
   }
   parser.module_() catch {
     RawSyntaxError(_) => {
       let pos = parser.tok_loc.end_
-      error("Syntax error:\n" + string_of_loc(Loc::new(pos, pos)))
+      error("Syntax error:\n" + string_of_loc(Loc(pos, pos)))
     }
     AtdError(_) as e => raise e
     _ => abort("unexpected error")

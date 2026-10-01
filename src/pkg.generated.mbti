@@ -279,8 +279,9 @@ pub(all) struct Loc {
   start : Pos
   end_ : Pos
 } derive(Eq, @debug.Debug)
+#alias(new, deprecated)
+pub fn Loc::Loc(Pos, Pos) -> Self
 pub fn Loc::compare(Self, Self) -> Int
-pub fn Loc::new(Pos, Pos) -> Self
 
 pub(all) struct Module {
   head : (Loc, Array[AnnotSection])
@@ -368,9 +369,10 @@ pub(all) struct TypeInst {
 pub(all) struct TypeName {
   path : Array[String]
 } derive(Eq, Hash, @debug.Debug)
+#alias(new, deprecated)
+pub fn TypeName::TypeName(Array[String]) -> Self
 pub fn TypeName::basename(Self) -> String
 pub fn TypeName::is_simple(Self, String) -> Bool
-pub fn TypeName::new(Array[String]) -> Self
 pub fn TypeName::simple(String) -> Self
 pub fn TypeName::split(Self) -> (String?, String) raise AtdError
 pub fn TypeName::to_string(Self) -> String
@@ -380,9 +382,10 @@ pub impl Show for TypeName
 pub struct UniqueNames {
   // private fields
 }
+#alias(new, deprecated)
+pub fn UniqueNames::UniqueNames(reserved_identifiers~ : Array[String], reserved_prefixes~ : Array[String], safe_prefix~ : String) -> Self
 pub fn UniqueNames::all(Self) -> Array[(String, String)]
 pub fn UniqueNames::create(Self, String) -> String
-pub fn UniqueNames::new(reserved_identifiers~ : Array[String], reserved_prefixes~ : Array[String], safe_prefix~ : String) -> Self
 pub fn UniqueNames::reverse_translate(Self, String) -> String?
 pub fn UniqueNames::translate(Self, String, preferred_translation? : String) -> String
 pub fn UniqueNames::translate_only(Self, String) -> String?

@@ -111,7 +111,7 @@ fn is_transparent_wrap(an : @atd.Annot) -> Bool {
 /// Lift all inline records and sums so that they only occur at the top of
 /// type definitions.
 fn lift_inline_types(defs : Array[@atd.TypeDef]) -> Array[@atd.TypeDef] {
-  let names = @atd.UniqueNames::new(
+  let names = @atd.UniqueNames(
     reserved_identifiers=defs.map(d => d.name.to_string()),
     reserved_prefixes=[],
     safe_prefix="",

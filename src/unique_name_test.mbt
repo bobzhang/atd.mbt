@@ -2,7 +2,7 @@
 
 ///|
 test "unique names: reserved identifiers" {
-  let u = @atd.UniqueNames::new(
+  let u = @atd.UniqueNames(
     reserved_identifiers=["y"],
     reserved_prefixes=[],
     safe_prefix="x_",
@@ -13,7 +13,7 @@ test "unique names: reserved identifiers" {
   assert_eq(u.translate_only("a"), Some("a"))
   assert_eq(u.translate("y_"), "y_")
   assert_eq(u.translate("y"), "y2")
-  let u = @atd.UniqueNames::new(
+  let u = @atd.UniqueNames(
     reserved_identifiers=["y"],
     reserved_prefixes=["y_"],
     safe_prefix="x_",
@@ -24,7 +24,7 @@ test "unique names: reserved identifiers" {
 ///|
 test "panic unique names: safe prefix conflicting with the empty prefix" {
   ignore(
-    @atd.UniqueNames::new(
+    @atd.UniqueNames(
       reserved_identifiers=[],
       reserved_prefixes=[""],
       safe_prefix="x_",
@@ -35,7 +35,7 @@ test "panic unique names: safe prefix conflicting with the empty prefix" {
 ///|
 test "panic unique names: safe prefix conflicting with a reserved prefix" {
   ignore(
-    @atd.UniqueNames::new(
+    @atd.UniqueNames(
       reserved_identifiers=[],
       reserved_prefixes=["x"],
       safe_prefix="x_",
@@ -45,7 +45,7 @@ test "panic unique names: safe prefix conflicting with a reserved prefix" {
 
 ///|
 test "unique names: reserved prefixes" {
-  let u = @atd.UniqueNames::new(
+  let u = @atd.UniqueNames(
     reserved_identifiers=[],
     reserved_prefixes=["y_"],
     safe_prefix="x_",
@@ -60,7 +60,7 @@ test "unique names: reserved prefixes" {
 
 ///|
 test "unique names: identifier creation" {
-  let u = @atd.UniqueNames::new(
+  let u = @atd.UniqueNames(
     reserved_identifiers=[],
     reserved_prefixes=["y_"],
     safe_prefix="x_",
