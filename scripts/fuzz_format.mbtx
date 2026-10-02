@@ -17,6 +17,7 @@ import {
   "moonbitlang/async@0.22.4/fs",
   "moonbitlang/async@0.22.4/process",
   "moonbitlang/async@0.22.4/stdio",
+  "moonbitlang/core/buffer",
   "moonbitlang/core/env",
   "moonbitlang/core/random",
   "moonbitlang/core/double",
@@ -443,13 +444,42 @@ fn ocaml_error_message(err : String) -> String? {
 }
 
 ///|
-async fn run(exe : String, path : String) -> (Int, Bytes, String) {
-  let (code, out, err) = @process.collect_output(
-    exe,
-    [],
-    stdin=@process.redirect_from_file(path),
-  )
-  (code, out.binary(), err.text())
+/// The largest output compared. Some scripts print an indentation of about
+/// `pp_infinity` (a billion) columns, e.g. a tabulation after `@<-2>`: such
+/// outputs don't fit in the memory of the script, and are skipped.
+const MAX_OUTPUT : Int = 1 << 20
+
+///|
+/// Run `exe` on the script `path`: its exit code, standard output and
+/// standard error, or `None` (and the process is stopped) when its standard
+/// output is longer than `MAX_OUTPUT` bytes.
+async fn run(exe : String, path : String) -> (Int, Bytes, String)? {
+  let (r_out, w_out) = @process.read_from_process()
+  let (r_err, w_err) = @process.read_from_process()
+  @async.with_task_group(group => {
+    let code = group.spawn(() => {
+      @process.run(
+        exe,
+        [],
+        stdin=@process.redirect_from_file(path),
+        stdout=w_out,
+        stderr=w_err,
+      )
+    })
+    let err = group.spawn(() => {
+      defer r_err.close()
+      r_err.read_all().text()
+    })
+    let out = @buffer.Buffer()
+    defer r_out.close()
+    while r_out.read_some() is Some(chunk) {
+      out.write_bytes(chunk)
+      if out.length() > MAX_OUTPUT {
+        group.return_immediately(None)
+      }
+    }
+    Some((code.wait(), out.to_bytes(), err.wait()))
+  })
 }
 
 ///|
@@ -467,11 +497,16 @@ async fn main {
   let path = tmp + "/script.txt"
   let mut diffs = 0
   let mut skipped = 0
+  let mut huge = 0
   let rejections : Map[String, Int] = Map([])
   for i in 0..<count {
     let src = script(rand)
     @fs.write_file(path, src)
-    let (code, expected, err) = run(reference_driver, path)
+    guard run(reference_driver, path) is Some((code, expected, err)) else {
+      skipped += 1
+      huge += 1
+      continue
+    }
     if code != 0 {
       // OCaml rejected the script (e.g. an invalid format string)
       skipped += 1
@@ -489,7 +524,9 @@ async fn main {
       // the same message
       if code > 0 {
         // `abort` prints its message on stdout
-        let (mbt_code, mbt_out, _) = run(mbt_driver, path)
+        let (mbt_code, mbt_out, _) = run(mbt_driver, path).unwrap_or(
+          (0, b"", ""),
+        )
         let mbt_reason = @utf8.decode_lossy(mbt_out)
           .split("\n")
           .next()
@@ -516,7 +553,9 @@ async fn main {
       skipped += 1
       continue
     }
-    let (code, actual, _) = run(mbt_driver, path)
+    let (code, actual, _) = run(mbt_driver, path).unwrap_or(
+      (0, b"(output longer than the limit)", ""),
+    )
     if code != 0 || expected != actual {
       diffs += 1
       @stdio.stdout.write("=== difference for script \{i}:\n")
@@ -533,6 +572,11 @@ async fn main {
   }
   for reason, n in rejections {
     @stdio.stdout.write("rejected by OCaml (\{n}): \{reason}\n")
+  }
+  if huge > 0 {
+    @stdio.stdout.write(
+      "skipped (\{huge}): output longer than \{MAX_OUTPUT} bytes\n",
+    )
   }
   @stdio.stdout.write(
     "\{diffs} differences (\{skipped} scripts rejected by OCaml)\n",
