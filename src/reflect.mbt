@@ -225,4 +225,4 @@ pub fn reflect_module(name : String, x : Module) -> String {
 
 ///|
 /// Version of the ATD library.
-pub let version : String = "0.2.0"
+pub let version : String = "0.3.0"
