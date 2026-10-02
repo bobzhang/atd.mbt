@@ -4,7 +4,9 @@ target/
 .mooncakes/
 *.log
 *.md.new
-# The format module is a separate workspace member, published on its own
+# The other modules of the workspace, published on their own
 /format/
+/easy_format/
+/atd_runtime/
 # The workspace is for development only
 /moon.work

@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "bobzhang/atd/runtime"
+package "bobzhang/atd_runtime"
 
 import {
   "moonbitlang/core/debug",

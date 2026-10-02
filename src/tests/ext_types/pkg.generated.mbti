@@ -2,25 +2,25 @@
 package "bobzhang/atd/tests/ext_types"
 
 import {
-  "bobzhang/atd/runtime",
+  "bobzhang/atd_runtime",
 }
 
 // Values
-pub fn priority_of_json(Json) -> Int raise @runtime.JsonError
+pub fn priority_of_json(Json) -> Int raise @atd_runtime.JsonError
 
-pub fn priority_of_string(StringView) -> Int raise @runtime.JsonError
+pub fn priority_of_string(StringView) -> Int raise @atd_runtime.JsonError
 
-pub fn read_priority(Json, @runtime.Path) -> Int raise @runtime.JsonError
+pub fn read_priority(Json, @atd_runtime.Path) -> Int raise @atd_runtime.JsonError
 
-pub fn read_tag(Json, @runtime.Path) -> String raise @runtime.JsonError
+pub fn read_tag(Json, @atd_runtime.Path) -> String raise @atd_runtime.JsonError
 
 pub fn string_of_priority(Int, indent? : Int) -> String
 
 pub fn string_of_tag(String, indent? : Int) -> String
 
-pub fn tag_of_json(Json) -> String raise @runtime.JsonError
+pub fn tag_of_json(Json) -> String raise @atd_runtime.JsonError
 
-pub fn tag_of_string(StringView) -> String raise @runtime.JsonError
+pub fn tag_of_string(StringView) -> String raise @atd_runtime.JsonError
 
 pub fn write_priority(Int) -> Json
 

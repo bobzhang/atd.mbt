@@ -1,4 +1,4 @@
 import {
-  "bobzhang/atd/runtime" @atd_runtime,
+  "bobzhang/atd_runtime",
   "bobzhang/atd/tests/ext_types" @ext,
 }

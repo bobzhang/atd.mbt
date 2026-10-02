@@ -1,6 +1,6 @@
 import {
   "bobzhang/atd",
-  "bobzhang/atd/easy_format",
+  "bobzhang/easy_format",
 }
 
 import {

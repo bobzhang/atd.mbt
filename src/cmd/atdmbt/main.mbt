@@ -16,7 +16,7 @@ let usage : String =
   #|ATD files. For each input file 'foo.atd', the file 'foo.mbt' is created
   #|in the current directory, unless an output file is specified with -o.
   #|
-  #|The generated code requires the package "bobzhang/atd/runtime",
+  #|The generated code requires the package "bobzhang/atd_runtime",
   #|imported with the alias 'atd_runtime' in the moon.pkg file of the
   #|package containing the generated code.
   #|

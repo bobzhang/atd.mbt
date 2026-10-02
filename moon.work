@@ -2,4 +2,6 @@ members = [
   ".",
   "./format",
   "./format/fuzz",
+  "./easy_format",
+  "./atd_runtime",
 ]

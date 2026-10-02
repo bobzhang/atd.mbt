@@ -7,11 +7,11 @@
 // - 'read_foo': convert a JSON value into a 'Foo' value;
 // - 'foo_of_json', 'foo_of_string' and 'string_of_foo': conveniences.
 //
-// This code requires the package "bobzhang/atd/runtime", imported with
+// This code requires the package "bobzhang/atd_runtime", imported with
 // the alias 'atd_runtime' in moon.pkg:
 //
 //   import {
-//     "bobzhang/atd/runtime" @atd_runtime,
+//     "bobzhang/atd_runtime" @atd_runtime,
 //   }
 
 ///|

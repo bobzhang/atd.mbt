@@ -1,0 +1,127 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "bobzhang/easy_format"
+
+import {
+  "bobzhang/format",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub let atom : AtomParam
+
+pub fn compact_to_buffer(StringBuilder, T) -> Unit
+
+pub fn compact_to_formatter(@format.Formatter, T) -> Unit
+
+pub fn compact_to_string(T) -> String
+
+pub fn define_styles(@format.Formatter, Escape, ArrayView[(String, Style)]) -> Unit
+
+pub let label : LabelParam
+
+#deprecated
+pub let label_false : LabelParam
+
+#deprecated
+pub let label_true : LabelParam
+
+pub let list : ListParam
+
+#deprecated
+pub let list_false : ListParam
+
+#deprecated
+pub let list_true : ListParam
+
+pub fn to_buffer(StringBuilder, T, escape? : Escape, styles? : ArrayView[(String, Style)]) -> Unit
+
+pub fn to_formatter(@format.Formatter, T) -> Unit
+
+pub fn to_string(T, escape? : Escape, styles? : ArrayView[(String, Style)]) -> String
+
+// Errors
+
+// Types and methods
+pub(all) struct AtomParam {
+  atom_style : String?
+} derive(Eq, @debug.Debug)
+pub fn AtomParam::equal(Self, Self) -> Bool
+pub fn AtomParam::not_equal(Self, Self) -> Bool
+pub fn AtomParam::to_repr(Self) -> @debug.Repr
+
+pub(all) enum Escape {
+  NoEscape
+  Escape(((StringView) -> Unit, StringView) -> Unit)
+  EscapeString((String) -> String)
+}
+
+pub(all) enum LabelBreak {
+  Auto
+  Always
+  AlwaysRec
+  Never
+} derive(Eq, @debug.Debug)
+pub fn LabelBreak::equal(Self, Self) -> Bool
+pub fn LabelBreak::not_equal(Self, Self) -> Bool
+pub fn LabelBreak::to_repr(Self) -> @debug.Repr
+
+pub(all) struct LabelParam {
+  label_break : LabelBreak
+  space_after_label : Bool
+  indent_after_label : Int
+  label_style : String?
+} derive(Eq, @debug.Debug)
+pub fn LabelParam::equal(Self, Self) -> Bool
+pub fn LabelParam::not_equal(Self, Self) -> Bool
+pub fn LabelParam::to_repr(Self) -> @debug.Repr
+
+pub(all) struct ListParam {
+  space_after_opening : Bool
+  space_after_separator : Bool
+  space_before_separator : Bool
+  separators_stick_left : Bool
+  space_before_closing : Bool
+  stick_to_label : Bool
+  align_closing : Bool
+  wrap_body : Wrap
+  indent_body : Int
+  list_style : String?
+  opening_style : String?
+  body_style : String?
+  separator_style : String?
+  closing_style : String?
+} derive(Eq, @debug.Debug)
+pub fn ListParam::equal(Self, Self) -> Bool
+pub fn ListParam::not_equal(Self, Self) -> Bool
+pub fn ListParam::to_repr(Self) -> @debug.Repr
+
+pub(all) struct Style {
+  tag_open : String
+  tag_close : String
+} derive(Eq, @debug.Debug)
+pub fn Style::equal(Self, Self) -> Bool
+pub fn Style::not_equal(Self, Self) -> Bool
+pub fn Style::to_repr(Self) -> @debug.Repr
+
+pub(all) enum T {
+  Atom(String, AtomParam)
+  List((String, String, String, ListParam), Array[T])
+  Label((T, LabelParam), T)
+  Custom((@format.Formatter) -> Unit)
+}
+
+pub(all) enum Wrap {
+  WrapAtoms
+  AlwaysWrap
+  NeverWrap
+  ForceBreaks
+  ForceBreaksRec
+  NoBreaks
+} derive(Eq, @debug.Debug)
+pub fn Wrap::equal(Self, Self) -> Bool
+pub fn Wrap::not_equal(Self, Self) -> Bool
+pub fn Wrap::to_repr(Self) -> @debug.Repr
+
+// Type aliases
+
+// Traits

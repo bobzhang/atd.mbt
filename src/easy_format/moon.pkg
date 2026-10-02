@@ -1,5 +1,0 @@
-import {
-  "bobzhang/format",
-}
-
-warnings = "-implicit_impl_as_method"

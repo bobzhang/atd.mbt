@@ -12,7 +12,7 @@
 // - an implementation of `ToJson` for structs and enums;
 // - `Foo::new(...)` for records, with labelled arguments and defaults.
 //
-// The generated code depends on the package `bobzhang/atd/runtime`,
+// The generated code depends on the package `bobzhang/atd_runtime`,
 // imported with the alias `@atd_runtime`.
 
 ///|

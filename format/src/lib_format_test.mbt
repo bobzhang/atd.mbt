@@ -394,3 +394,17 @@ test "texts of unknown size don't overflow" {
   ppf.print_flush()
   assert_eq(buf.to_string(), "a" + "x".repeat(80) + "a\naa\nz\nz\n y")
 }
+
+///|
+test "set_output_functions" {
+  // like in OCaml, newlines and spaces go through the current output
+  // function of a formatter made by `Formatter(output)`
+  let buf = StringBuilder()
+  let ppf = @format.Formatter::of_buffer(buf)
+  let (out_string, out_flush) = ppf.get_output_functions()
+  ppf.set_output_functions(s => out_string(s.to_owned().to_upper()), out_flush)
+  ppf.printf("@[<v 2>a@,b@]@.", [])
+  ppf.set_output_functions(s => out_string("[" + s.to_owned() + "]"), out_flush)
+  ppf.printf("@[<v 2>a@,b@]@.", [])
+  assert_eq(buf.to_string(), "A\n  B\n[a][\n][  ][b][\n]")
+}

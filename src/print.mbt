@@ -61,7 +61,7 @@ let label0 : @easy_format.LabelParam = {
 
 ///|
 fn make_atom(s : String) -> @easy_format.T {
-  Atom(s)
+  Atom(s, @easy_format.atom)
 }
 
 ///|

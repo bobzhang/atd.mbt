@@ -1,6 +1,6 @@
 import {
   "bobzhang/format",
-  "bobzhang/atd/easy_format",
+  "bobzhang/easy_format",
   "bobzhang/atd/yojson",
   "moonbitlang/x/crypto",
   "moonbitlang/core/buffer",

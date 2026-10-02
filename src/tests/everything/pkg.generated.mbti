@@ -2,91 +2,91 @@
 package "bobzhang/atd/tests/everything"
 
 import {
-  "bobzhang/atd/runtime",
+  "bobzhang/atd_runtime",
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
 
 // Values
-pub fn _int_float_parametrized_record_of_json(Json) -> IntFloatParametrizedRecord raise @runtime.JsonError
+pub fn _int_float_parametrized_record_of_json(Json) -> IntFloatParametrizedRecord raise @atd_runtime.JsonError
 
-pub fn _int_float_parametrized_record_of_string(StringView) -> IntFloatParametrizedRecord raise @runtime.JsonError
+pub fn _int_float_parametrized_record_of_string(StringView) -> IntFloatParametrizedRecord raise @atd_runtime.JsonError
 
-pub fn _tuple_e1a4b40_of_json(Json) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @runtime.JsonError
+pub fn _tuple_e1a4b40_of_json(Json) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @atd_runtime.JsonError
 
-pub fn _tuple_e1a4b40_of_string(StringView) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @runtime.JsonError
+pub fn _tuple_e1a4b40_of_string(StringView) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @atd_runtime.JsonError
 
-pub fn alias_of_json(Json) -> Array[Int] raise @runtime.JsonError
+pub fn alias_of_json(Json) -> Array[Int] raise @atd_runtime.JsonError
 
-pub fn alias_of_string(StringView) -> Array[Int] raise @runtime.JsonError
+pub fn alias_of_string(StringView) -> Array[Int] raise @atd_runtime.JsonError
 
-pub fn anything_of_json(Json) -> Json raise @runtime.JsonError
+pub fn anything_of_json(Json) -> Json raise @atd_runtime.JsonError
 
-pub fn anything_of_string(StringView) -> Json raise @runtime.JsonError
+pub fn anything_of_string(StringView) -> Json raise @atd_runtime.JsonError
 
-pub fn different_kinds_of_things_of_json(Json) -> DifferentKindsOfThings raise @runtime.JsonError
+pub fn different_kinds_of_things_of_json(Json) -> DifferentKindsOfThings raise @atd_runtime.JsonError
 
-pub fn different_kinds_of_things_of_string(StringView) -> DifferentKindsOfThings raise @runtime.JsonError
+pub fn different_kinds_of_things_of_string(StringView) -> DifferentKindsOfThings raise @atd_runtime.JsonError
 
-pub fn foo_of_json(Json) -> Foo raise @runtime.JsonError
+pub fn foo_of_json(Json) -> Foo raise @atd_runtime.JsonError
 
-pub fn foo_of_string(StringView) -> Foo raise @runtime.JsonError
+pub fn foo_of_string(StringView) -> Foo raise @atd_runtime.JsonError
 
-pub fn import__of_json(Json) -> Json raise @runtime.JsonError
+pub fn import__of_json(Json) -> Json raise @atd_runtime.JsonError
 
-pub fn import__of_string(StringView) -> Json raise @runtime.JsonError
+pub fn import__of_string(StringView) -> Json raise @atd_runtime.JsonError
 
-pub fn import_default_of_json(Json) -> Json raise @runtime.JsonError
+pub fn import_default_of_json(Json) -> Json raise @atd_runtime.JsonError
 
-pub fn import_default_of_string(StringView) -> Json raise @runtime.JsonError
+pub fn import_default_of_string(StringView) -> Json raise @atd_runtime.JsonError
 
-pub fn pair_of_json(Json) -> (String, Int) raise @runtime.JsonError
+pub fn pair_of_json(Json) -> (String, Int) raise @atd_runtime.JsonError
 
-pub fn pair_of_string(StringView) -> (String, Int) raise @runtime.JsonError
+pub fn pair_of_string(StringView) -> (String, Int) raise @atd_runtime.JsonError
 
-pub fn read__int_float_parametrized_record(Json, @runtime.Path) -> IntFloatParametrizedRecord raise @runtime.JsonError
+pub fn read__int_float_parametrized_record(Json, @atd_runtime.Path) -> IntFloatParametrizedRecord raise @atd_runtime.JsonError
 
-pub fn read__tuple_e1a4b40(Json, @runtime.Path) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @runtime.JsonError
+pub fn read__tuple_e1a4b40(Json, @atd_runtime.Path) -> (DifferentKindsOfThings, DifferentKindsOfThings, Int) raise @atd_runtime.JsonError
 
-pub fn read_alias(Json, @runtime.Path) -> Array[Int] raise @runtime.JsonError
+pub fn read_alias(Json, @atd_runtime.Path) -> Array[Int] raise @atd_runtime.JsonError
 
-pub fn read_anything(Json, @runtime.Path) -> Json raise @runtime.JsonError
+pub fn read_anything(Json, @atd_runtime.Path) -> Json raise @atd_runtime.JsonError
 
-pub fn read_different_kinds_of_things(Json, @runtime.Path) -> DifferentKindsOfThings raise @runtime.JsonError
+pub fn read_different_kinds_of_things(Json, @atd_runtime.Path) -> DifferentKindsOfThings raise @atd_runtime.JsonError
 
-pub fn read_foo(Json, @runtime.Path) -> Foo raise @runtime.JsonError
+pub fn read_foo(Json, @atd_runtime.Path) -> Foo raise @atd_runtime.JsonError
 
-pub fn read_import_(Json, @runtime.Path) -> Json raise @runtime.JsonError
+pub fn read_import_(Json, @atd_runtime.Path) -> Json raise @atd_runtime.JsonError
 
-pub fn read_import_default(Json, @runtime.Path) -> Json raise @runtime.JsonError
+pub fn read_import_default(Json, @atd_runtime.Path) -> Json raise @atd_runtime.JsonError
 
-pub fn read_pair(Json, @runtime.Path) -> (String, Int) raise @runtime.JsonError
+pub fn read_pair(Json, @atd_runtime.Path) -> (String, Int) raise @atd_runtime.JsonError
 
-pub fn read_root(Json, @runtime.Path) -> Root raise @runtime.JsonError
+pub fn read_root(Json, @atd_runtime.Path) -> Root raise @atd_runtime.JsonError
 
-pub fn read_shape(Json, @runtime.Path) -> Shape raise @runtime.JsonError
+pub fn read_shape(Json, @atd_runtime.Path) -> Shape raise @atd_runtime.JsonError
 
-pub fn read_simple_record(Json, @runtime.Path) -> SimpleRecord raise @runtime.JsonError
+pub fn read_simple_record(Json, @atd_runtime.Path) -> SimpleRecord raise @atd_runtime.JsonError
 
-pub fn read_special_string(Json, @runtime.Path) -> String raise @runtime.JsonError
+pub fn read_special_string(Json, @atd_runtime.Path) -> String raise @atd_runtime.JsonError
 
-pub fn read_this(Json, @runtime.Path) -> Int raise @runtime.JsonError
+pub fn read_this(Json, @atd_runtime.Path) -> Int raise @atd_runtime.JsonError
 
-pub fn root_of_json(Json) -> Root raise @runtime.JsonError
+pub fn root_of_json(Json) -> Root raise @atd_runtime.JsonError
 
-pub fn root_of_string(StringView) -> Root raise @runtime.JsonError
+pub fn root_of_string(StringView) -> Root raise @atd_runtime.JsonError
 
-pub fn shape_of_json(Json) -> Shape raise @runtime.JsonError
+pub fn shape_of_json(Json) -> Shape raise @atd_runtime.JsonError
 
-pub fn shape_of_string(StringView) -> Shape raise @runtime.JsonError
+pub fn shape_of_string(StringView) -> Shape raise @atd_runtime.JsonError
 
-pub fn simple_record_of_json(Json) -> SimpleRecord raise @runtime.JsonError
+pub fn simple_record_of_json(Json) -> SimpleRecord raise @atd_runtime.JsonError
 
-pub fn simple_record_of_string(StringView) -> SimpleRecord raise @runtime.JsonError
+pub fn simple_record_of_string(StringView) -> SimpleRecord raise @atd_runtime.JsonError
 
-pub fn special_string_of_json(Json) -> String raise @runtime.JsonError
+pub fn special_string_of_json(Json) -> String raise @atd_runtime.JsonError
 
-pub fn special_string_of_string(StringView) -> String raise @runtime.JsonError
+pub fn special_string_of_string(StringView) -> String raise @atd_runtime.JsonError
 
 pub fn string_of__int_float_parametrized_record(IntFloatParametrizedRecord, indent? : Int) -> String
 
@@ -116,9 +116,9 @@ pub fn string_of_special_string(String, indent? : Int) -> String
 
 pub fn string_of_this(Int, indent? : Int) -> String
 
-pub fn this_of_json(Json) -> Int raise @runtime.JsonError
+pub fn this_of_json(Json) -> Int raise @atd_runtime.JsonError
 
-pub fn this_of_string(StringView) -> Int raise @runtime.JsonError
+pub fn this_of_string(StringView) -> Int raise @atd_runtime.JsonError
 
 pub fn write__int_float_parametrized_record(IntFloatParametrizedRecord) -> Json
 

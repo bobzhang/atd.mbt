@@ -2,157 +2,157 @@
 package "bobzhang/atd/tests/features"
 
 import {
-  "bobzhang/atd/runtime",
+  "bobzhang/atd_runtime",
   "moonbitlang/core/builtin",
   "moonbitlang/core/debug",
 }
 
 // Values
-pub fn _int_boxed_of_json(Json) -> Json raise @runtime.JsonError
+pub fn _int_boxed_of_json(Json) -> Json raise @atd_runtime.JsonError
 
-pub fn _int_boxed_of_string(StringView) -> Json raise @runtime.JsonError
+pub fn _int_boxed_of_string(StringView) -> Json raise @atd_runtime.JsonError
 
-pub fn _string_int_entry_of_json(Json) -> StringIntEntry raise @runtime.JsonError
+pub fn _string_int_entry_of_json(Json) -> StringIntEntry raise @atd_runtime.JsonError
 
-pub fn _string_int_entry_of_string(StringView) -> StringIntEntry raise @runtime.JsonError
+pub fn _string_int_entry_of_string(StringView) -> StringIntEntry raise @atd_runtime.JsonError
 
-pub fn celsius_of_json(Json) -> Celsius raise @runtime.JsonError
+pub fn celsius_of_json(Json) -> Celsius raise @atd_runtime.JsonError
 
-pub fn celsius_of_string(StringView) -> Celsius raise @runtime.JsonError
+pub fn celsius_of_string(StringView) -> Celsius raise @atd_runtime.JsonError
 
-pub fn color_of_json(Json) -> Color raise @runtime.JsonError
+pub fn color_of_json(Json) -> Color raise @atd_runtime.JsonError
 
-pub fn color_of_string(StringView) -> Color raise @runtime.JsonError
+pub fn color_of_string(StringView) -> Color raise @atd_runtime.JsonError
 
-pub fn defaults_of_json(Json) -> Defaults raise @runtime.JsonError
+pub fn defaults_of_json(Json) -> Defaults raise @atd_runtime.JsonError
 
-pub fn defaults_of_string(StringView) -> Defaults raise @runtime.JsonError
+pub fn defaults_of_string(StringView) -> Defaults raise @atd_runtime.JsonError
 
-pub fn documented_of_json(Json) -> Documented raise @runtime.JsonError
+pub fn documented_of_json(Json) -> Documented raise @atd_runtime.JsonError
 
-pub fn documented_of_string(StringView) -> Documented raise @runtime.JsonError
+pub fn documented_of_string(StringView) -> Documented raise @atd_runtime.JsonError
 
-pub fn empty_record_of_json(Json) -> EmptyRecord raise @runtime.JsonError
+pub fn empty_record_of_json(Json) -> EmptyRecord raise @atd_runtime.JsonError
 
-pub fn empty_record_of_string(StringView) -> EmptyRecord raise @runtime.JsonError
+pub fn empty_record_of_string(StringView) -> EmptyRecord raise @atd_runtime.JsonError
 
-pub fn forest_of_json(Json) -> Forest raise @runtime.JsonError
+pub fn forest_of_json(Json) -> Forest raise @atd_runtime.JsonError
 
-pub fn forest_of_string(StringView) -> Forest raise @runtime.JsonError
+pub fn forest_of_string(StringView) -> Forest raise @atd_runtime.JsonError
 
-pub fn fruit_of_json(Json) -> Fruit raise @runtime.JsonError
+pub fn fruit_of_json(Json) -> Fruit raise @atd_runtime.JsonError
 
-pub fn fruit_of_string(StringView) -> Fruit raise @runtime.JsonError
+pub fn fruit_of_string(StringView) -> Fruit raise @atd_runtime.JsonError
 
-pub fn inline_nested_b_of_json(Json) -> InlineNestedB raise @runtime.JsonError
+pub fn inline_nested_b_of_json(Json) -> InlineNestedB raise @atd_runtime.JsonError
 
-pub fn inline_nested_b_of_string(StringView) -> InlineNestedB raise @runtime.JsonError
+pub fn inline_nested_b_of_string(StringView) -> InlineNestedB raise @atd_runtime.JsonError
 
-pub fn inline_nested_of_json(Json) -> InlineNested raise @runtime.JsonError
+pub fn inline_nested_of_json(Json) -> InlineNested raise @atd_runtime.JsonError
 
-pub fn inline_nested_of_string(StringView) -> InlineNested raise @runtime.JsonError
+pub fn inline_nested_of_string(StringView) -> InlineNested raise @atd_runtime.JsonError
 
-pub fn inline_of_json(Json) -> Inline raise @runtime.JsonError
+pub fn inline_of_json(Json) -> Inline raise @atd_runtime.JsonError
 
-pub fn inline_of_string(StringView) -> Inline raise @runtime.JsonError
+pub fn inline_of_string(StringView) -> Inline raise @atd_runtime.JsonError
 
-pub fn inline_point_of_json(Json) -> InlinePoint raise @runtime.JsonError
+pub fn inline_point_of_json(Json) -> InlinePoint raise @atd_runtime.JsonError
 
-pub fn inline_point_of_string(StringView) -> InlinePoint raise @runtime.JsonError
+pub fn inline_point_of_string(StringView) -> InlinePoint raise @atd_runtime.JsonError
 
-pub fn int64s_of_json(Json) -> Int64s raise @runtime.JsonError
+pub fn int64s_of_json(Json) -> Int64s raise @atd_runtime.JsonError
 
-pub fn int64s_of_string(StringView) -> Int64s raise @runtime.JsonError
+pub fn int64s_of_string(StringView) -> Int64s raise @atd_runtime.JsonError
 
-pub fn int_entries_of_json(Json) -> Array[StringIntEntry] raise @runtime.JsonError
+pub fn int_entries_of_json(Json) -> Array[StringIntEntry] raise @atd_runtime.JsonError
 
-pub fn int_entries_of_string(StringView) -> Array[StringIntEntry] raise @runtime.JsonError
+pub fn int_entries_of_string(StringView) -> Array[StringIntEntry] raise @atd_runtime.JsonError
 
-pub fn maps_of_json(Json) -> Maps raise @runtime.JsonError
+pub fn maps_of_json(Json) -> Maps raise @atd_runtime.JsonError
 
-pub fn maps_of_string(StringView) -> Maps raise @runtime.JsonError
+pub fn maps_of_string(StringView) -> Maps raise @atd_runtime.JsonError
 
-pub fn match_of_json(Json) -> Match raise @runtime.JsonError
+pub fn match_of_json(Json) -> Match raise @atd_runtime.JsonError
 
-pub fn match_of_string(StringView) -> Match raise @runtime.JsonError
+pub fn match_of_string(StringView) -> Match raise @atd_runtime.JsonError
 
-pub fn no_derive_of_json(Json) -> NoDerive raise @runtime.JsonError
+pub fn no_derive_of_json(Json) -> NoDerive raise @atd_runtime.JsonError
 
-pub fn no_derive_of_string(StringView) -> NoDerive raise @runtime.JsonError
+pub fn no_derive_of_string(StringView) -> NoDerive raise @atd_runtime.JsonError
 
-pub fn no_patch_of_json(Json) -> NoPatch raise @runtime.JsonError
+pub fn no_patch_of_json(Json) -> NoPatch raise @atd_runtime.JsonError
 
-pub fn no_patch_of_string(StringView) -> NoPatch raise @runtime.JsonError
+pub fn no_patch_of_string(StringView) -> NoPatch raise @atd_runtime.JsonError
 
-pub fn option_like_of_json(Json) -> OptionLike raise @runtime.JsonError
+pub fn option_like_of_json(Json) -> OptionLike raise @atd_runtime.JsonError
 
-pub fn option_like_of_string(StringView) -> OptionLike raise @runtime.JsonError
+pub fn option_like_of_string(StringView) -> OptionLike raise @atd_runtime.JsonError
 
-pub fn patch_of_json(Json) -> Patch raise @runtime.JsonError
+pub fn patch_of_json(Json) -> Patch raise @atd_runtime.JsonError
 
-pub fn patch_of_string(StringView) -> Patch raise @runtime.JsonError
+pub fn patch_of_string(StringView) -> Patch raise @atd_runtime.JsonError
 
-pub fn raw_of_json(Json) -> Json raise @runtime.JsonError
+pub fn raw_of_json(Json) -> Json raise @atd_runtime.JsonError
 
-pub fn raw_of_string(StringView) -> Json raise @runtime.JsonError
+pub fn raw_of_string(StringView) -> Json raise @atd_runtime.JsonError
 
-pub fn read__int_boxed(Json, @runtime.Path) -> Json raise @runtime.JsonError
+pub fn read__int_boxed(Json, @atd_runtime.Path) -> Json raise @atd_runtime.JsonError
 
-pub fn read__string_int_entry(Json, @runtime.Path) -> StringIntEntry raise @runtime.JsonError
+pub fn read__string_int_entry(Json, @atd_runtime.Path) -> StringIntEntry raise @atd_runtime.JsonError
 
-pub fn read_celsius(Json, @runtime.Path) -> Celsius raise @runtime.JsonError
+pub fn read_celsius(Json, @atd_runtime.Path) -> Celsius raise @atd_runtime.JsonError
 
-pub fn read_color(Json, @runtime.Path) -> Color raise @runtime.JsonError
+pub fn read_color(Json, @atd_runtime.Path) -> Color raise @atd_runtime.JsonError
 
-pub fn read_defaults(Json, @runtime.Path) -> Defaults raise @runtime.JsonError
+pub fn read_defaults(Json, @atd_runtime.Path) -> Defaults raise @atd_runtime.JsonError
 
-pub fn read_documented(Json, @runtime.Path) -> Documented raise @runtime.JsonError
+pub fn read_documented(Json, @atd_runtime.Path) -> Documented raise @atd_runtime.JsonError
 
-pub fn read_empty_record(Json, @runtime.Path) -> EmptyRecord raise @runtime.JsonError
+pub fn read_empty_record(Json, @atd_runtime.Path) -> EmptyRecord raise @atd_runtime.JsonError
 
-pub fn read_forest(Json, @runtime.Path) -> Forest raise @runtime.JsonError
+pub fn read_forest(Json, @atd_runtime.Path) -> Forest raise @atd_runtime.JsonError
 
-pub fn read_fruit(Json, @runtime.Path) -> Fruit raise @runtime.JsonError
+pub fn read_fruit(Json, @atd_runtime.Path) -> Fruit raise @atd_runtime.JsonError
 
-pub fn read_inline(Json, @runtime.Path) -> Inline raise @runtime.JsonError
+pub fn read_inline(Json, @atd_runtime.Path) -> Inline raise @atd_runtime.JsonError
 
-pub fn read_inline_nested(Json, @runtime.Path) -> InlineNested raise @runtime.JsonError
+pub fn read_inline_nested(Json, @atd_runtime.Path) -> InlineNested raise @atd_runtime.JsonError
 
-pub fn read_inline_nested_b(Json, @runtime.Path) -> InlineNestedB raise @runtime.JsonError
+pub fn read_inline_nested_b(Json, @atd_runtime.Path) -> InlineNestedB raise @atd_runtime.JsonError
 
-pub fn read_inline_point(Json, @runtime.Path) -> InlinePoint raise @runtime.JsonError
+pub fn read_inline_point(Json, @atd_runtime.Path) -> InlinePoint raise @atd_runtime.JsonError
 
-pub fn read_int64s(Json, @runtime.Path) -> Int64s raise @runtime.JsonError
+pub fn read_int64s(Json, @atd_runtime.Path) -> Int64s raise @atd_runtime.JsonError
 
-pub fn read_int_entries(Json, @runtime.Path) -> Array[StringIntEntry] raise @runtime.JsonError
+pub fn read_int_entries(Json, @atd_runtime.Path) -> Array[StringIntEntry] raise @atd_runtime.JsonError
 
-pub fn read_maps(Json, @runtime.Path) -> Maps raise @runtime.JsonError
+pub fn read_maps(Json, @atd_runtime.Path) -> Maps raise @atd_runtime.JsonError
 
-pub fn read_match(Json, @runtime.Path) -> Match raise @runtime.JsonError
+pub fn read_match(Json, @atd_runtime.Path) -> Match raise @atd_runtime.JsonError
 
-pub fn read_no_derive(Json, @runtime.Path) -> NoDerive raise @runtime.JsonError
+pub fn read_no_derive(Json, @atd_runtime.Path) -> NoDerive raise @atd_runtime.JsonError
 
-pub fn read_no_patch(Json, @runtime.Path) -> NoPatch raise @runtime.JsonError
+pub fn read_no_patch(Json, @atd_runtime.Path) -> NoPatch raise @atd_runtime.JsonError
 
-pub fn read_option_like(Json, @runtime.Path) -> OptionLike raise @runtime.JsonError
+pub fn read_option_like(Json, @atd_runtime.Path) -> OptionLike raise @atd_runtime.JsonError
 
-pub fn read_patch(Json, @runtime.Path) -> Patch raise @runtime.JsonError
+pub fn read_patch(Json, @atd_runtime.Path) -> Patch raise @atd_runtime.JsonError
 
-pub fn read_raw(Json, @runtime.Path) -> Json raise @runtime.JsonError
+pub fn read_raw(Json, @atd_runtime.Path) -> Json raise @atd_runtime.JsonError
 
-pub fn read_string_list(Json, @runtime.Path) -> Array[String] raise @runtime.JsonError
+pub fn read_string_list(Json, @atd_runtime.Path) -> Array[String] raise @atd_runtime.JsonError
 
-pub fn read_tagged(Json, @runtime.Path) -> Tagged raise @runtime.JsonError
+pub fn read_tagged(Json, @atd_runtime.Path) -> Tagged raise @atd_runtime.JsonError
 
-pub fn read_temperatures(Json, @runtime.Path) -> Temperatures raise @runtime.JsonError
+pub fn read_temperatures(Json, @atd_runtime.Path) -> Temperatures raise @atd_runtime.JsonError
 
-pub fn read_tree(Json, @runtime.Path) -> Tree raise @runtime.JsonError
+pub fn read_tree(Json, @atd_runtime.Path) -> Tree raise @atd_runtime.JsonError
 
-pub fn read_tuples(Json, @runtime.Path) -> Tuples raise @runtime.JsonError
+pub fn read_tuples(Json, @atd_runtime.Path) -> Tuples raise @atd_runtime.JsonError
 
-pub fn string_list_of_json(Json) -> Array[String] raise @runtime.JsonError
+pub fn string_list_of_json(Json) -> Array[String] raise @atd_runtime.JsonError
 
-pub fn string_list_of_string(StringView) -> Array[String] raise @runtime.JsonError
+pub fn string_list_of_string(StringView) -> Array[String] raise @atd_runtime.JsonError
 
 pub fn string_of__int_boxed(Json, indent? : Int) -> String
 
@@ -208,21 +208,21 @@ pub fn string_of_tree(Tree, indent? : Int) -> String
 
 pub fn string_of_tuples(Tuples, indent? : Int) -> String
 
-pub fn tagged_of_json(Json) -> Tagged raise @runtime.JsonError
+pub fn tagged_of_json(Json) -> Tagged raise @atd_runtime.JsonError
 
-pub fn tagged_of_string(StringView) -> Tagged raise @runtime.JsonError
+pub fn tagged_of_string(StringView) -> Tagged raise @atd_runtime.JsonError
 
-pub fn temperatures_of_json(Json) -> Temperatures raise @runtime.JsonError
+pub fn temperatures_of_json(Json) -> Temperatures raise @atd_runtime.JsonError
 
-pub fn temperatures_of_string(StringView) -> Temperatures raise @runtime.JsonError
+pub fn temperatures_of_string(StringView) -> Temperatures raise @atd_runtime.JsonError
 
-pub fn tree_of_json(Json) -> Tree raise @runtime.JsonError
+pub fn tree_of_json(Json) -> Tree raise @atd_runtime.JsonError
 
-pub fn tree_of_string(StringView) -> Tree raise @runtime.JsonError
+pub fn tree_of_string(StringView) -> Tree raise @atd_runtime.JsonError
 
-pub fn tuples_of_json(Json) -> Tuples raise @runtime.JsonError
+pub fn tuples_of_json(Json) -> Tuples raise @atd_runtime.JsonError
 
-pub fn tuples_of_string(StringView) -> Tuples raise @runtime.JsonError
+pub fn tuples_of_string(StringView) -> Tuples raise @atd_runtime.JsonError
 
 pub fn write__int_boxed(Json) -> Json
 

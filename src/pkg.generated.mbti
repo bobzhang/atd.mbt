@@ -2,8 +2,8 @@
 package "bobzhang/atd"
 
 import {
-  "bobzhang/atd/easy_format",
   "bobzhang/atd/yojson",
+  "bobzhang/easy_format",
   "moonbitlang/core/debug",
 }
 

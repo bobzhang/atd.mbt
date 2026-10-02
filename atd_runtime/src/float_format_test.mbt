@@ -24,18 +24,18 @@ test "format_float_g" {
     (0.1, 17, "0.10000000000000001"),
   ]
   for c in cases {
-    assert_eq(@runtime.format_float_g(c.0, c.1), c.2, msg="\{c.0} \{c.1}")
+    assert_eq(@atd_runtime.format_float_g(c.0, c.1), c.2, msg="\{c.0} \{c.1}")
   }
 }
 
 ///|
 test "write_float_prec" {
-  let w = @runtime.write_float_prec(2)
+  let w = @atd_runtime.write_float_prec(2)
   inspect(w(0.000123456789).stringify(), content="0.00012")
   inspect(w(1234567890123.0).stringify(), content="1.2e+12")
   inspect(w(3.0).stringify(), content="3.0")
   inspect(
-    @runtime.write_float_prec(5)(2.0.sqrt()).stringify(),
+    @atd_runtime.write_float_prec(5)(2.0.sqrt()).stringify(),
     content="1.4142",
   )
 }
@@ -48,7 +48,7 @@ test "write_float_as_int is like atdgen" {
     5.0e-324, 2.6, -2.6, 0.49999999999999994,
   ]
   inspect(
-    xs.map(x => @runtime.write_float_as_int(x).stringify()).join(" "),
+    xs.map(x => @atd_runtime.write_float_as_int(x).stringify()).join(" "),
     content="1 2 3 -0 -2 -2 -4 0 -0 1000000000000000 -100000000000000000000 123 -124 0 3 -3 1",
   )
 }
@@ -57,15 +57,15 @@ test "write_float_as_int is like atdgen" {
 test "write_float_prec with huge precisions" {
   // like Yojson, precisions outside of 1..16 mean 17
   inspect(
-    @runtime.write_float_prec(2147483647)(0.1).stringify(),
+    @atd_runtime.write_float_prec(2147483647)(0.1).stringify(),
     content="0.10000000000000001",
   )
   inspect(
-    @runtime.write_float_prec(0)(0.1).stringify(),
+    @atd_runtime.write_float_prec(0)(0.1).stringify(),
     content="0.10000000000000001",
   )
   inspect(
-    @runtime.format_float_g(1.0e-300, 2147483647),
+    @atd_runtime.format_float_g(1.0e-300, 2147483647),
     content=(
       #|1.00000000000000002505909183520875968569614680770370524992534231990046604318405148467630281218195010089496230627027825414891031146499880413081224609160619018271942662793458427551041478278701507022263926060379361392435977509403014386614147912551359088259101734169222292122040491862182202915561954185941852588326204092831631787205015401996986616948980410676557942431921652541808732242554300585073938340203330993157646467433638479065531661724812599598594906293782493759617177861888792970476530542335134710418229637566637950767497147854236589795152044892049176025289756709261767081824924720105632337755616538050643653812583050224659631159300563236507929025398878153811554013986009587978081167432804936359631140419153283449560376539011485874652862548828125e-300
     ),

@@ -22,9 +22,9 @@ shapes.atd
 shapes.mbt
 ```
 
-The generated code depends on the runtime package
-`bobzhang/atd/runtime`, which the `moon.pkg` of the package containing the
-code must import with the alias `atd_runtime`:
+The generated code depends on the runtime library `bobzhang/atd_runtime`
+(`moon add bobzhang/atd_runtime`), which the `moon.pkg` of the package
+containing the code must import with the alias `atd_runtime`:
 
 ```mooncram
 $ head -n 16 shapes.mbt
@@ -37,11 +37,11 @@ $ head -n 16 shapes.mbt
 // - 'read_foo': convert a JSON value into a 'Foo' value;
 // - 'foo_of_json', 'foo_of_string' and 'string_of_foo': conveniences.
 //
-// This code requires the package "bobzhang/atd/runtime", imported with
+// This code requires the package "bobzhang/atd_runtime", imported with
 // the alias 'atd_runtime' in moon.pkg:
 //
 //   import {
-//     "bobzhang/atd/runtime" @atd_runtime,
+//     "bobzhang/atd_runtime" @atd_runtime,
 //   }
 
 ```

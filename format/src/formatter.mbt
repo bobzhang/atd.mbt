@@ -116,13 +116,22 @@ pub fn Formatter::Formatter(
   output : (StringView) -> Unit,
   flush? : () -> Unit = () => (),
 ) -> Formatter {
-  Formatter::of_out_functions({
+  let ppf = Formatter::of_out_functions({
     out_string: output,
     out_flush: flush,
-    out_newline: () => output("\n"),
-    out_spaces: n => display_blanks(output, n),
-    out_indent: n => display_blanks(output, n),
+    out_newline: () => (),
+    out_spaces: _ => (),
+    out_indent: _ => (),
   })
+  // newlines and spaces are output with the current output function of the
+  // formatter (see `set_output_functions`), like in OCaml
+  ppf.out = {
+    ..ppf.out,
+    out_newline: () => (ppf.out.out_string)("\n"),
+    out_spaces: n => display_blanks(ppf.out.out_string, n),
+    out_indent: n => display_blanks(ppf.out.out_string, n),
+  }
+  ppf
 }
 
 ///|
@@ -566,6 +575,28 @@ pub fn Formatter::set_out_functions(
 /// The output functions of the formatter.
 pub fn Formatter::get_out_functions(self : Formatter) -> OutFunctions {
   self.out
+}
+
+///|
+/// Set the functions that output a string and flush the output, like
+/// OCaml's `pp_set_formatter_output_functions`: the other output functions
+/// are unchanged (those of `Formatter(output)` output newlines and spaces
+/// with the current output function).
+pub fn Formatter::set_output_functions(
+  self : Formatter,
+  out_string : (StringView) -> Unit,
+  out_flush : () -> Unit,
+) -> Unit {
+  self.out = { ..self.out, out_string, out_flush, }
+}
+
+///|
+/// The functions that output a string and flush the output, like OCaml's
+/// `pp_get_formatter_output_functions`.
+pub fn Formatter::get_output_functions(
+  self : Formatter,
+) -> ((StringView) -> Unit, () -> Unit) {
+  (self.out.out_string, self.out.out_flush)
 }
 
 // Tags

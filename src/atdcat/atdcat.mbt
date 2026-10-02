@@ -48,7 +48,9 @@ let usage_options : String = [
 
 ///|
 fn format_html_comments(x : @atd.AnnotSection) -> @easy_format.T {
-  let comment = s => @easy_format.T::Atom("(*html " + s + "*)")
+  let comment = s => {
+    @easy_format.T::Atom("(*html " + s + "*)", @easy_format.atom)
+  }
   if x.name == "doc" {
     match x.fields.iter().find_first(f => f.name == "html") {
       Some({ value: Some(s), .. }) => comment(s)

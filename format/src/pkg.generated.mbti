@@ -70,6 +70,7 @@ pub fn Formatter::get_mark_tags(Self) -> Bool
 pub fn Formatter::get_max_boxes(Self) -> Int
 pub fn Formatter::get_max_indent(Self) -> Int
 pub fn Formatter::get_out_functions(Self) -> OutFunctions
+pub fn Formatter::get_output_functions(Self) -> ((StringView) -> Unit, () -> Unit)
 pub fn Formatter::get_print_tags(Self) -> Bool
 pub fn Formatter::get_stag_functions(Self) -> StagFunctions
 pub fn[T] Formatter::kprintf(Self, (Self) -> T, String, ArrayView[Arg]) -> T
@@ -116,6 +117,7 @@ pub fn Formatter::set_mark_tags(Self, Bool) -> Unit
 pub fn Formatter::set_max_boxes(Self, Int) -> Unit
 pub fn Formatter::set_max_indent(Self, Int) -> Unit
 pub fn Formatter::set_out_functions(Self, OutFunctions) -> Unit
+pub fn Formatter::set_output_functions(Self, (StringView) -> Unit, () -> Unit) -> Unit
 pub fn Formatter::set_print_tags(Self, Bool) -> Unit
 pub fn Formatter::set_stag_functions(Self, StagFunctions) -> Unit
 pub fn Formatter::set_tab(Self) -> Unit
