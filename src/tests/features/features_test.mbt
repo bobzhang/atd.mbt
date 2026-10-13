@@ -78,8 +78,8 @@ test "64-bit integers and numeric representations" {
 
 ///|
 test "maps" {
-  let by_name : Map[String, Int] = { "a": 1, "b": 2 }
-  let by_id : Map[Int, String] = { 1: "x", 2: "y" }
+  let by_name : Map[String, Int32] = { "a": 1, "b": 2 }
+  let by_id : Map[Int32, String] = { 1: "x", 2: "y" }
   let x = @features.Maps::new(by_name~, by_id~, pairs=[("p", 1.5), ("q", 2)])
   let s = @features.string_of_maps(x)
   inspect(

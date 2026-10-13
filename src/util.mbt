@@ -22,15 +22,15 @@ fn default_warning_handler(msg : String) -> Unit {
 pub fn load_bytes(
   src : BytesView,
   annot_schema? : Schema,
-  expand? : Bool = false,
-  keep_builtins? : Bool = false,
-  keep_poly? : Bool = false,
-  xdebug? : Bool = false,
-  inherit_fields? : Bool = false,
-  inherit_variants? : Bool = false,
-  pos_fname? : String = "",
-  pos_lnum? : Int = 1,
-  on_warning? : (String) -> Unit = default_warning_handler,
+  expand~ : Bool = false,
+  keep_builtins~ : Bool = false,
+  keep_poly~ : Bool = false,
+  xdebug~ : Bool = false,
+  inherit_fields~ : Bool = false,
+  inherit_variants~ : Bool = false,
+  pos_fname~ : String = "",
+  pos_lnum~ : Int32 = 1,
+  on_warning~ : (String) -> Unit = default_warning_handler,
 ) -> Module raise AtdError {
   let module_ = parse_module(src, pos_fname~, pos_lnum~)
   check_module(module_)
@@ -62,15 +62,15 @@ pub fn load_bytes(
 pub fn load_string(
   s : String,
   annot_schema? : Schema,
-  expand? : Bool = false,
-  keep_builtins? : Bool = false,
-  keep_poly? : Bool = false,
-  xdebug? : Bool = false,
-  inherit_fields? : Bool = false,
-  inherit_variants? : Bool = false,
-  pos_fname? : String = "",
-  pos_lnum? : Int = 1,
-  on_warning? : (String) -> Unit = default_warning_handler,
+  expand~ : Bool = false,
+  keep_builtins~ : Bool = false,
+  keep_poly~ : Bool = false,
+  xdebug~ : Bool = false,
+  inherit_fields~ : Bool = false,
+  inherit_variants~ : Bool = false,
+  pos_fname~ : String = "",
+  pos_lnum~ : Int32 = 1,
+  on_warning~ : (String) -> Unit = default_warning_handler,
 ) -> Module raise AtdError {
   load_bytes(
     @utf8.encode(s),
@@ -106,7 +106,7 @@ let ignorable_type_names : Array[TypeName] = [
 /// `all_rec` assumes all definitions are mutually dependent.
 pub fn tsort(
   type_defs : Array[TypeDef],
-  all_rec? : Bool = false,
+  all_rec~ : Bool = false,
 ) -> Array[(Bool, Array[TypeDef])] {
   if all_rec {
     [(true, type_defs)]

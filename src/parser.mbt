@@ -632,8 +632,8 @@ fn Parser::field(self : Parser) -> Field raise Error {
 /// semantic check.
 pub fn parse_module(
   src : BytesView,
-  pos_fname? : String = "",
-  pos_lnum? : Int = 1,
+  pos_fname~ : String = "",
+  pos_lnum~ : Int32 = 1,
 ) -> Module raise AtdError {
   let lexer = Lexer(src.to_owned(), fname=pos_fname, lnum=pos_lnum)
   let parser = Parser(lexer) catch {

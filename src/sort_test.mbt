@@ -1,7 +1,7 @@
 // Port of the tests of atd/src/sort.ml
 
 ///|
-fn in_order(result : Array[(Bool, Array[Int])], a : Int, b : Int) -> Bool {
+fn in_order(result : Array[(Bool, Array[Int32])], a : Int32, b : Int32) -> Bool {
   for i, g in result {
     let l = g.1
     if l.contains(b) {
@@ -14,27 +14,31 @@ fn in_order(result : Array[(Bool, Array[Int])], a : Int, b : Int) -> Bool {
 }
 
 ///|
-fn in_same_cycle(result : Array[(Bool, Array[Int])], a : Int, b : Int) -> Bool {
+fn in_same_cycle(
+  result : Array[(Bool, Array[Int32])],
+  a : Int32,
+  b : Int32,
+) -> Bool {
   result.iter().any(g => g.0 && g.1.contains(a) && g.1.contains(b))
 }
 
 ///|
-fn not_in_cycle(result : Array[(Bool, Array[Int])], x : Int) -> Bool {
+fn not_in_cycle(result : Array[(Bool, Array[Int32])], x : Int32) -> Bool {
   result.iter().any(g => !g.0 && g.1 == [x])
 }
 
 ///|
-fn seq(r : Array[(Bool, Array[Int])], a : Int, b : Int) -> Bool {
+fn seq(r : Array[(Bool, Array[Int32])], a : Int32, b : Int32) -> Bool {
   in_order(r, a, b) && !in_order(r, b, a) && !in_same_cycle(r, a, b)
 }
 
 ///|
-fn cyc(r : Array[(Bool, Array[Int])], a : Int, b : Int) -> Bool {
+fn cyc(r : Array[(Bool, Array[Int32])], a : Int32, b : Int32) -> Bool {
   in_same_cycle(r, a, b) && !in_order(r, a, b) && !in_order(r, b, a)
 }
 
 ///|
-fn sorted(l : Array[(Int, Array[Int])]) -> Array[(Bool, Array[Int])] {
+fn sorted(l : Array[(Int32, Array[Int32])]) -> Array[(Bool, Array[Int32])] {
   @atd.topological_sort(l, x => x)
 }
 

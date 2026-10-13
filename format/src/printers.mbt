@@ -17,7 +17,7 @@ fn default_sep(ppf : Formatter) -> Unit {
 /// by default), like OCaml's `pp_print_list`.
 pub fn[T] Formatter::print_list(
   self : Formatter,
-  pp_sep? : (Formatter) -> Unit = default_sep,
+  pp_sep~ : (Formatter) -> Unit = default_sep,
   pp_v : (Formatter, T) -> Unit,
   l : @list.List[T],
 ) -> Unit {
@@ -35,7 +35,7 @@ pub fn[T] Formatter::print_list(
 /// Print the elements of an array, like `print_list`.
 pub fn[T] Formatter::print_array(
   self : Formatter,
-  pp_sep? : (Formatter) -> Unit = default_sep,
+  pp_sep~ : (Formatter) -> Unit = default_sep,
   pp_v : (Formatter, T) -> Unit,
   a : ArrayView[T],
 ) -> Unit {
@@ -51,7 +51,7 @@ pub fn[T] Formatter::print_array(
 /// Print the elements of an iterator, like OCaml's `pp_print_seq`.
 pub fn[T] Formatter::print_iter(
   self : Formatter,
-  pp_sep? : (Formatter) -> Unit = default_sep,
+  pp_sep~ : (Formatter) -> Unit = default_sep,
   pp_v : (Formatter, T) -> Unit,
   seq : Iter[T],
 ) -> Unit {
@@ -102,7 +102,7 @@ pub fn Formatter::print_text(self : Formatter, s : String) -> Unit {
 /// which prints nothing by default, like OCaml's `pp_print_option`.
 pub fn[T] Formatter::print_option(
   self : Formatter,
-  none? : (Formatter) -> Unit = Formatter::print_nothing,
+  none~ : (Formatter) -> Unit = Formatter::print_nothing,
   pp_v : (Formatter, T) -> Unit,
   o : T?,
 ) -> Unit {

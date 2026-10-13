@@ -159,8 +159,8 @@ fn InheritExpander::subst_variant(
 /// Expand the `inherit` statements of all the type definitions.
 pub fn expand_inherit(
   defs : Array[TypeDef],
-  inherit_fields? : Bool = true,
-  inherit_variants? : Bool = true,
+  inherit_fields~ : Bool = true,
+  inherit_variants~ : Bool = true,
 ) -> Array[TypeDef] raise AtdError {
   let tbl = make_predef_table(defs)
   let e : InheritExpander = { tbl, inherit_fields, inherit_variants, }

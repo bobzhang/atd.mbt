@@ -48,14 +48,14 @@ pub fn anything_of_string(
 ///|
 /// Serialize a value of type `Anything` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_anything(x : Anything, indent? : Int = 0) -> String {
+pub fn string_of_anything(x : Anything, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_anything(x), indent~)
 }
 
 ///|
 pub(all) enum DifferentKindsOfThings {
   Root
-  Thing(Int)
+  Thing(Int32)
   // JSON: "wow"
   WOW
   // JSON: "!!!"
@@ -122,7 +122,7 @@ pub fn different_kinds_of_things_of_string(
 /// given indentation.
 pub fn string_of_different_kinds_of_things(
   x : DifferentKindsOfThings,
-  indent? : Int = 0,
+  indent~ : Int32 = 0,
 ) -> String {
   @atd_runtime.stringify(write_different_kinds_of_things(x), indent~)
 }
@@ -136,7 +136,7 @@ pub impl ToJson for DifferentKindsOfThings with fn to_json(self) {
 pub extend DifferentKindsOfThings with ToJson::{to_json}
 
 ///|
-pub type This = Int
+pub type This = Int32
 
 ///|
 pub fn write_this(x : This) -> Json {
@@ -166,7 +166,7 @@ pub fn this_of_string(s : StringView) -> This raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `This` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_this(x : This, indent? : Int = 0) -> String {
+pub fn string_of_this(x : This, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_this(x), indent~)
 }
 
@@ -226,7 +226,7 @@ pub fn simple_record_of_string(
 ///|
 /// Serialize a value of type `SimpleRecord` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_simple_record(x : SimpleRecord, indent? : Int = 0) -> String {
+pub fn string_of_simple_record(x : SimpleRecord, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_simple_record(x), indent~)
 }
 
@@ -242,20 +242,20 @@ pub extend SimpleRecord with ToJson::{to_json}
 pub(all) struct Root {
   id : String
   this : This
-  items : Array[Array[Int]]
-  maybe : Int?
+  items : Array[Array[Int32]]
+  maybe : Int32?
   maybe2 : SimpleRecord?
-  extras : Array[Int]
-  answer : Int
+  extras : Array[Int32]
+  answer : Int32
   aliased : Alias
   point : (Double, Double)
   kinds : Array[DifferentKindsOfThings]
-  assoc1 : Array[(Double, Int)]
-  assoc2 : Array[(String, Int)]
-  assoc3 : Array[(Double, Int)]
-  assoc4 : Array[(String, Int)]
-  options : Array[Int?]
-  nullables : Array[Int?]
+  assoc1 : Array[(Double, Int32)]
+  assoc2 : Array[(String, Int32)]
+  assoc3 : Array[(Double, Int32)]
+  assoc4 : Array[(String, Int32)]
+  options : Array[Int32?]
+  nullables : Array[Int32?]
   untyped_things : Array[Json]
   foo : Foo?
   parametrized_record : IntFloatParametrizedRecord
@@ -276,20 +276,20 @@ pub extend Root with Debug::{to_repr}
 pub fn Root::new(
   id~ : String,
   this~ : This,
-  items~ : Array[Array[Int]],
-  maybe? : Int,
+  items~ : Array[Array[Int32]],
+  maybe? : Int32,
   maybe2? : SimpleRecord,
-  extras? : Array[Int] = [],
-  answer? : Int = 0,
+  extras~ : Array[Int32] = [],
+  answer~ : Int32 = 0,
   aliased~ : Alias,
   point~ : (Double, Double),
   kinds~ : Array[DifferentKindsOfThings],
-  assoc1~ : Array[(Double, Int)],
-  assoc2~ : Array[(String, Int)],
-  assoc3~ : Array[(Double, Int)],
-  assoc4~ : Array[(String, Int)],
-  options? : Array[Int?] = [],
-  nullables? : Array[Int?] = [],
+  assoc1~ : Array[(Double, Int32)],
+  assoc2~ : Array[(String, Int32)],
+  assoc3~ : Array[(Double, Int32)],
+  assoc4~ : Array[(String, Int32)],
+  options~ : Array[Int32?] = [],
+  nullables~ : Array[Int32?] = [],
   untyped_things~ : Array[Json],
   foo~ : Foo?,
   parametrized_record~ : IntFloatParametrizedRecord,
@@ -349,13 +349,13 @@ pub fn write_root(x : Root) -> Json {
     @atd_runtime.write_float(x.point.1),
   ])
   o["kinds"] = @atd_runtime.write_list(write_different_kinds_of_things)(x.kinds)
-  o["assoc1"] = @atd_runtime.write_list((x : (Double, Int)) => {
+  o["assoc1"] = @atd_runtime.write_list((x : (Double, Int32)) => {
     Json::array([@atd_runtime.write_float(x.0), @atd_runtime.write_int(x.1)])
   })(x.assoc1)
   o["assoc2"] = @atd_runtime.write_assoc_array_to_object(@atd_runtime.write_int)(
     x.assoc2,
   )
-  o["assoc3"] = @atd_runtime.write_list((x : (Double, Int)) => {
+  o["assoc3"] = @atd_runtime.write_list((x : (Double, Int32)) => {
     Json::array([@atd_runtime.write_float(x.0), @atd_runtime.write_int(x.1)])
   })(x.assoc3)
   o["assoc4"] = @atd_runtime.write_assoc_array_to_object(@atd_runtime.write_int)(
@@ -543,7 +543,7 @@ pub fn root_of_string(s : StringView) -> Root raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Root` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_root(x : Root, indent? : Int = 0) -> String {
+pub fn string_of_root(x : Root, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_root(x), indent~)
 }
 
@@ -556,7 +556,7 @@ pub impl ToJson for Root with fn to_json(self) {
 pub extend Root with ToJson::{to_json}
 
 ///|
-pub type Alias = Array[Int]
+pub type Alias = Array[Int32]
 
 ///|
 pub fn write_alias(x : Alias) -> Json {
@@ -586,7 +586,7 @@ pub fn alias_of_string(s : StringView) -> Alias raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Alias` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_alias(x : Alias, indent? : Int = 0) -> String {
+pub fn string_of_alias(x : Alias, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_alias(x), indent~)
 }
 
@@ -648,7 +648,7 @@ pub fn shape_of_string(s : StringView) -> Shape raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Shape` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_shape(x : Shape, indent? : Int = 0) -> String {
+pub fn string_of_shape(x : Shape, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_shape(x), indent~)
 }
 
@@ -661,7 +661,7 @@ pub impl ToJson for Shape with fn to_json(self) {
 pub extend Shape with ToJson::{to_json}
 
 ///|
-pub type Pair = (String, Int)
+pub type Pair = (String, Int32)
 
 ///|
 pub fn write_pair(x : Pair) -> Json {
@@ -697,7 +697,7 @@ pub fn pair_of_string(s : StringView) -> Pair raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Pair` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_pair(x : Pair, indent? : Int = 0) -> String {
+pub fn string_of_pair(x : Pair, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_pair(x), indent~)
 }
 
@@ -753,7 +753,7 @@ pub fn foo_of_string(s : StringView) -> Foo raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Foo` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_foo(x : Foo, indent? : Int = 0) -> String {
+pub fn string_of_foo(x : Foo, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_foo(x), indent~)
 }
 
@@ -800,7 +800,10 @@ pub fn special_string_of_string(
 ///|
 /// Serialize a value of type `SpecialString` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_special_string(x : SpecialString, indent? : Int = 0) -> String {
+pub fn string_of_special_string(
+  x : SpecialString,
+  indent~ : Int32 = 0,
+) -> String {
   @atd_runtime.stringify(write_special_string(x), indent~)
 }
 
@@ -839,7 +842,10 @@ pub fn import_default_of_string(
 ///|
 /// Serialize a value of type `ImportDefault` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_import_default(x : ImportDefault, indent? : Int = 0) -> String {
+pub fn string_of_import_default(
+  x : ImportDefault,
+  indent~ : Int32 = 0,
+) -> String {
   @atd_runtime.stringify(write_import_default(x), indent~)
 }
 
@@ -874,13 +880,13 @@ pub fn import__of_string(s : StringView) -> Import raise @atd_runtime.JsonError 
 ///|
 /// Serialize a value of type `Import` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_import_(x : Import, indent? : Int = 0) -> String {
+pub fn string_of_import_(x : Import, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_import_(x), indent~)
 }
 
 ///|
 pub(all) struct IntFloatParametrizedRecord {
-  field_a : Int
+  field_a : Int32
   field_b : Array[Double]
 } derive(Eq, Debug)
 
@@ -893,8 +899,8 @@ pub extend IntFloatParametrizedRecord with Debug::{to_repr}
 ///|
 /// Create a value of type `IntFloatParametrizedRecord`.
 pub fn IntFloatParametrizedRecord::new(
-  field_a~ : Int,
-  field_b? : Array[Double] = [],
+  field_a~ : Int32,
+  field_b~ : Array[Double] = [],
 ) -> IntFloatParametrizedRecord {
   IntFloatParametrizedRecord::{ field_a, field_b, }
 }
@@ -951,7 +957,7 @@ pub fn _int_float_parametrized_record_of_string(
 /// given indentation.
 pub fn string_of__int_float_parametrized_record(
   x : IntFloatParametrizedRecord,
-  indent? : Int = 0,
+  indent~ : Int32 = 0,
 ) -> String {
   @atd_runtime.stringify(write__int_float_parametrized_record(x), indent~)
 }
@@ -965,7 +971,7 @@ pub impl ToJson for IntFloatParametrizedRecord with fn to_json(self) {
 pub extend IntFloatParametrizedRecord with ToJson::{to_json}
 
 ///|
-pub type TupleE1a4b40 = (DifferentKindsOfThings, DifferentKindsOfThings, Int)
+pub type TupleE1a4b40 = (DifferentKindsOfThings, DifferentKindsOfThings, Int32)
 
 ///|
 pub fn write__tuple_e1a4b40(x : TupleE1a4b40) -> Json {
@@ -1010,6 +1016,9 @@ pub fn _tuple_e1a4b40_of_string(
 ///|
 /// Serialize a value of type `TupleE1a4b40` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of__tuple_e1a4b40(x : TupleE1a4b40, indent? : Int = 0) -> String {
+pub fn string_of__tuple_e1a4b40(
+  x : TupleE1a4b40,
+  indent~ : Int32 = 0,
+) -> String {
   @atd_runtime.stringify(write__tuple_e1a4b40(x), indent~)
 }

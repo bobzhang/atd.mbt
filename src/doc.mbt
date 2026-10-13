@@ -47,11 +47,11 @@ fn is_verb_not_special(c : Char) -> Bool {
 ///|
 priv struct DocLexer {
   s : Array[Char]
-  mut pos : Int
+  mut pos : Int32
 }
 
 ///|
-fn DocLexer::at(self : DocLexer, i : Int) -> Char? {
+fn DocLexer::at(self : DocLexer, i : Int32) -> Char? {
   if i < self.s.length() {
     Some(self.s[i])
   } else {
@@ -60,7 +60,7 @@ fn DocLexer::at(self : DocLexer, i : Int) -> Char? {
 }
 
 ///|
-fn DocLexer::has_prefix(self : DocLexer, i : Int, p : String) -> Bool {
+fn DocLexer::has_prefix(self : DocLexer, i : Int32, p : String) -> Bool {
   let mut j = i
   for c in p {
     if self.at(j) != Some(c) {
@@ -72,7 +72,7 @@ fn DocLexer::has_prefix(self : DocLexer, i : Int, p : String) -> Bool {
 }
 
 ///|
-fn DocLexer::count(self : DocLexer, i : Int, pred : (Char) -> Bool) -> Int {
+fn DocLexer::count(self : DocLexer, i : Int32, pred : (Char) -> Bool) -> Int32 {
   let mut j = i
   while self.at(j) is Some(c) && pred(c) {
     j += 1
@@ -81,13 +81,13 @@ fn DocLexer::count(self : DocLexer, i : Int, pred : (Char) -> Bool) -> Int {
 }
 
 ///|
-fn DocLexer::sub(self : DocLexer, i : Int, n : Int) -> String {
+fn DocLexer::sub(self : DocLexer, i : Int32, n : Int32) -> String {
   String::from_array(self.s[i:i + n].to_owned())
 }
 
 ///|
 /// Length of a match of `line_break` ('\r'? '\n') at position i, or -1.
-fn DocLexer::line_break(self : DocLexer, i : Int) -> Int {
+fn DocLexer::line_break(self : DocLexer, i : Int32) -> Int32 {
   if self.at(i) == Some('\n') {
     1
   } else if self.at(i) == Some('\r') && self.at(i + 1) == Some('\n') {
@@ -100,7 +100,7 @@ fn DocLexer::line_break(self : DocLexer, i : Int) -> Int {
 ///|
 /// Pick the longest match; ties are resolved in favor of the first rule.
 /// `candidates` holds the match length of each rule, -1 for no match.
-fn longest(candidates : Array[Int]) -> (Int, Int) {
+fn longest(candidates : Array[Int32]) -> (Int32, Int32) {
   let mut best = -1
   let mut best_len = -1
   for i, len in candidates {
@@ -270,7 +270,7 @@ fn DocLexer::inline_verbatim(self : DocLexer) -> String raise DocFailure {
 }
 
 ///|
-fn count_leading_spaces(line : String) -> Int {
+fn count_leading_spaces(line : String) -> Int32 {
   let mut n = 0
   for c in line {
     if c == ' ' {
@@ -436,7 +436,7 @@ fn compact_whitespace(s : String) -> String {
   let chars = s.to_array()
   let buf = StringBuilder()
   let mut i = 0
-  let is_seq = (i : Int) => {
+  let is_seq = (i : Int32) => {
     i + 4 <= chars.length() &&
     chars[i] == ' ' &&
     chars[i + 1] == '\t' &&
@@ -616,7 +616,7 @@ pub fn split_on_blank(str : String) -> Array[String] {
 /// possible.
 pub fn concatenate_into_lines(
   words : Array[String],
-  max_length~ : Int,
+  max_length~ : Int32,
 ) -> Array[String] {
   let max_length = if max_length < 0 { 0 } else { max_length }
   let lines = []
@@ -644,6 +644,6 @@ pub fn concatenate_into_lines(
 
 ///|
 /// Rewrap a paragraph into lines of at most `max_length` bytes.
-pub fn rewrap_paragraph(str : String, max_length~ : Int) -> Array[String] {
+pub fn rewrap_paragraph(str : String, max_length~ : Int32) -> Array[String] {
   concatenate_into_lines(split_on_blank(str), max_length~)
 }
