@@ -22,7 +22,7 @@ priv enum OutFormat {
 
 ///|
 priv suberror Exit {
-  Exit(Int)
+  Exit(Int32)
 }
 
 ///|
@@ -281,7 +281,7 @@ fn run_exn(io : Io, args : ArrayView[String]) -> Unit raise Error {
 ///|
 /// Run atdcat with the given command-line arguments (including the program
 /// name), returning the exit code.
-pub fn run(io : Io, args : ArrayView[String]) -> Int {
+pub fn run(io : Io, args : ArrayView[String]) -> Int32 {
   try run_exn(io, args) catch {
     Exit(code) => code
     @atd.AtdError(msg) => {

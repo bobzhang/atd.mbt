@@ -45,12 +45,12 @@ pub fn tag_of_string(s : StringView) -> Tag raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Tag` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_tag(x : Tag, indent? : Int = 0) -> String {
+pub fn string_of_tag(x : Tag, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_tag(x), indent~)
 }
 
 ///|
-pub type Priority = Int
+pub type Priority = Int32
 
 ///|
 pub fn write_priority(x : Priority) -> Json {
@@ -82,6 +82,6 @@ pub fn priority_of_string(
 ///|
 /// Serialize a value of type `Priority` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_priority(x : Priority, indent? : Int = 0) -> String {
+pub fn string_of_priority(x : Priority, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_priority(x), indent~)
 }

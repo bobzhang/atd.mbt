@@ -1,6 +1,6 @@
 ///|
 test "format_float_g" {
-  let cases : Array[(Double, Int, String)] = [
+  let cases : Array[(Double, Int32, String)] = [
     (1.4142135623730951, 5, "1.4142"),
     (0.000123456789, 2, "0.00012"),
     (1234567890123.0, 2, "1.2e+12"),

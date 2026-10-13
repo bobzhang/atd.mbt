@@ -8,7 +8,7 @@
 ///|
 /// Length of a string in UTF-8 bytes, which is its width for the
 /// pretty-printer, like OCaml's `String.length` on UTF-8 strings.
-pub fn utf8_length(s : StringView) -> Int {
+pub fn utf8_length(s : StringView) -> Int32 {
   let mut n = 0
   for c in s {
     let code = c.to_int()
@@ -95,7 +95,7 @@ let blank_line : String = String::make(80, ' ')
 ///|
 /// Output `n` spaces with an output function, 80 at a time, like OCaml's
 /// `display_blanks`.
-fn display_blanks(out_string : (StringView) -> Unit, n : Int) -> Unit {
+fn display_blanks(out_string : (StringView) -> Unit, n : Int32) -> Unit {
   let mut n = n
   while n > 0 {
     if n <= 80 {
@@ -114,7 +114,7 @@ fn display_blanks(out_string : (StringView) -> Unit, n : Int) -> Unit {
 /// `make_formatter`.
 pub fn Formatter::Formatter(
   output : (StringView) -> Unit,
-  flush? : () -> Unit = () => (),
+  flush~ : () -> Unit = () => (),
 ) -> Formatter {
   let ppf = Formatter::of_out_functions({
     out_string: output,
@@ -145,7 +145,7 @@ pub fn Formatter::of_buffer(buf : StringBuilder) -> Formatter {
 
 ///|
 /// Print a string, pretending that its width is `size`.
-pub fn Formatter::print_as(self : Formatter, size : Int, s : String) -> Unit {
+pub fn Formatter::print_as(self : Formatter, size : Int32, s : String) -> Unit {
   if self.curr_depth < self.max_boxes {
     self.enqueue_string_as(size.to_int64(), s)
   }
@@ -160,7 +160,7 @@ pub fn Formatter::print_string(self : Formatter, s : String) -> Unit {
 
 ///|
 /// Print an integer.
-pub fn Formatter::print_int(self : Formatter, i : Int) -> Unit {
+pub fn Formatter::print_int(self : Formatter, i : Int32) -> Unit {
   self.print_string(i.to_string())
 }
 
@@ -200,28 +200,28 @@ pub fn Formatter::open_hbox(self : Formatter) -> Unit {
 ///|
 /// Open a vertical box: every break hint splits the line; `indent` is
 /// added to the current indentation.
-pub fn Formatter::open_vbox(self : Formatter, indent : Int) -> Unit {
+pub fn Formatter::open_vbox(self : Formatter, indent : Int32) -> Unit {
   self.open_box_gen(indent, VBox)
 }
 
 ///|
 /// Open a horizontal/vertical box: horizontal if it fits on the line,
 /// otherwise vertical.
-pub fn Formatter::open_hvbox(self : Formatter, indent : Int) -> Unit {
+pub fn Formatter::open_hvbox(self : Formatter, indent : Int32) -> Unit {
   self.open_box_gen(indent, HVBox)
 }
 
 ///|
 /// Open a horizontal-or-vertical compacting box: break hints split the line
 /// only when the material doesn't fit on it.
-pub fn Formatter::open_hovbox(self : Formatter, indent : Int) -> Unit {
+pub fn Formatter::open_hovbox(self : Formatter, indent : Int32) -> Unit {
   self.open_box_gen(indent, HOVBox)
 }
 
 ///|
 /// Open a structural compacting box: like `open_hovbox`, but break hints
 /// also split the line if that reduces the indentation.
-pub fn Formatter::open_box(self : Formatter, indent : Int) -> Unit {
+pub fn Formatter::open_box(self : Formatter, indent : Int32) -> Unit {
   self.open_box_gen(indent, Box)
 }
 
@@ -232,8 +232,8 @@ pub fn Formatter::open_box(self : Formatter, indent : Int) -> Unit {
 /// the line is not split, `breaks` = (before, offset, after) if it is.
 pub fn Formatter::print_custom_break(
   self : Formatter,
-  fits~ : (String, Int, String),
-  breaks~ : (String, Int, String),
+  fits~ : (String, Int32, String),
+  breaks~ : (String, Int32, String),
 ) -> Unit {
   let (before, width, after) = fits
   if self.curr_depth < self.max_boxes {
@@ -249,8 +249,8 @@ pub fn Formatter::print_custom_break(
 /// split the line and add `offset` to the indentation.
 pub fn Formatter::print_break(
   self : Formatter,
-  width : Int,
-  offset : Int,
+  width : Int32,
+  offset : Int32,
 ) -> Unit {
   self.print_custom_break(fits=("", width, ""), breaks=("", offset, ""))
 }
@@ -309,7 +309,7 @@ pub fn Formatter::open_tbox(self : Formatter) -> Unit {
   if self.curr_depth < self.max_boxes {
     self.enqueue_advance({
       size: 0,
-      token: TBegin({ tabs: @list.empty(), }),
+      token: TBegin({ tabs: @list.List([]), }),
       length: 0,
     })
   }
@@ -332,8 +332,8 @@ pub fn Formatter::close_tbox(self : Formatter) -> Unit {
 /// `offset` to the indentation.
 pub fn Formatter::print_tbreak(
   self : Formatter,
-  width : Int,
-  offset : Int,
+  width : Int32,
+  offset : Int32,
 ) -> Unit {
   if self.curr_depth < self.max_boxes {
     let size = -self.right_total
@@ -364,7 +364,7 @@ pub fn Formatter::set_tab(self : Formatter) -> Unit {
 ///|
 /// Set the maximum number of simultaneously opened boxes (must be > 1);
 /// material in deeper boxes is printed as the ellipsis.
-pub fn Formatter::set_max_boxes(self : Formatter, n : Int) -> Unit {
+pub fn Formatter::set_max_boxes(self : Formatter, n : Int32) -> Unit {
   if n > 1 {
     self.max_boxes = n
   }
@@ -372,7 +372,7 @@ pub fn Formatter::set_max_boxes(self : Formatter, n : Int) -> Unit {
 
 ///|
 /// The maximum number of simultaneously opened boxes.
-pub fn Formatter::get_max_boxes(self : Formatter) -> Int {
+pub fn Formatter::get_max_boxes(self : Formatter) -> Int32 {
   self.max_boxes
 }
 
@@ -418,7 +418,7 @@ fn Formatter::set_min_space_left(self : Formatter, n : Int64) -> Unit {
 ///|
 /// Set the maximum indentation: boxes opened beyond it are rejected to the
 /// left. Ignored if `n <= 1`.
-pub fn Formatter::set_max_indent(self : Formatter, n : Int) -> Unit {
+pub fn Formatter::set_max_indent(self : Formatter, n : Int32) -> Unit {
   self.set_max_indent64(n.to_int64())
 }
 
@@ -431,13 +431,13 @@ fn Formatter::set_max_indent64(self : Formatter, n : Int64) -> Unit {
 
 ///|
 /// The maximum indentation.
-pub fn Formatter::get_max_indent(self : Formatter) -> Int {
+pub fn Formatter::get_max_indent(self : Formatter) -> Int32 {
   self.max_indent.to_int()
 }
 
 ///|
 /// Set the right margin (78 by default). Ignored if `n < 1`.
-pub fn Formatter::set_margin(self : Formatter, n : Int) -> Unit {
+pub fn Formatter::set_margin(self : Formatter, n : Int32) -> Unit {
   if n >= 1 {
     let n = pp_limit(n.to_int64())
     self.margin = n
@@ -464,15 +464,15 @@ pub fn Formatter::set_margin(self : Formatter, n : Int) -> Unit {
 
 ///|
 /// The right margin.
-pub fn Formatter::get_margin(self : Formatter) -> Int {
+pub fn Formatter::get_margin(self : Formatter) -> Int32 {
   self.margin.to_int()
 }
 
 ///|
 /// The geometry of a formatter.
 pub(all) struct Geometry {
-  max_indent : Int
-  margin : Int
+  max_indent : Int32
+  margin : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -522,8 +522,8 @@ fn Formatter::set_full_geometry(self : Formatter, g : Geometry) -> Unit {
 /// geometry.
 pub fn Formatter::set_geometry(
   self : Formatter,
-  max_indent~ : Int,
-  margin~ : Int,
+  max_indent~ : Int32,
+  margin~ : Int32,
 ) -> Unit raise InvalidArgument {
   let g = { max_indent, margin, }
   match validate_geometry(g) {
@@ -536,8 +536,8 @@ pub fn Formatter::set_geometry(
 /// Like `set_geometry`, but does nothing if the geometry is invalid.
 pub fn Formatter::safe_set_geometry(
   self : Formatter,
-  max_indent~ : Int,
-  margin~ : Int,
+  max_indent~ : Int32,
+  margin~ : Int32,
 ) -> Unit {
   let g = { max_indent, margin, }
   if validate_geometry(g) is None {
@@ -655,8 +655,8 @@ pub(all) enum SymbolicOutputItem {
   OutputFlush
   OutputNewline
   OutputString(String)
-  OutputSpaces(Int)
-  OutputIndent(Int)
+  OutputSpaces(Int32)
+  OutputIndent(Int32)
 } derive(Eq, Debug)
 
 ///|

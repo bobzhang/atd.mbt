@@ -215,7 +215,7 @@ fn assoc(l : Array[(String, @yojson.Value)]) -> @yojson.Value {
 fn type_expr_to_assoc(
   x : JsType,
   version : JsonschemaVersion,
-  is_nullable? : Bool = false,
+  is_nullable~ : Bool = false,
 ) -> Array[(String, @yojson.Value)] {
   match x {
     Ref(s) => [("$ref", @yojson.Value::String(s))]
@@ -294,8 +294,8 @@ fn type_expr_to_assoc(
 fn type_expr_to_json(
   x : JsType,
   version : JsonschemaVersion,
-  is_nullable? : Bool = false,
-  descr? : Array[(String, @yojson.Value)] = [],
+  is_nullable~ : Bool = false,
+  descr~ : Array[(String, @yojson.Value)] = [],
 ) -> @yojson.Value {
   let l = descr.copy()
   l.append(type_expr_to_assoc(x, version, is_nullable~))
@@ -335,8 +335,8 @@ pub fn jsonschema_of_module(
   module_ : Module,
   src_name~ : String,
   root_type~ : String,
-  version? : JsonschemaVersion = default_jsonschema_version,
-  xprop? : Bool = true,
+  version~ : JsonschemaVersion = default_jsonschema_version,
+  xprop~ : Bool = true,
 ) -> @yojson.Value raise AtdError {
   let defs = []
   for d in expand_inherit(module_.type_defs) {
@@ -383,8 +383,8 @@ pub fn print_jsonschema(
   module_ : Module,
   src_name~ : String,
   root_type~ : String,
-  version? : JsonschemaVersion = default_jsonschema_version,
-  xprop? : Bool = true,
+  version~ : JsonschemaVersion = default_jsonschema_version,
+  xprop~ : Bool = true,
 ) -> String raise AtdError {
   let json = jsonschema_of_module(
     module_,

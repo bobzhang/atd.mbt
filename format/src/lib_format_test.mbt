@@ -263,10 +263,10 @@ test "pp_print_custom_break" {
 
 ///|
 test "pr6824" {
-  let f = (n : Int) => @format.sprintf("[%i]", [Int(n)])
+  let f = (n : Int32) => @format.sprintf("[%i]", [Int(n)])
   assert_eq(f(1), "[1]")
   assert_eq(f(2), "[2]")
-  let f = (n : Int) => @format.asprintf("[%i]", [Int(n)])
+  let f = (n : Int32) => @format.asprintf("[%i]", [Int(n)])
   assert_eq(f(1), "[1]")
   assert_eq(f(2), "[2]")
 }
@@ -303,7 +303,7 @@ test "print_if_newline" {
 
 ///|
 test "print_seq" {
-  let pp_print_intseq = (ppf : @format.Formatter, seq : Iter[Int]) => {
+  let pp_print_intseq = (ppf : @format.Formatter, seq : Iter[Int32]) => {
     ppf.print_iter(
       pp_sep=ppf => ppf.print_char(' '),
       @format.Formatter::print_int,

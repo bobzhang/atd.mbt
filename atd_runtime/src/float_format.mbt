@@ -4,7 +4,7 @@
 /// The exact decimal expansion of a finite, non-negative double:
 /// `(digits, exponent)` such that the value is `0.digits * 10^exponent`,
 /// with no leading zero in `digits` (empty for zero).
-fn exact_decimal(x : Double) -> (String, Int) {
+fn exact_decimal(x : Double) -> (String, Int32) {
   let bits = x.reinterpret_as_uint64()
   let biased = ((bits >> 52) & 0x7FF).to_int()
   let fraction = bits & 0xFFFFFFFFFFFFF
@@ -33,7 +33,7 @@ fn exact_decimal(x : Double) -> (String, Int) {
 /// Round a digit string to `n` digits, rounding half to even.
 /// Return the rounded digits (exactly `n` of them) and whether the rounding
 /// carried into a new leading digit.
-fn round_digits(digits : String, n : Int) -> (Array[Int], Bool) {
+fn round_digits(digits : String, n : Int32) -> (Array[Int32], Bool) {
   let d = digits.iter().map(c => c.to_int() - '0'.to_int()).collect()
   if d.length() <= n {
     // no rounding needed; trailing zeros would be removed anyway
@@ -71,7 +71,7 @@ fn round_digits(digits : String, n : Int) -> (Array[Int], Bool) {
 
 ///|
 /// Format a finite number like C's `printf("%.<precision>g", x)`.
-pub fn format_float_g(x : Double, precision : Int) -> String {
+pub fn format_float_g(x : Double, precision : Int32) -> String {
   let p = if precision <= 0 { 1 } else { precision }
   let negative = x < 0.0 || (x == 0.0 && 1.0 / x < 0.0)
   let sign = if negative { "-" } else { "" }

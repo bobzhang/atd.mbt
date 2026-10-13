@@ -357,7 +357,7 @@ fn Printer::format_module(self : Printer, x : Module) -> @easy_format.T {
 /// Convert any node into an Easy_format tree.
 pub fn format(
   x : Any,
-  format_annot? : (AnnotSection) -> @easy_format.T = default_format_annot,
+  format_annot~ : (AnnotSection) -> @easy_format.T = default_format_annot,
 ) -> @easy_format.T {
   let p : Printer = { format_annot, }
   match x {
@@ -376,7 +376,7 @@ pub fn format(
 /// Pretty-print any node in ATD syntax.
 pub fn to_string(
   x : Any,
-  format_annot? : (AnnotSection) -> @easy_format.T = default_format_annot,
+  format_annot~ : (AnnotSection) -> @easy_format.T = default_format_annot,
 ) -> String {
   @easy_format.to_string(format(x, format_annot~))
 }

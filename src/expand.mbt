@@ -19,8 +19,8 @@
 /// Entry of the expansion table: order in the file, number of parameters,
 /// original type definition, rewritten type definition.
 priv struct ExpandEntry {
-  seqnum : Int
-  n_param : Int
+  seqnum : Int32
+  n_param : Int32
   orig : TypeDef?
   rewritten : TypeDef?
 }
@@ -65,7 +65,7 @@ fn mapvar_expr(f : (String) -> String, x : TypeExpr) -> TypeExpr {
 }
 
 ///|
-fn var_of_int(i : Int) -> String {
+fn var_of_int(i : Int32) -> String {
   let letter = i % 26
   let number = i / 26
   let prefix = (letter + 'a'.to_int()).unsafe_to_char().to_string()
@@ -77,7 +77,7 @@ fn var_of_int(i : Int) -> String {
 }
 
 ///|
-fn vars_of_int(n : Int) -> Array[String] {
+fn vars_of_int(n : Int32) -> Array[String] {
   Array::makei(n, var_of_int)
 }
 
@@ -162,7 +162,7 @@ fn assoc_env(env : Array[(String, TypeExpr)], s : String) -> TypeExpr? {
 ///|
 priv struct Expander {
   keep_builtins : Bool
-  mut seqnum : Int
+  mut seqnum : Int32
   /// Specializations being created: original type name and location
   stack : Array[(TypeName, Loc)]
   tbl : Map[TypeName, ExpandEntry]
@@ -286,7 +286,7 @@ fn Expander::subst_type_name(
 
 ///|
 /// Maximum nesting of the specializations created by the expansion.
-let max_expansion_depth : Int = 100
+let max_expansion_depth : Int32 = 100
 
 ///|
 fn Expander::create_type_def(
@@ -296,7 +296,7 @@ fn Expander::create_type_def(
   orig_args : Array[TypeExpr],
   env : Array[(String, TypeExpr)],
   name : TypeName,
-  n_param : Int,
+  n_param : Int32,
   an0 : Annot,
 ) -> Unit raise AtdError {
   // A specialization of a type that uses itself with ever-growing
@@ -511,7 +511,7 @@ fn suggest_good_name(name_with_punct : String) -> String {
     "x"
   } else {
     match name[0] {
-      'a'..='z' | 'A'..='Z' => name
+      'a'..<='z' | 'A'..<='Z' => name
       _ => "x" + name
     }
   }
@@ -571,10 +571,10 @@ fn standardize_type_names(
 /// - `debug`: keep meaningful but non ATD-compliant names for new types.
 pub fn expand_type_defs(
   td_list : Array[TypeDef],
-  prefix? : String = "_",
-  keep_builtins? : Bool = false,
-  keep_poly? : Bool = false,
-  debug? : Bool = false,
+  prefix~ : String = "_",
+  keep_builtins~ : Bool = false,
+  keep_poly~ : Bool = false,
+  debug~ : Bool = false,
 ) -> Array[TypeDef] raise AtdError {
   let td_list = expand_defs(td_list, keep_builtins~, keep_poly~)
   if debug {

@@ -75,7 +75,7 @@ fn[A] format_tuple(f : (A) -> @easy_format.T, l : Array[A]) -> @easy_format.T {
 }
 
 ///|
-fn format_int(x : Int) -> @easy_format.T {
+fn format_int(x : Int32) -> @easy_format.T {
   Atom(x.to_string(), atom)
 }
 
@@ -86,8 +86,8 @@ fn format_float(x : Double) -> @easy_format.T {
 
 ///|
 fn format_sum(
-  wrap? : @easy_format.Wrap = WrapAtoms,
-  l : Array[Int],
+  wrap~ : @easy_format.Wrap = WrapAtoms,
+  l : Array[Int32],
 ) -> @easy_format.T {
   List(
     ("(", "+", ")", { ..operator_param, wrap_body: wrap, }),
@@ -107,10 +107,10 @@ fn[A] format_array(
 
 ///|
 fn format_matrix(
-  align_closing1? : Bool = true,
-  align_closing2? : Bool = true,
-  wrap1? : @easy_format.Wrap = WrapAtoms,
-  wrap2? : @easy_format.Wrap = WrapAtoms,
+  align_closing1~ : Bool = true,
+  align_closing2~ : Bool = true,
+  wrap1~ : @easy_format.Wrap = WrapAtoms,
+  wrap2~ : @easy_format.Wrap = WrapAtoms,
   m : Array[Array[Double]],
 ) -> @easy_format.T {
   format_array(
@@ -203,8 +203,8 @@ fn make_heterogenous_list(
 /// margin.
 fn with_margin(
   stdout : StringBuilder,
-  html? : Bool = false,
-  margin : Int,
+  html~ : Bool = false,
+  margin : Int32,
   f : (@format.Formatter) -> Unit,
 ) -> Unit {
   let fmt = @format.Formatter::of_buffer(stdout)
@@ -352,7 +352,7 @@ test "simple_example" {
   with_margin(stdout, 80, to_formatter(format_matrix(wrap2=NeverWrap, m)))
   // a function definition, showed with different right-margin settings and
   // either begin-end or { } around the function body
-  let program = (html : Bool, margin : Int, style) => {
+  let program = (html : Bool, margin : Int32, style) => {
     with_margin(
       stdout,
       html~,

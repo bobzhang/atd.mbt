@@ -21,13 +21,13 @@ fn check_recursive_aliases(
   }
   // depth-first search on the graph of aliases, iteratively
   // state: 1 = being visited, 2 = done
-  let state : Map[String, Int] = Map([])
+  let state : Map[String, Int32] = Map([])
   for d in defs {
     let root = d.name.to_string()
     if !aliases.contains(root) || state.contains(root) {
       continue
     }
-    let stack : Array[(String, Array[String], Int)] = []
+    let stack : Array[(String, Array[String], Int32)] = []
     let deps = (name : String) => {
       aliases[name].value
       .extract_type_names()
@@ -174,8 +174,8 @@ pub fn generate_module(
 pub fn generate(
   src : BytesView,
   atd_filename~ : String,
-  pos_fname? : String = atd_filename,
-  on_warning? : (String) -> Unit = msg => eprintln(msg),
+  pos_fname~ : String = atd_filename,
+  on_warning~ : (String) -> Unit = msg => eprintln(msg),
 ) -> String raise @atd.AtdError {
   let m = @atd.load_bytes(
     src,

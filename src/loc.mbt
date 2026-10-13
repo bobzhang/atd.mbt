@@ -8,11 +8,11 @@ pub(all) struct Pos {
   /// File name, used in error messages.
   fname : String
   /// Line number, starting from 1.
-  lnum : Int
+  lnum : Int32
   /// Byte offset of the beginning of the line.
-  bol : Int
+  bol : Int32
   /// Byte offset of the position.
-  cnum : Int
+  cnum : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -39,7 +39,7 @@ pub fn Loc::Loc(start : Pos, end_ : Pos) -> Loc {
 }
 
 ///|
-fn compare_pos(a : Pos, b : Pos) -> Int {
+fn compare_pos(a : Pos, b : Pos) -> Int32 {
   let c = compare_strings(a.fname, b.fname)
   if c != 0 {
     c
@@ -51,7 +51,7 @@ fn compare_pos(a : Pos, b : Pos) -> Int {
 ///|
 /// Compare two locations so as to sort them by file path, then start
 /// position, then end position.
-pub fn Loc::compare(a : Loc, b : Loc) -> Int {
+pub fn Loc::compare(a : Loc, b : Loc) -> Int32 {
   let c = compare_pos(a.start, b.start)
   if c != 0 {
     c
