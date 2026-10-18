@@ -114,7 +114,7 @@ fn FormatParser::parse_literal(
     str_ind += 1
   }
   if str_ind == end_ind {
-    return self.add_literal(lit_start, str_ind, @list.empty())
+    return self.add_literal(lit_start, str_ind, List([]))
   }
   let fmt_rest = if self.char_at(str_ind) == '%' {
     self.parse_format(str_ind, end_ind)
@@ -726,7 +726,7 @@ fn FormatParser::parse_tag(
       return fmt_rest.prepend(make(sub_fmt))
     }
   }
-  self.parse(str_ind, end_ind).prepend(make(@list.empty()))
+  self.parse(str_ind, end_ind).prepend(make(List([])))
 }
 
 ///|

@@ -309,7 +309,7 @@ pub fn Formatter::open_tbox(self : Formatter) -> Unit {
   if self.curr_depth < self.max_boxes {
     self.enqueue_advance({
       size: 0,
-      token: TBegin({ tabs: @list.empty(), }),
+      token: TBegin({ tabs: List([]), }),
       length: 0,
     })
   }
