@@ -11,7 +11,7 @@ pub(all) enum JsonInt {
 /// JSON representation of an ATD `float`.
 pub(all) enum JsonFloat {
   /// Number with an optional maximum number of decimal places
-  Float(Int?)
+  Float(Int32?)
   Int
 } derive(Eq, Debug)
 
@@ -110,7 +110,7 @@ pub fn get_json_int(an : Annot) -> JsonInt raise AtdError {
 
 ///|
 /// `<json precision="N">`
-pub fn get_json_precision(an : Annot) -> Int? raise AtdError {
+pub fn get_json_precision(an : Annot) -> Int32? raise AtdError {
   annot_get_opt_field(
     an,
     parse=s => {

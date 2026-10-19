@@ -91,7 +91,7 @@ fn Env::fun_base(self : Env, atd_name : String) -> String {
 }
 
 ///|
-fn suffix(i : Int) -> String {
+fn suffix(i : Int32) -> String {
   match i {
     0 => ""
     1 => "_"

@@ -38,15 +38,15 @@ priv enum Token {
 priv struct Lexer {
   src : Bytes
   fname : String
-  mut pos : Int
-  mut lnum : Int
-  mut bol : Int
+  mut pos : Int32
+  mut lnum : Int32
+  mut bol : Int32
   /// Start of the current lexeme
   mut start : Pos
 }
 
 ///|
-fn Lexer::Lexer(src : Bytes, fname~ : String, lnum~ : Int) -> Lexer {
+fn Lexer::Lexer(src : Bytes, fname~ : String, lnum~ : Int32) -> Lexer {
   {
     src,
     fname,
@@ -63,7 +63,7 @@ fn Lexer::curr_pos(self : Lexer) -> Pos {
 }
 
 ///|
-fn Lexer::peek(self : Lexer, offset : Int) -> Int {
+fn Lexer::peek(self : Lexer, offset : Int32) -> Int32 {
   let i = self.pos + offset
   if i < self.src.length() {
     self.src[i].to_int()
@@ -85,32 +85,32 @@ fn[T] Lexer::error(self : Lexer, msg : String) -> T raise AtdError {
 }
 
 ///|
-fn is_upper(c : Int) -> Bool {
+fn is_upper(c : Int32) -> Bool {
   c >= 'A' && c <= 'Z'
 }
 
 ///|
-fn is_lower(c : Int) -> Bool {
+fn is_lower(c : Int32) -> Bool {
   c >= 'a' && c <= 'z'
 }
 
 ///|
-fn is_digit(c : Int) -> Bool {
+fn is_digit(c : Int32) -> Bool {
   c >= '0' && c <= '9'
 }
 
 ///|
-fn is_identchar(c : Int) -> Bool {
+fn is_identchar(c : Int32) -> Bool {
   is_upper(c) || is_lower(c) || is_digit(c) || c == '_' || c == '\''
 }
 
 ///|
-fn is_hex(c : Int) -> Bool {
+fn is_hex(c : Int32) -> Bool {
   is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')
 }
 
 ///|
-fn int_of_hex(c : Int) -> Int {
+fn int_of_hex(c : Int32) -> Int32 {
   if is_digit(c) {
     c - 48
   } else if c >= 'a' && c <= 'f' {
@@ -128,7 +128,7 @@ fn decode_utf8(b : BytesView) -> String {
 
 ///|
 /// Length of an lident starting at offset `i` (0 if none).
-fn Lexer::lident_length(self : Lexer, i : Int) -> Int {
+fn Lexer::lident_length(self : Lexer, i : Int32) -> Int32 {
   let c = self.peek(i)
   let mut n = if is_lower(c) {
     1
@@ -144,7 +144,7 @@ fn Lexer::lident_length(self : Lexer, i : Int) -> Int {
 }
 
 ///|
-fn Lexer::substring(self : Lexer, start : Int, end_ : Int) -> String {
+fn Lexer::substring(self : Lexer, start : Int32, end_ : Int32) -> String {
   decode_utf8(self.src[start:end_])
 }
 
@@ -267,7 +267,7 @@ fn ocaml_escaped_bytes(b : BytesView) -> String {
       '\t' => buf.write_string("\\t")
       '\r' => buf.write_string("\\r")
       '\b' => buf.write_string("\\b")
-      0x20..=0x7E => buf.write_char(b.unsafe_to_char())
+      0x20..<=0x7E => buf.write_char(b.unsafe_to_char())
       _ => {
         buf.write_char('\\')
         buf.write_char((b / 100 + 48).unsafe_to_char())
@@ -377,7 +377,7 @@ fn Lexer::string(self : Lexer, double_quoted : Bool) -> String raise AtdError {
 
 ///|
 /// Skip a comment, after the opening `(*`.
-fn Lexer::comment(self : Lexer, depth : Int) -> Unit raise AtdError {
+fn Lexer::comment(self : Lexer, depth : Int32) -> Unit raise AtdError {
   let mut depth = depth
   for ;; {
     self.start = self.curr_pos()

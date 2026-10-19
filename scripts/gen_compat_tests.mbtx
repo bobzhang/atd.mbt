@@ -88,7 +88,7 @@ fn mbt_string(s : String) -> String {
 
 ///|
 /// Compare strings by code points, like Python.
-fn compare_paths(a : String, b : String) -> Int {
+fn compare_paths(a : String, b : String) -> Int32 {
   let ia = a.iter()
   let ib = b.iter()
   for ;; {
@@ -128,7 +128,7 @@ struct Case {
   stdin_file : String?
   stdout : String
   stderr : String
-  code : Int
+  code : Int32
 }
 
 ///|

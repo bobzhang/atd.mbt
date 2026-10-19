@@ -86,12 +86,12 @@ fn word(rand : @random.Rand) -> String {
 }
 
 ///|
-fn small(rand : @random.Rand, lo : Int, hi : Int) -> Int {
+fn small(rand : @random.Rand, lo : Int32, hi : Int32) -> Int32 {
   lo + rand.int(limit=hi - lo + 1)
 }
 
 ///|
-fn int32_value(rand : @random.Rand) -> Int {
+fn int32_value(rand : @random.Rand) -> Int32 {
   match rand.int(limit=5) {
     0 => small(rand, -20, 20)
     1 => pick(rand, [0, 1, -1, 42, -42, 2147483647, -2147483648, 1000000])
@@ -120,7 +120,7 @@ let interesting_floats : Array[Double] = [
 ]
 
 ///|
-fn float_bits(rand : @random.Rand, nan? : Bool = true) -> String {
+fn float_bits(rand : @random.Rand, nan~ : Bool = true) -> String {
   let x = if rand.int(limit=3) == 0 {
     // random bits, but not a negative NaN (printed as "-nan" by glibc)
     let x = rand.int64().reinterpret_as_double()
@@ -151,7 +151,11 @@ fn float_bits(rand : @random.Rand, nan? : Bool = true) -> String {
 
 ///|
 /// Generate a conversion and its arguments.
-fn conversion(rand : @random.Rand, args : Array[String], depth : Int) -> String {
+fn conversion(
+  rand : @random.Rand,
+  args : Array[String],
+  depth : Int32,
+) -> String {
   let buf = StringBuilder()
   buf.write_char('%')
   let conv = pick(rand, [
@@ -312,7 +316,7 @@ fn conversion(rand : @random.Rand, args : Array[String], depth : Int) -> String 
 fn format_string(
   rand : @random.Rand,
   args : Array[String],
-  depth : Int,
+  depth : Int32,
 ) -> String {
   let buf = StringBuilder()
   for _ in 0..<small(rand, 1, 8) {
@@ -443,7 +447,7 @@ fn ocaml_error_message(err : String) -> String? {
 }
 
 ///|
-async fn run(exe : String, path : String) -> (Int, Bytes, String) {
+async fn run(exe : String, path : String) -> (Int32, Bytes, String) {
   let (code, out, err) = @process.collect_output(
     exe,
     [],
@@ -467,7 +471,7 @@ async fn main {
   let path = tmp + "/script.txt"
   let mut diffs = 0
   let mut skipped = 0
-  let rejections : Map[String, Int] = Map([])
+  let rejections : Map[String, Int32] = Map([])
   for i in 0..<count {
     let src = script(rand)
     @fs.write_file(path, src)

@@ -14,7 +14,7 @@
 /// The exact decimal expansion of a finite, non-negative double:
 /// `(digits, exponent)` such that the value is `0.digits * 10^exponent`,
 /// with no leading zero in `digits` (empty for zero).
-fn exact_decimal(x : Double) -> (String, Int) {
+fn exact_decimal(x : Double) -> (String, Int32) {
   let bits = x.reinterpret_as_uint64()
   let biased = ((bits >> 52) & 0x7FF).to_int()
   let fraction = bits & 0xFFFFFFFFFFFFF
@@ -46,7 +46,7 @@ fn exact_decimal(x : Double) -> (String, Int) {
 /// half to even on the exact value. Return the kept digits (exactly
 /// `max(keep, 0)` of them, padded with zeros) and whether the rounding
 /// carried into a new leading digit.
-fn round_digits_at(digits : String, keep : Int) -> (Array[Int], Bool) {
+fn round_digits_at(digits : String, keep : Int32) -> (Array[Int32], Bool) {
   let d = digits.iter().map(c => c.to_int() - '0'.to_int()).collect()
   if keep < 0 {
     return ([], false)
@@ -84,7 +84,7 @@ fn round_digits_at(digits : String, keep : Int) -> (Array[Int], Bool) {
 }
 
 ///|
-fn digits_string(d : ArrayView[Int]) -> String {
+fn digits_string(d : ArrayView[Int32]) -> String {
   let buf = StringBuilder()
   for x in d {
     buf.write_char((x + '0'.to_int()).unsafe_to_char())
@@ -95,7 +95,7 @@ fn digits_string(d : ArrayView[Int]) -> String {
 ///|
 /// The digits of a number in scientific notation with `prec` digits after
 /// the point: the `prec + 1` significant digits and the decimal exponent.
-fn scientific_digits(x : Double, prec : Int) -> (Array[Int], Int) {
+fn scientific_digits(x : Double, prec : Int32) -> (Array[Int32], Int32) {
   let (digits, exp10) = exact_decimal(x)
   if digits == "" {
     return (Array::make(prec + 1, 0), 0)
@@ -111,7 +111,7 @@ fn scientific_digits(x : Double, prec : Int) -> (Array[Int], Int) {
 ///|
 /// The digits of a number in fixed notation with `prec` digits after the
 /// point: the digits before and after the point.
-fn fixed_digits(x : Double, prec : Int) -> (String, String) {
+fn fixed_digits(x : Double, prec : Int32) -> (String, String) {
   let (digits, exp10) = exact_decimal(x)
   if digits == "" {
     return ("0", String::make(prec, '0'))
@@ -141,7 +141,7 @@ fn fixed_digits(x : Double, prec : Int) -> (String, String) {
 }
 
 ///|
-fn exponent_string(e : Int, upper : Bool) -> String {
+fn exponent_string(e : Int32, upper : Bool) -> String {
   let buf = StringBuilder()
   buf.write_char(if upper { 'E' } else { 'e' })
   buf.write_char(if e < 0 { '-' } else { '+' })
@@ -165,9 +165,9 @@ fn is_negative(x : Double) -> Bool {
 pub fn format_float_c(
   x : Double,
   conv : Char,
-  prec : Int,
-  sign? : Char = '-',
-  alt? : Bool = false,
+  prec : Int32,
+  sign~ : Char = '-',
+  alt~ : Bool = false,
 ) -> String {
   let upper = conv == 'E' || conv == 'G' || conv == 'F'
   let neg = is_negative(x)
@@ -253,7 +253,7 @@ fn strip_trailing_zeros(s : String) -> String {
 /// Format a number in hexadecimal like OCaml's `caml_hexstring_of_float`
 /// (`%h`): `prec` digits after the point, or as many as needed if `prec` is
 /// negative.
-pub fn hexstring_of_float(x : Double, prec : Int, sign : Char) -> String {
+pub fn hexstring_of_float(x : Double, prec : Int32, sign : Char) -> String {
   let bits = x.reinterpret_as_uint64()
   let negative = bits >> 63 != 0
   let mut exp = ((bits >> 52) & 0x7FF).to_int()
@@ -338,7 +338,7 @@ pub fn string_of_float(f : Double) -> String {
 
 ///|
 /// Digits of an unsigned 64-bit integer in a base.
-fn unsigned_digits(n : UInt64, base : Int, upper : Bool) -> String {
+fn unsigned_digits(n : UInt64, base : Int32, upper : Bool) -> String {
   if n == 0 {
     return "0"
   }
@@ -470,7 +470,7 @@ priv enum PadTy {
 
 ///|
 /// Add padding around a string, like OCaml's `fix_padding`.
-fn fix_padding(padty : PadTy, width : Int, s : String) -> String {
+fn fix_padding(padty : PadTy, width : Int32, s : String) -> String {
   // the width is in bytes, like OCaml strings
   let len = utf8_length(s)
   let (width, padty) = (width.abs(), if width < 0 { Left } else { padty })
@@ -498,7 +498,7 @@ fn fix_padding(padty : PadTy, width : Int, s : String) -> String {
 
 ///|
 /// Add `0` padding to an integer, like OCaml's `fix_int_precision`.
-fn fix_int_precision(prec : Int, s : String) -> String {
+fn fix_int_precision(prec : Int32, s : String) -> String {
   let prec = prec.abs()
   let len = s.length()
   if len == 0 {
@@ -531,7 +531,7 @@ fn fix_int_precision(prec : Int, s : String) -> String {
 ///|
 /// Escape one byte like OCaml's `String.escaped` (`quote` tells whether to
 /// escape `'`, as `Char.escaped` does).
-fn escape_byte(buf : StringBuilder, b : Int, quote : Bool) -> Unit {
+fn escape_byte(buf : StringBuilder, b : Int32, quote : Bool) -> Unit {
   match b {
     '"' => buf.write_string(if quote { "\"" } else { "\\\"" })
     '\'' => buf.write_string(if quote { "\\'" } else { "'" })
@@ -540,7 +540,7 @@ fn escape_byte(buf : StringBuilder, b : Int, quote : Bool) -> Unit {
     '\t' => buf.write_string("\\t")
     '\r' => buf.write_string("\\r")
     '\b' => buf.write_string("\\b")
-    0x20..=0x7E => buf.write_char(b.unsafe_to_char())
+    0x20..<=0x7E => buf.write_char(b.unsafe_to_char())
     _ => {
       buf.write_char('\\')
       buf.write_char((b / 100 + 48).unsafe_to_char())
@@ -552,7 +552,7 @@ fn escape_byte(buf : StringBuilder, b : Int, quote : Bool) -> Unit {
 
 ///|
 /// Iterate over the UTF-8 encoding of a string.
-fn utf8_iter(s : StringView, f : (Int) -> Unit) -> Unit {
+fn utf8_iter(s : StringView, f : (Int32) -> Unit) -> Unit {
   for c in s {
     let code = c.to_int()
     if code < 0x80 {

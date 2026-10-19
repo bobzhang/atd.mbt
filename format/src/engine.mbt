@@ -57,10 +57,10 @@ priv struct TBox {
 /// drive indentation and line splitting.
 priv enum Token {
   Text(String)
-  Break(fits~ : (String, Int, String), breaks~ : (String, Int, String))
-  TBreak(Int, Int)
+  Break(fits~ : (String, Int32, String), breaks~ : (String, Int32, String))
+  TBreak(Int32, Int32)
   STab
-  Begin(Int, BoxType)
+  Begin(Int32, BoxType)
   End
   TBegin(TBox)
   TEnd
@@ -110,9 +110,9 @@ pub(all) struct OutFunctions {
   /// Output a newline
   out_newline : () -> Unit
   /// Output `n` spaces (when a break hint does not split the line)
-  out_spaces : (Int) -> Unit
+  out_spaces : (Int32) -> Unit
   /// Output `n` spaces of indentation (after a newline)
-  out_indent : (Int) -> Unit
+  out_indent : (Int32) -> Unit
 }
 
 ///|
@@ -148,8 +148,8 @@ pub struct Formatter {
   priv mut is_new_line : Bool
   priv mut left_total : Int64
   priv mut right_total : Int64
-  priv mut curr_depth : Int
-  priv mut max_boxes : Int
+  priv mut curr_depth : Int32
+  priv mut max_boxes : Int32
   priv mut ellipsis : String
   priv mut out : OutFunctions
   priv mut print_tags : Bool
@@ -182,12 +182,12 @@ fn Formatter::output_newline(self : Formatter) -> Unit {
 }
 
 ///|
-fn Formatter::output_spaces(self : Formatter, n : Int) -> Unit {
+fn Formatter::output_spaces(self : Formatter, n : Int32) -> Unit {
   (self.out.out_spaces)(n)
 }
 
 ///|
-fn Formatter::output_indent(self : Formatter, n : Int) -> Unit {
+fn Formatter::output_indent(self : Formatter, n : Int32) -> Unit {
   (self.out.out_indent)(n)
 }
 
@@ -212,7 +212,7 @@ fn Formatter::format_string(self : Formatter, s : String) -> Unit {
 ///|
 fn Formatter::break_new_line(
   self : Formatter,
-  breaks : (String, Int, String),
+  breaks : (String, Int32, String),
   width : Int64,
 ) -> Unit {
   let (before, offset, after) = breaks
@@ -239,7 +239,7 @@ fn Formatter::break_line(self : Formatter, width : Int64) -> Unit {
 ///|
 fn Formatter::break_same_line(
   self : Formatter,
-  fits : (String, Int, String),
+  fits : (String, Int32, String),
 ) -> Unit {
   let (before, width, after) = fits
   self.format_string(before)
@@ -506,7 +506,7 @@ fn Formatter::scan_push(self : Formatter, b : Bool, token : QueueElem) -> Unit {
 /// ellipsis string.
 fn Formatter::open_box_gen(
   self : Formatter,
-  indent : Int,
+  indent : Int32,
   br_ty : BoxType,
 ) -> Unit {
   self.curr_depth = self.curr_depth + 1

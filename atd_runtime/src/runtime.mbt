@@ -11,7 +11,7 @@
 pub(all) enum Path {
   Root
   Key(Path, String)
-  Index(Path, Int)
+  Index(Path, Int32)
 }
 
 ///|
@@ -22,7 +22,7 @@ pub fn Path::key(self : Path, key : String) -> Path {
 
 ///|
 /// The path of the element `i` of the array at this path.
-pub fn Path::index(self : Path, i : Int) -> Path {
+pub fn Path::index(self : Path, i : Int32) -> Path {
   Index(self, i)
 }
 
@@ -129,7 +129,7 @@ pub fn[T] missing_field(
 
 ///|
 /// Print JSON compactly, or with the given indentation.
-pub fn stringify(x : Json, indent? : Int = 0) -> String {
+pub fn stringify(x : Json, indent~ : Int32 = 0) -> String {
   x.stringify(indent~)
 }
 
@@ -167,7 +167,7 @@ fn is_integer_literal(r : String) -> Bool {
 /// When the text of the number is known (see `parse`), it must be an
 /// integer literal: `1.0` or `1e3` are rejected, like with atdgen.
 /// Otherwise, the number must be an integral value within range.
-pub fn read_int(x : Json, path : Path) -> Int raise JsonError {
+pub fn read_int(x : Json, path : Path) -> Int32 raise JsonError {
   match x {
     Number(_, repr=Some(r)) if is_integer_literal(r) =>
       @string.parse_int(r) catch {
@@ -198,7 +198,7 @@ pub fn read_int64(x : Json, path : Path) -> Int64 raise JsonError {
 
 ///|
 /// Read an integer represented as a JSON string (`<json repr="string">`).
-pub fn read_int_of_string(x : Json, path : Path) -> Int raise JsonError {
+pub fn read_int_of_string(x : Json, path : Path) -> Int32 raise JsonError {
   match x {
     String(s) => @string.parse_int(s) catch { _ => bad_json("int", x, path) }
     _ => bad_json("int", x, path)
@@ -258,7 +258,7 @@ pub fn write_bool(x : Bool) -> Json {
 
 ///|
 /// Write an integer.
-pub fn write_int(x : Int) -> Json {
+pub fn write_int(x : Int32) -> Json {
   Json::number(x.to_double())
 }
 
@@ -270,7 +270,7 @@ pub fn write_int64(x : Int64) -> Json {
 
 ///|
 /// Write an integer as a JSON string (`<json repr="string">`).
-pub fn write_int_to_string(x : Int) -> Json {
+pub fn write_int_to_string(x : Int32) -> Json {
   Json::string(x.to_string())
 }
 
@@ -312,7 +312,7 @@ pub fn write_float_as_int(x : Double) -> Json {
 ///|
 /// Build a writer for numbers with at most `precision` significant digits
 /// (`<json precision="N">`), formatted like atdgen does (C's `%.Ng`).
-pub fn write_float_prec(precision : Int) -> (Double) -> Json {
+pub fn write_float_prec(precision : Int32) -> (Double) -> Json {
   x => {
     if x.is_nan() || x.is_inf() {
       Json::number(x)
@@ -425,7 +425,7 @@ pub fn[T] write_nullable(write_elt : (T) -> Json) -> (T?) -> Json {
 pub fn read_tuple(
   x : Json,
   path : Path,
-  n : Int,
+  n : Int32,
 ) -> Array[Json] raise JsonError {
   match x {
     Array(l) if l.length() == n => l
@@ -563,7 +563,7 @@ pub fn read_object(
 pub fn get_field(
   o : Map[String, Json],
   key : String,
-  keep_nulls? : Bool = false,
+  keep_nulls~ : Bool = false,
 ) -> Json? {
   match o.get(key) {
     Some(Null) if !keep_nulls => None
@@ -593,7 +593,7 @@ pub fn[T] read_optional_field(
   key : String,
   read_value : (Json, Path) -> T raise JsonError,
   path : Path,
-  keep_nulls? : Bool = false,
+  keep_nulls~ : Bool = false,
 ) -> T? raise JsonError {
   match get_field(o, key, keep_nulls~) {
     Some(v) => Some(read_value(v, path.key(key)))

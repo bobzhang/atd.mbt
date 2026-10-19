@@ -5,7 +5,7 @@
 fn doc_comment(
   loc : @atd.Loc,
   an : @atd.Annot,
-  indent? : String = "",
+  indent~ : String = "",
 ) -> Array[String] raise @atd.AtdError {
   match @atd.get_doc(loc, an) {
     None => []

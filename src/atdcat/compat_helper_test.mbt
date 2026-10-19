@@ -7,7 +7,7 @@ fn check_atdcat(
   stdin~ : String,
   stdout~ : String,
   stderr~ : String,
-  code~ : Int,
+  code~ : Int32,
 ) -> Unit raise {
   let out = StringBuilder()
   let err = StringBuilder()

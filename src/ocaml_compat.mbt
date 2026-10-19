@@ -3,7 +3,7 @@
 
 ///|
 /// Iterate over the UTF-8 encoding of a string.
-fn utf8_bytes(s : StringView, f : (Int) -> Unit) -> Unit {
+fn utf8_bytes(s : StringView, f : (Int32) -> Unit) -> Unit {
   for c in s {
     let code = c.to_int()
     if code < 0x80 {
@@ -36,7 +36,7 @@ pub fn ocaml_escaped(s : StringView) -> String {
       '\t' => buf.write_string("\\t")
       '\r' => buf.write_string("\\r")
       '\b' => buf.write_string("\\b")
-      0x20..=0x7E => buf.write_char(b.unsafe_to_char())
+      0x20..<=0x7E => buf.write_char(b.unsafe_to_char())
       _ => {
         buf.write_char('\\')
         buf.write_char((b / 100 + 48).unsafe_to_char())
@@ -57,7 +57,7 @@ pub fn ocaml_quote(s : StringView) -> String {
 ///|
 /// Compare strings like OCaml's `String.compare`, i.e. by UTF-8 bytes,
 /// which is the same as comparing code points.
-pub fn compare_strings(a : StringView, b : StringView) -> Int {
+pub fn compare_strings(a : StringView, b : StringView) -> Int32 {
   let ia = a.iter()
   let ib = b.iter()
   for ;; {
@@ -75,7 +75,7 @@ pub fn compare_strings(a : StringView, b : StringView) -> Int {
 pub fn compare_string_lists(
   a : ArrayView[String],
   b : ArrayView[String],
-) -> Int {
+) -> Int32 {
   let n = if a.length() < b.length() { a.length() } else { b.length() }
   for i in 0..<n {
     let c = compare_strings(a[i], b[i])

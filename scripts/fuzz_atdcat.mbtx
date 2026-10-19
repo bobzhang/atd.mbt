@@ -125,7 +125,7 @@ fn mutate(rand : @random.Rand, src : Bytes) -> Bytes {
 }
 
 ///|
-async fn run(exe : String, args : Array[String]) -> (Int, Bytes, Bytes) {
+async fn run(exe : String, args : Array[String]) -> (Int32, Bytes, Bytes) {
   // a MoonBit program compiled to wasm runs with moonrun
   let (exe, args) = if exe.has_suffix(".wasm") {
     ("moonrun", [exe, ..args])

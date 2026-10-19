@@ -262,7 +262,7 @@ fn collapse_fields(l : Array[AnnotField]) -> Array[AnnotField] {
 }
 
 ///|
-let id_counter : Ref[Int] = { val: -1, }
+let id_counter : Ref[Int32] = { val: -1, }
 
 ///|
 /// Reset the counter used by `annot_create_id`, as if the program had just

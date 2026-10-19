@@ -16,7 +16,7 @@ fn predef_def(name : String, mk : (Loc, TypeExpr) -> TypeExpr) -> TypeDef {
 
 ///|
 /// The list of predefined types: name, arity, and definition if any.
-let predef_list : Array[(TypeName, Int, TypeDef?)] = [
+let predef_list : Array[(TypeName, Int32, TypeDef?)] = [
   (TypeName::simple("unit"), 0, None),
   (TypeName::simple("bool"), 0, None),
   (TypeName::simple("int"), 0, None),
@@ -52,13 +52,13 @@ let predef_list : Array[(TypeName, Int, TypeDef?)] = [
 
 ///|
 /// The predefined types: name, arity, and definition if any.
-pub fn predef_types() -> Array[(TypeName, Int, TypeDef?)] {
+pub fn predef_types() -> Array[(TypeName, Int32, TypeDef?)] {
   predef_list.copy()
 }
 
 ///|
 /// A table mapping type names to their arity and definition.
-pub type PredefTable = Map[TypeName, (Int, TypeDef?)]
+pub type PredefTable = Map[TypeName, (Int32, TypeDef?)]
 
 ///|
 /// Build the table of predefined and user-defined types, checking for
@@ -96,7 +96,7 @@ pub fn make_predef_table(
 pub fn get_original_definition(
   tbl : PredefTable,
   name : TypeName,
-) -> (Int, TypeDef?)? {
+) -> (Int32, TypeDef?)? {
   let visited : Array[TypeName] = []
   let mut res = tbl.get(name)
   guard res is Some(_) else { return None }
@@ -116,7 +116,7 @@ pub fn get_original_definition(
 
 ///|
 /// Return the type construct that a type name stands for, if known.
-pub fn get_construct(tbl : PredefTable, name : TypeName) -> (Int, TypeExpr)? {
+pub fn get_construct(tbl : PredefTable, name : TypeName) -> (Int32, TypeExpr)? {
   match get_original_definition(tbl, name) {
     None | Some((_, None)) => None
     Some((n, Some(def))) => Some((n, def.value))

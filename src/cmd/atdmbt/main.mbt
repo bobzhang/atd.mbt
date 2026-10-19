@@ -5,7 +5,7 @@
 
 ///|
 priv suberror Exit {
-  Exit(Int)
+  Exit(Int32)
 }
 
 ///|

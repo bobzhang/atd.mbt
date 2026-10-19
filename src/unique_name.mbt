@@ -50,7 +50,7 @@ fn UniqueNames::has_reserved_prefix(self : UniqueNames, s : String) -> Bool {
 }
 
 ///|
-fn suffix_of_int(n : Int) -> String {
+fn suffix_of_int(n : Int32) -> String {
   match n {
     0 => ""
     1 => "_"

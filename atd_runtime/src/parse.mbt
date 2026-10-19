@@ -5,12 +5,12 @@
 ///|
 priv struct JsonParser {
   s : StringView
-  mut i : Int
-  mut depth : Int
+  mut i : Int32
+  mut depth : Int32
 }
 
 ///|
-let max_nesting_depth : Int = 1024
+let max_nesting_depth : Int32 = 1024
 
 ///|
 fn[T] JsonParser::fail(self : JsonParser, msg : String) -> T raise JsonError {
@@ -34,7 +34,7 @@ fn[T] JsonParser::fail(self : JsonParser, msg : String) -> T raise JsonError {
 }
 
 ///|
-fn JsonParser::peek(self : JsonParser) -> Int {
+fn JsonParser::peek(self : JsonParser) -> Int32 {
   if self.i < self.s.length() {
     self.s[self.i].to_int()
   } else {
@@ -74,7 +74,7 @@ fn JsonParser::value(self : JsonParser) -> Json raise JsonError {
     't' => self.expect_word("true", Json::boolean(true))
     'f' => self.expect_word("false", Json::boolean(false))
     'n' => self.expect_word("null", Json::null())
-    '-' | '0'..='9' => self.number()
+    '-' | '0'..<='9' => self.number()
     -1 => self.fail("unexpected end of input")
     _ => self.fail("unexpected character")
   }
@@ -151,11 +151,11 @@ fn JsonParser::array(self : JsonParser) -> Json raise JsonError {
 }
 
 ///|
-fn hex_value(c : Int) -> Int {
+fn hex_value(c : Int32) -> Int32 {
   match c {
-    '0'..='9' => c - '0'
-    'a'..='f' => c - 'a' + 10
-    'A'..='F' => c - 'A' + 10
+    '0'..<='9' => c - '0'
+    'a'..<='f' => c - 'a' + 10
+    'A'..<='F' => c - 'A' + 10
     _ => -1
   }
 }
@@ -213,9 +213,9 @@ fn JsonParser::string(self : JsonParser) -> String raise JsonError {
 }
 
 ///|
-fn JsonParser::digits(self : JsonParser) -> Int {
+fn JsonParser::digits(self : JsonParser) -> Int32 {
   let start = self.i
-  while self.peek() is ('0'..='9') {
+  while self.peek() is ('0'..<='9') {
     self.i += 1
   }
   self.i - start
@@ -229,7 +229,7 @@ fn JsonParser::number(self : JsonParser) -> Json raise JsonError {
   }
   match self.peek() {
     '0' => self.i += 1
-    '1'..='9' => ignore(self.digits())
+    '1'..<='9' => ignore(self.digits())
     _ => self.fail("invalid number")
   }
   if self.peek() == '.' {
