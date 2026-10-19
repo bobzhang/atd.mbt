@@ -27,14 +27,14 @@ priv struct FormatParser {
 let max_string_length : Int64 = 144115188075855863L
 
 ///|
-fn FormatParser::char_at(self : FormatParser, i : Int) -> Char {
+fn FormatParser::char_at(self : FormatParser, i : Int32) -> Char {
   self.str[i].unsafe_to_char()
 }
 
 ///|
 /// The position of an index in error messages: like in OCaml, it counts
 /// the bytes of the UTF-8 encoding.
-fn FormatParser::pos(self : FormatParser, i : Int) -> Int {
+fn FormatParser::pos(self : FormatParser, i : Int32) -> Int32 {
   utf8_length(self.str.view(end_offset=i))
 }
 
@@ -46,7 +46,7 @@ fn FormatParser::quoted(self : FormatParser) -> String {
 ///|
 fn FormatParser::invalid_format_message(
   self : FormatParser,
-  str_ind : Int,
+  str_ind : Int32,
   msg : String,
 ) -> FormatError {
   FormatError(
@@ -57,7 +57,7 @@ fn FormatParser::invalid_format_message(
 ///|
 fn FormatParser::unexpected_end_of_format(
   self : FormatParser,
-  end_ind : Int,
+  end_ind : Int32,
 ) -> FormatError {
   self.invalid_format_message(end_ind, "unexpected end of format")
 }
@@ -65,7 +65,7 @@ fn FormatParser::unexpected_end_of_format(
 ///|
 fn FormatParser::expected_character(
   self : FormatParser,
-  str_ind : Int,
+  str_ind : Int32,
   expected : String,
   read : Char,
 ) -> FormatError {
@@ -78,8 +78,8 @@ fn FormatParser::expected_character(
 ///|
 fn FormatParser::incompatible_flag(
   self : FormatParser,
-  pct_ind : Int,
-  str_ind : Int,
+  pct_ind : Int32,
+  str_ind : Int32,
   symb : Char,
   option : String,
 ) -> FormatError {
@@ -95,8 +95,8 @@ fn FormatParser::incompatible_flag(
 /// Parse the format from `beg_ind` (included) to `end_ind` (excluded).
 fn FormatParser::parse(
   self : FormatParser,
-  beg_ind : Int,
-  end_ind : Int,
+  beg_ind : Int32,
+  end_ind : Int32,
 ) -> @list.List[Item] raise FormatError {
   self.parse_literal(beg_ind, beg_ind, end_ind)
 }
@@ -105,9 +105,9 @@ fn FormatParser::parse(
 /// Read literal characters up to '%' or '@' special characters.
 fn FormatParser::parse_literal(
   self : FormatParser,
-  lit_start : Int,
-  str_ind : Int,
-  end_ind : Int,
+  lit_start : Int32,
+  str_ind : Int32,
+  end_ind : Int32,
 ) -> @list.List[Item] raise FormatError {
   let mut str_ind = str_ind
   while str_ind < end_ind && !(self.char_at(str_ind) is ('%' | '@')) {
@@ -128,8 +128,8 @@ fn FormatParser::parse_literal(
 /// Add a literal to a format from a literal character sub-sequence.
 fn FormatParser::add_literal(
   self : FormatParser,
-  lit_start : Int,
-  str_ind : Int,
+  lit_start : Int32,
+  str_ind : Int32,
   fmt : @list.List[Item],
 ) -> @list.List[Item] {
   if str_ind == lit_start {
@@ -145,8 +145,8 @@ fn FormatParser::add_literal(
 /// Parse a format after '%'.
 fn FormatParser::parse_format(
   self : FormatParser,
-  pct_ind : Int,
-  end_ind : Int,
+  pct_ind : Int32,
+  end_ind : Int32,
 ) -> @list.List[Item] raise FormatError {
   let str_ind = pct_ind + 1
   if str_ind == end_ind {
@@ -162,9 +162,9 @@ fn FormatParser::parse_format(
 ///|
 fn FormatParser::parse_flags(
   self : FormatParser,
-  pct_ind : Int,
-  str_ind : Int,
-  end_ind : Int,
+  pct_ind : Int32,
+  str_ind : Int32,
+  end_ind : Int32,
   ign : Bool,
 ) -> @list.List[Item] raise FormatError {
   // in legacy mode, duplicate flags are accepted
@@ -197,9 +197,9 @@ fn FormatParser::parse_flags(
 /// Try to read a digital or a '*' padding.
 fn FormatParser::parse_padding(
   self : FormatParser,
-  pct_ind : Int,
-  str_ind : Int,
-  end_ind : Int,
+  pct_ind : Int32,
+  str_ind : Int32,
+  end_ind : Int32,
   zero : Bool,
   minus : Bool,
   plus : Bool,
@@ -217,7 +217,7 @@ fn FormatParser::parse_padding(
     (true, true) => Left // legacy
   }
   match self.char_at(str_ind) {
-    '0'..='9' => {
+    '0'..<='9' => {
       let (new_ind, width) = self.parse_positive(str_ind, end_ind)
       self.parse_after_padding(
         pct_ind,
@@ -262,9 +262,9 @@ fn FormatParser::parse_padding(
 /// Is precision defined?
 fn FormatParser::parse_after_padding(
   self : FormatParser,
-  pct_ind : Int,
-  str_ind : Int,
-  end_ind : Int,
+  pct_ind : Int32,
+  str_ind : Int32,
+  end_ind : Int32,
   minus : Bool,
   plus : Bool,
   hash : Bool,
@@ -309,9 +309,9 @@ fn FormatParser::parse_after_padding(
 /// Read the digital or '*' precision.
 fn FormatParser::parse_precision(
   self : FormatParser,
-  pct_ind : Int,
-  str_ind : Int,
-  end_ind : Int,
+  pct_ind : Int32,
+  str_ind : Int32,
+  end_ind : Int32,
   minus : Bool,
   plus : Bool,
   hash : Bool,
@@ -322,7 +322,7 @@ fn FormatParser::parse_precision(
   if str_ind == end_ind {
     raise self.unexpected_end_of_format(end_ind)
   }
-  let parse_literal = (minus : Bool, str_ind : Int) => {
+  let parse_literal = (minus : Bool, str_ind : Int32) => {
     let (new_ind, prec) = self.parse_positive(str_ind, end_ind)
     self.parse_after_precision(
       pct_ind,
@@ -338,7 +338,7 @@ fn FormatParser::parse_precision(
     )
   }
   match self.char_at(str_ind) {
-    '0'..='9' => parse_literal(minus, str_ind)
+    '0'..<='9' => parse_literal(minus, str_ind)
     // legacy: '+' or '-' before the precision is accepted and ignored
     '+' | '-' as symb => parse_literal(minus || symb == '-', str_ind + 1)
     '*' =>
@@ -375,9 +375,9 @@ fn FormatParser::parse_precision(
 /// Try to read the conversion.
 fn FormatParser::parse_after_precision(
   self : FormatParser,
-  pct_ind : Int,
-  str_ind : Int,
-  end_ind : Int,
+  pct_ind : Int32,
+  str_ind : Int32,
+  end_ind : Int32,
   minus : Bool,
   plus : Bool,
   hash : Bool,
@@ -421,9 +421,9 @@ fn FormatParser::parse_after_precision(
 /// Case analysis on conversion.
 fn FormatParser::parse_conversion(
   self : FormatParser,
-  pct_ind : Int,
-  str_ind : Int,
-  end_ind : Int,
+  pct_ind : Int32,
+  str_ind : Int32,
+  end_ind : Int32,
   plus : Bool,
   hash : Bool,
   space : Bool,
@@ -670,8 +670,8 @@ fn FormatParser::parse_conversion(
 /// Parse formatting information (after '@').
 fn FormatParser::parse_after_at(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
+  str_ind : Int32,
+  end_ind : Int32,
 ) -> @list.List[Item] raise FormatError {
   if str_ind == end_ind {
     return @list.singleton(Lit("@"))
@@ -704,8 +704,8 @@ fn FormatParser::parse_after_at(
 fn FormatParser::parse_tag(
   self : FormatParser,
   is_open_tag : Bool,
-  str_ind : Int,
-  end_ind : Int,
+  str_ind : Int32,
+  end_ind : Int32,
 ) -> @list.List[Item] raise FormatError {
   let make = (sub : @list.List[Item]) => {
     if is_open_tag {
@@ -733,8 +733,8 @@ fn FormatParser::parse_tag(
 /// Try to read the optional <width offset> after "@;".
 fn FormatParser::parse_good_break(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
+  str_ind : Int32,
+  end_ind : Int32,
 ) -> @list.List[Item] raise FormatError {
   let attempt = () => {
     if str_ind == end_ind || self.char_at(str_ind) != '<' {
@@ -742,12 +742,12 @@ fn FormatParser::parse_good_break(
     }
     let str_ind_1 = self.parse_spaces(str_ind + 1, end_ind)
     match self.char_at(str_ind_1) {
-      '0'..='9' | '-' => {
+      '0'..<='9' | '-' => {
         let (str_ind_2, width) = self.parse_integer(str_ind_1, end_ind)
         let str_ind_3 = self.parse_spaces(str_ind_2, end_ind)
         match self.char_at(str_ind_3) {
           '>' => Some((str_ind_3 + 1, BreakHint(width, 0)))
-          '0'..='9' | '-' => {
+          '0'..<='9' | '-' => {
             let (str_ind_4, offset) = self.parse_integer(str_ind_3, end_ind)
             let str_ind_5 = self.parse_spaces(str_ind_4, end_ind)
             if self.char_at(str_ind_5) != '>' {
@@ -773,13 +773,13 @@ fn FormatParser::parse_good_break(
 /// Parse the size in a <n>.
 fn FormatParser::parse_magic_size(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
+  str_ind : Int32,
+  end_ind : Int32,
 ) -> @list.List[Item] raise FormatError {
   let attempt = () => {
     let str_ind_1 = self.parse_spaces(str_ind, end_ind)
     match self.char_at(str_ind_1) {
-      '0'..='9' | '-' => {
+      '0'..<='9' | '-' => {
         let (str_ind_2, size) = self.parse_integer(str_ind_1, end_ind)
         let str_ind_3 = self.parse_spaces(str_ind_2, end_ind)
         if self.char_at(str_ind_3) != '>' {
@@ -802,13 +802,13 @@ fn FormatParser::parse_magic_size(
 /// Parse a char set (of scanf's %[...]); return the index after it.
 fn FormatParser::parse_char_set(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
-) -> Int raise FormatError {
+  str_ind : Int32,
+  end_ind : Int32,
+) -> Int32 raise FormatError {
   if str_ind == end_ind {
     raise self.unexpected_end_of_format(end_ind)
   }
-  let fail_single_percent = (str_ind : Int) => {
+  let fail_single_percent = (str_ind : Int32) => {
     FormatError(
       "invalid format \{self.quoted()}: '%' alone is not accepted in character sets, use %% instead at position \{self.pos(str_ind)}.",
     )
@@ -898,9 +898,9 @@ fn FormatParser::parse_char_set(
 /// Consume all next spaces, raise an error if end_ind is reached.
 fn FormatParser::parse_spaces(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
-) -> Int raise FormatError {
+  str_ind : Int32,
+  end_ind : Int32,
+) -> Int32 raise FormatError {
   let mut str_ind = str_ind
   for ;; {
     if str_ind == end_ind {
@@ -917,9 +917,9 @@ fn FormatParser::parse_spaces(
 /// Read a positive integer, raise an error if end_ind is reached.
 fn FormatParser::parse_positive(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
-) -> (Int, Int) raise FormatError {
+  str_ind : Int32,
+  end_ind : Int32,
+) -> (Int32, Int32) raise FormatError {
   let mut str_ind = str_ind
   let mut acc = 0L
   for ;; {
@@ -927,7 +927,7 @@ fn FormatParser::parse_positive(
       raise self.unexpected_end_of_format(end_ind)
     }
     match self.char_at(str_ind) {
-      '0'..='9' as c => {
+      '0'..<='9' as c => {
         acc = acc * 10 + (c.to_int() - '0'.to_int()).to_int64()
         if acc > max_string_length {
           raise FormatError(
@@ -948,20 +948,20 @@ fn FormatParser::parse_positive(
 /// reached.
 fn FormatParser::parse_integer(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
-) -> (Int, Int) raise FormatError {
+  str_ind : Int32,
+  end_ind : Int32,
+) -> (Int32, Int32) raise FormatError {
   if str_ind == end_ind {
     raise self.unexpected_end_of_format(end_ind)
   }
   match self.char_at(str_ind) {
-    '0'..='9' => self.parse_positive(str_ind, end_ind)
+    '0'..<='9' => self.parse_positive(str_ind, end_ind)
     '-' => {
       if str_ind + 1 == end_ind {
         raise self.unexpected_end_of_format(end_ind)
       }
       match self.char_at(str_ind + 1) {
-        '0'..='9' => {
+        '0'..<='9' => {
           let (next_ind, n) = self.parse_positive(str_ind + 1, end_ind)
           (next_ind, -n)
         }
@@ -977,10 +977,10 @@ fn FormatParser::parse_integer(
 /// "%)").
 fn FormatParser::search_subformat_end(
   self : FormatParser,
-  str_ind : Int,
-  end_ind : Int,
+  str_ind : Int32,
+  end_ind : Int32,
   c : Char,
-) -> Int raise FormatError {
+) -> Int32 raise FormatError {
   let mut str_ind = str_ind
   for ;; {
     if str_ind == end_ind {

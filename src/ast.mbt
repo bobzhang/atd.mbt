@@ -445,14 +445,14 @@ fn[T] default_hook(
 /// it is applied as `hook(cont, x)` and must call `cont` for the visitor
 /// to continue down the tree.
 pub fn visit(
-  module_? : ((Module) -> Unit raise AtdError, Module) -> Unit raise AtdError = default_hook,
-  import_? : ((Import) -> Unit raise AtdError, Import) -> Unit raise AtdError = default_hook,
-  imported_type? : ((ImportedType) -> Unit raise AtdError, ImportedType) -> Unit raise AtdError = default_hook,
-  type_def? : ((TypeDef) -> Unit raise AtdError, TypeDef) -> Unit raise AtdError = default_hook,
-  type_expr? : ((TypeExpr) -> Unit raise AtdError, TypeExpr) -> Unit raise AtdError = default_hook,
-  variant? : ((Variant) -> Unit raise AtdError, Variant) -> Unit raise AtdError = default_hook,
-  cell? : ((Cell) -> Unit raise AtdError, Cell) -> Unit raise AtdError = default_hook,
-  field? : ((Field) -> Unit raise AtdError, Field) -> Unit raise AtdError = default_hook,
+  module_~ : ((Module) -> Unit raise AtdError, Module) -> Unit raise AtdError = default_hook,
+  import_~ : ((Import) -> Unit raise AtdError, Import) -> Unit raise AtdError = default_hook,
+  imported_type~ : ((ImportedType) -> Unit raise AtdError, ImportedType) -> Unit raise AtdError = default_hook,
+  type_def~ : ((TypeDef) -> Unit raise AtdError, TypeDef) -> Unit raise AtdError = default_hook,
+  type_expr~ : ((TypeExpr) -> Unit raise AtdError, TypeExpr) -> Unit raise AtdError = default_hook,
+  variant~ : ((Variant) -> Unit raise AtdError, Variant) -> Unit raise AtdError = default_hook,
+  cell~ : ((Cell) -> Unit raise AtdError, Cell) -> Unit raise AtdError = default_hook,
+  field~ : ((Field) -> Unit raise AtdError, Field) -> Unit raise AtdError = default_hook,
 ) -> (Any) -> Unit raise AtdError {
   let hooks : VisitorHooks = {
     module_,
@@ -594,7 +594,7 @@ pub fn[A] TypeExpr::fold(
 /// without duplicates, sorted.
 pub fn TypeExpr::extract_type_names(
   self : TypeExpr,
-  ignorable? : Array[TypeName] = [],
+  ignorable~ : Array[TypeName] = [],
 ) -> Array[TypeName] {
   let names : Array[TypeName] = []
   (self.fold((), (x, _) => {

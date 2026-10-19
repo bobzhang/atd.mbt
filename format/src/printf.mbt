@@ -20,9 +20,9 @@ pub(all) enum Arg {
   /// `%d`, `%i`, `%u`, `%x`, `%X`, `%o` (with OCaml's 63-bit `int`
   /// semantics for unsigned conversions of negative numbers), widths and
   /// precisions given by `*`, and `%N`, `%l`, `%n`, `%L` used alone
-  Int(Int)
+  Int(Int32)
   /// `%ld`, `%li`, ... (32-bit integers)
-  Int32(Int)
+  Int32(Int32)
   /// `%Ld`, `%nd`, ... (64-bit integers)
   Int64(Int64)
   /// `%f`, `%e`, `%E`, `%g`, `%G`, `%F`, `%h`, `%H`
@@ -44,14 +44,14 @@ pub(all) enum Arg {
 ///|
 priv enum Pad {
   NoPad
-  LitPad(PadTy, Int)
+  LitPad(PadTy, Int32)
   ArgPad(PadTy)
 }
 
 ///|
 priv enum Prec {
   NoPrec
-  LitPrec(Int)
+  LitPrec(Int32)
   ArgPrec
 }
 
@@ -86,11 +86,11 @@ priv enum Conv {
 priv enum FmtLit {
   CloseBox
   CloseTag
-  BreakHint(Int, Int)
+  BreakHint(Int32, Int32)
   FFlush
   ForceNewline
   FlushNewline
-  MagicSize(Int)
+  MagicSize(Int32)
   EscapedAt
   EscapedPercent
   ScanIndic(Char)
@@ -131,7 +131,7 @@ fn caml_char(c : Char) -> String {
 ///|
 /// Parse a box description such as `<hov 2>`, like OCaml's
 /// `open_box_of_string` (the angle brackets are already removed).
-fn open_box_of_string(str : String) -> (Int, BoxType) raise FormatError {
+fn open_box_of_string(str : String) -> (Int32, BoxType) raise FormatError {
   if str == "" {
     return (0, Box)
   }
@@ -192,9 +192,9 @@ fn open_box_of_string(str : String) -> (Int, BoxType) raise FormatError {
 ///|
 priv struct Printer {
   args : ArrayView[Arg]
-  mut next : Int
+  mut next : Int32
   /// size given by `@<n>` for the next string or character
-  mut magic_size : Int?
+  mut magic_size : Int32?
 }
 
 ///|
@@ -232,7 +232,7 @@ fn Printer::mismatch(self : Printer, a : Arg, expected : String) -> FormatError 
 }
 
 ///|
-fn Printer::take_int(self : Printer) -> Int raise FormatError {
+fn Printer::take_int(self : Printer) -> Int32 raise FormatError {
   match self.take("Int") {
     Int(n) => n
     a => raise self.mismatch(a, "Int")
@@ -243,7 +243,7 @@ fn Printer::take_int(self : Printer) -> Int raise FormatError {
 fn Printer::pad_width(
   self : Printer,
   pad : Pad,
-) -> (PadTy, Int)? raise FormatError {
+) -> (PadTy, Int32)? raise FormatError {
   match pad {
     NoPad => None
     LitPad(t, w) => Some((t, w))
@@ -252,7 +252,7 @@ fn Printer::pad_width(
 }
 
 ///|
-fn Printer::precision(self : Printer, prec : Prec) -> Int? raise FormatError {
+fn Printer::precision(self : Printer, prec : Prec) -> Int32? raise FormatError {
   match prec {
     NoPrec => None
     LitPrec(p) => Some(p)
@@ -261,7 +261,7 @@ fn Printer::precision(self : Printer, prec : Prec) -> Int? raise FormatError {
 }
 
 ///|
-fn apply_pad(p : (PadTy, Int)?, s : String) -> String {
+fn apply_pad(p : (PadTy, Int32)?, s : String) -> String {
   match p {
     None => s
     Some((t, w)) => fix_padding(t, w, s)
@@ -295,7 +295,7 @@ fn Printer::output_char(self : Printer, ppf : Formatter, c : Char) -> Unit {
 fn convert_float(
   kind : FloatKind,
   flag : Char,
-  prec : Int,
+  prec : Int32,
   x : Double,
 ) -> String {
   let hex = () => hexstring_of_float(x, prec, flag)

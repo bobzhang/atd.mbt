@@ -23,7 +23,7 @@ fn unhex(s : String) -> String {
 }
 
 ///|
-fn int(s : String) -> Int {
+fn int(s : String) -> Int32 {
   @string.parse_int(s) catch {
     _ => abort("bad integer \{s}")
   }

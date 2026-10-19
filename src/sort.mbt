@@ -11,17 +11,17 @@
 ///|
 priv struct SortGraph {
   /// node index -> neighbors (indices)
-  forward : Array[Array[Int]]
-  backward : Array[Array[Int]]
+  forward : Array[Array[Int32]]
+  backward : Array[Array[Int32]]
   /// node index -> rank of its id in the sorted order of ids
-  rank : Array[Int]
+  rank : Array[Int32]
   visited : Array[Bool]
 }
 
 ///|
 /// A set of node indices, kept sorted by rank.
 priv struct NodeSet {
-  elts : Array[Int]
+  elts : Array[Int32]
 }
 
 ///|
@@ -30,17 +30,17 @@ fn SortGraph::empty(_self : SortGraph) -> NodeSet {
 }
 
 ///|
-fn SortGraph::singleton(_self : SortGraph, v : Int) -> NodeSet {
+fn SortGraph::singleton(_self : SortGraph, v : Int32) -> NodeSet {
   { elts: [v], }
 }
 
 ///|
-fn NodeSet::mem(self : NodeSet, v : Int) -> Bool {
+fn NodeSet::mem(self : NodeSet, v : Int32) -> Bool {
   self.elts.contains(v)
 }
 
 ///|
-fn SortGraph::add(self : SortGraph, s : NodeSet, v : Int) -> NodeSet {
+fn SortGraph::add(self : SortGraph, s : NodeSet, v : Int32) -> NodeSet {
   if s.mem(v) {
     return s
   }
@@ -55,7 +55,7 @@ fn SortGraph::add(self : SortGraph, s : NodeSet, v : Int) -> NodeSet {
 }
 
 ///|
-fn NodeSet::remove(self : NodeSet, v : Int) -> NodeSet {
+fn NodeSet::remove(self : NodeSet, v : Int32) -> NodeSet {
   { elts: self.elts.filter(x => x != v), }
 }
 
@@ -75,7 +75,7 @@ fn NodeSet::is_empty(self : NodeSet) -> Bool {
 }
 
 ///|
-fn NodeSet::pick_one(self : NodeSet) -> (Int, NodeSet)? {
+fn NodeSet::pick_one(self : NodeSet) -> (Int32, NodeSet)? {
   match self.elts {
     [] => None
     [v, .. rest] => Some((v, { elts: rest.to_owned(), }))
@@ -84,18 +84,18 @@ fn NodeSet::pick_one(self : NodeSet) -> (Int, NodeSet)? {
 
 ///|
 fn filtered_neighbors(
-  v : Int,
-  edges : Array[Array[Int]],
+  v : Int32,
+  edges : Array[Array[Int32]],
   graph_nodes : NodeSet,
-) -> Array[Int] {
+) -> Array[Int32] {
   edges[v].filter(n => graph_nodes.mem(n))
 }
 
 ///|
 fn SortGraph::eliminate_roots_recursively(
   self : SortGraph,
-  edges : Array[Array[Int]],
-  back_edges : Array[Array[Int]],
+  edges : Array[Array[Int32]],
+  back_edges : Array[Array[Int32]],
   nodes : NodeSet,
 ) -> (Array[(Bool, NodeSet)], NodeSet) {
   let sorted = []
@@ -141,13 +141,13 @@ fn SortGraph::eliminate_leaves(
 /// node unless it can be reached by some cycle.
 fn SortGraph::visit(
   self : SortGraph,
-  edges : Array[Array[Int]],
-  start_node : Int,
+  edges : Array[Array[Int32]],
+  start_node : Int32,
   nodes : NodeSet,
 ) -> NodeSet {
   let visited = []
   let mut acc = self.empty()
-  fn color(v : Int) -> Unit {
+  fn color(v : Int32) -> Unit {
     if !self.visited[v] {
       self.visited[v] = true
       visited.push(v)
@@ -187,7 +187,7 @@ fn SortGraph::sort_subgraph(
 ///|
 fn SortGraph::partition(
   self : SortGraph,
-  pivot : Int,
+  pivot : Int32,
   nodes : NodeSet,
 ) -> Array[(Bool, NodeSet)] {
   let ancestors = self.visit(self.backward, pivot, nodes)
@@ -220,7 +220,7 @@ pub fn[T, Id : Compare + Hash + Eq] topological_sort(
   l : ArrayView[(T, Array[Id])],
   id : (T) -> Id,
 ) -> Array[(Bool, Array[T])] {
-  let node_tbl : Map[Id, Int] = Map([])
+  let node_tbl : Map[Id, Int32] = Map([])
   let values : Array[T] = []
   let ids : Array[Id] = []
   for x in l {

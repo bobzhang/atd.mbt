@@ -21,7 +21,7 @@ pub fn json_string_of_string(s : String) -> String {
       '\n' => buf.write_string("\\n")
       '\r' => buf.write_string("\\r")
       '\t' => buf.write_string("\\t")
-      '\u{00}'..='\u{1F}' | '\u{7F}' => {
+      '\u{00}'..<='\u{1F}' | '\u{7F}' => {
         let code = c.to_int()
         let hex = "0123456789abcdef"
         buf.write_string("\\u00")

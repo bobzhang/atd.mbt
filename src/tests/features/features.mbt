@@ -19,11 +19,11 @@
 
 ///|
 pub(all) struct Match {
-  match_ : Int
+  match_ : Int32
   fn_ : String
   kind : String
   x_ : Bool
-  some_list : Array[Int]
+  some_list : Array[Int32]
 } derive(Eq, Debug)
 
 ///|
@@ -35,11 +35,11 @@ pub extend Match with Debug::{to_repr}
 ///|
 /// Create a value of type `Match`.
 pub fn Match::new(
-  match_~ : Int,
+  match_~ : Int32,
   fn_~ : String,
   kind~ : String,
   x_~ : Bool,
-  some_list? : Array[Int] = [],
+  some_list~ : Array[Int32] = [],
 ) -> Match {
   Match::{ match_, fn_, kind, x_, some_list, }
 }
@@ -97,7 +97,7 @@ pub fn match_of_string(s : StringView) -> Match raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Match` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_match(x : Match, indent? : Int = 0) -> String {
+pub fn string_of_match(x : Match, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_match(x), indent~)
 }
 
@@ -114,11 +114,11 @@ pub(all) enum OptionLike {
   // JSON: "None"
   None_
   // JSON: "Some"
-  Some_(Int)
+  Some_(Int32)
   // JSON: "Ok"
   Ok_
   // JSON: "other"
-  Different(Int, String, Bool)
+  Different(Int32, String, Bool)
 } derive(Eq, Debug)
 
 ///|
@@ -186,7 +186,7 @@ pub fn option_like_of_string(
 ///|
 /// Serialize a value of type `OptionLike` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_option_like(x : OptionLike, indent? : Int = 0) -> String {
+pub fn string_of_option_like(x : OptionLike, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_option_like(x), indent~)
 }
 
@@ -202,7 +202,7 @@ pub extend OptionLike with ToJson::{to_json}
 pub(all) struct Int64s {
   big : Int64
   big_str : Int64
-  small_str : Int
+  small_str : Int32
   rounded : Double
   precise : Double
 } derive(Eq, Debug)
@@ -218,7 +218,7 @@ pub extend Int64s with Debug::{to_repr}
 pub fn Int64s::new(
   big~ : Int64,
   big_str~ : Int64,
-  small_str~ : Int,
+  small_str~ : Int32,
   rounded~ : Double,
   precise~ : Double,
 ) -> Int64s {
@@ -276,7 +276,7 @@ pub fn int64s_of_string(s : StringView) -> Int64s raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Int64s` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_int64s(x : Int64s, indent? : Int = 0) -> String {
+pub fn string_of_int64s(x : Int64s, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_int64s(x), indent~)
 }
 
@@ -290,8 +290,8 @@ pub extend Int64s with ToJson::{to_json}
 
 ///|
 pub(all) struct Maps {
-  by_name : Map[String, Int]
-  by_id : Map[Int, String]
+  by_name : Map[String, Int32]
+  by_id : Map[Int32, String]
   pairs : Array[(String, Double)]
 } derive(Eq, Debug)
 
@@ -304,8 +304,8 @@ pub extend Maps with Debug::{to_repr}
 ///|
 /// Create a value of type `Maps`.
 pub fn Maps::new(
-  by_name~ : Map[String, Int],
-  by_id~ : Map[Int, String],
+  by_name~ : Map[String, Int32],
+  by_id~ : Map[Int32, String],
   pairs~ : Array[(String, Double)],
 ) -> Maps {
   Maps::{ by_name, by_id, pairs, }
@@ -374,7 +374,7 @@ pub fn maps_of_string(s : StringView) -> Maps raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Maps` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_maps(x : Maps, indent? : Int = 0) -> String {
+pub fn string_of_maps(x : Maps, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_maps(x), indent~)
 }
 
@@ -442,7 +442,7 @@ pub fn inline_of_string(s : StringView) -> Inline raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Inline` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_inline(x : Inline, indent? : Int = 0) -> String {
+pub fn string_of_inline(x : Inline, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_inline(x), indent~)
 }
 
@@ -515,7 +515,7 @@ pub fn inline_point_of_string(
 ///|
 /// Serialize a value of type `InlinePoint` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_inline_point(x : InlinePoint, indent? : Int = 0) -> String {
+pub fn string_of_inline_point(x : InlinePoint, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_inline_point(x), indent~)
 }
 
@@ -529,7 +529,7 @@ pub extend InlinePoint with ToJson::{to_json}
 
 ///|
 pub(all) struct InlineNestedB {
-  z : Int
+  z : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -540,7 +540,7 @@ pub extend InlineNestedB with Debug::{to_repr}
 
 ///|
 /// Create a value of type `InlineNestedB`.
-pub fn InlineNestedB::new(z~ : Int) -> InlineNestedB {
+pub fn InlineNestedB::new(z~ : Int32) -> InlineNestedB {
   InlineNestedB::{ z, }
 }
 
@@ -585,7 +585,7 @@ pub fn inline_nested_b_of_string(
 /// given indentation.
 pub fn string_of_inline_nested_b(
   x : InlineNestedB,
-  indent? : Int = 0,
+  indent~ : Int32 = 0,
 ) -> String {
   @atd_runtime.stringify(write_inline_nested_b(x), indent~)
 }
@@ -651,7 +651,7 @@ pub fn inline_nested_of_string(
 ///|
 /// Serialize a value of type `InlineNested` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_inline_nested(x : InlineNested, indent? : Int = 0) -> String {
+pub fn string_of_inline_nested(x : InlineNested, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_inline_nested(x), indent~)
 }
 
@@ -665,7 +665,7 @@ pub extend InlineNested with ToJson::{to_json}
 
 ///|
 pub(all) enum Tree {
-  Leaf(Int)
+  Leaf(Int32)
   Node(Tree, Tree)
 } derive(Eq, Debug)
 
@@ -720,7 +720,7 @@ pub fn tree_of_string(s : StringView) -> Tree raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Tree` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_tree(x : Tree, indent? : Int = 0) -> String {
+pub fn string_of_tree(x : Tree, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_tree(x), indent~)
 }
 
@@ -794,7 +794,7 @@ pub fn forest_of_string(s : StringView) -> Forest raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Forest` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_forest(x : Forest, indent? : Int = 0) -> String {
+pub fn string_of_forest(x : Forest, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_forest(x), indent~)
 }
 
@@ -809,15 +809,15 @@ pub extend Forest with ToJson::{to_json}
 ///|
 pub(all) struct Defaults {
   b : Bool
-  i : Int
+  i : Int32
   f : Double
   s : String
   l : Array[String]
-  o : Int?
+  o : Int32?
   u : Unit
   j : Json
   alias_default : StringList
-  custom : Array[Int]
+  custom : Array[Int32]
   custom_enum : Color
 } derive(Eq, Debug)
 
@@ -830,17 +830,17 @@ pub extend Defaults with Debug::{to_repr}
 ///|
 /// Create a value of type `Defaults`.
 pub fn Defaults::new(
-  b? : Bool = false,
-  i? : Int = 0,
-  f? : Double = 0.0,
-  s? : String = "",
-  l? : Array[String] = [],
-  o? : Int? = None,
-  u? : Unit = (),
-  j? : Json = Json::null(),
-  alias_default? : StringList = [],
-  custom? : Array[Int] = [1, 2, 3],
-  custom_enum? : Color = Color::Red,
+  b~ : Bool = false,
+  i~ : Int32 = 0,
+  f~ : Double = 0.0,
+  s~ : String = "",
+  l~ : Array[String] = [],
+  o~ : Int32? = None,
+  u~ : Unit = (),
+  j~ : Json = Json::null(),
+  alias_default~ : StringList = [],
+  custom~ : Array[Int32] = [1, 2, 3],
+  custom_enum~ : Color = Color::Red,
 ) -> Defaults {
   Defaults::{ b, i, f, s, l, o, u, j, alias_default, custom, custom_enum, }
 }
@@ -936,7 +936,7 @@ pub fn defaults_of_string(
 ///|
 /// Serialize a value of type `Defaults` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_defaults(x : Defaults, indent? : Int = 0) -> String {
+pub fn string_of_defaults(x : Defaults, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_defaults(x), indent~)
 }
 
@@ -981,7 +981,7 @@ pub fn string_list_of_string(
 ///|
 /// Serialize a value of type `StringList` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_string_list(x : StringList, indent? : Int = 0) -> String {
+pub fn string_of_string_list(x : StringList, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_string_list(x), indent~)
 }
 
@@ -1035,7 +1035,7 @@ pub fn color_of_string(s : StringView) -> Color raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Color` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_color(x : Color, indent? : Int = 0) -> String {
+pub fn string_of_color(x : Color, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_color(x), indent~)
 }
 
@@ -1049,9 +1049,9 @@ pub extend Color with ToJson::{to_json}
 
 ///|
 pub(all) struct Patch {
-  x : Int??
-  y : Int??
-  z : Int??
+  x : Int32??
+  y : Int32??
+  z : Int32??
 } derive(Eq, Debug)
 
 ///|
@@ -1062,7 +1062,7 @@ pub extend Patch with Debug::{to_repr}
 
 ///|
 /// Create a value of type `Patch`.
-pub fn Patch::new(x? : Int?, y? : Int?, z? : Int?) -> Patch {
+pub fn Patch::new(x? : Int32?, y? : Int32?, z? : Int32?) -> Patch {
   Patch::{ x, y, z, }
 }
 
@@ -1130,7 +1130,7 @@ pub fn patch_of_string(s : StringView) -> Patch raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Patch` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_patch(x : Patch, indent? : Int = 0) -> String {
+pub fn string_of_patch(x : Patch, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_patch(x), indent~)
 }
 
@@ -1144,7 +1144,7 @@ pub extend Patch with ToJson::{to_json}
 
 ///|
 pub(all) struct NoPatch {
-  x : Int??
+  x : Int32??
 } derive(Eq, Debug)
 
 ///|
@@ -1155,7 +1155,7 @@ pub extend NoPatch with Debug::{to_repr}
 
 ///|
 /// Create a value of type `NoPatch`.
-pub fn NoPatch::new(x? : Int?) -> NoPatch {
+pub fn NoPatch::new(x? : Int32?) -> NoPatch {
   NoPatch::{ x, }
 }
 
@@ -1202,7 +1202,7 @@ pub fn no_patch_of_string(
 ///|
 /// Serialize a value of type `NoPatch` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_no_patch(x : NoPatch, indent? : Int = 0) -> String {
+pub fn string_of_no_patch(x : NoPatch, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_no_patch(x), indent~)
 }
 
@@ -1266,7 +1266,7 @@ pub fn fruit_of_string(s : StringView) -> Fruit raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Fruit` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_fruit(x : Fruit, indent? : Int = 0) -> String {
+pub fn string_of_fruit(x : Fruit, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_fruit(x), indent~)
 }
 
@@ -1281,9 +1281,9 @@ pub extend Fruit with ToJson::{to_json}
 ///|
 pub(all) struct Tuples {
   unit_tuple : Unit
-  single : Int
-  pair : (Int, String)
-  annotated : (Int, Double)
+  single : Int32
+  pair : (Int32, String)
+  annotated : (Int32, Double)
 } derive(Eq, Debug)
 
 ///|
@@ -1296,9 +1296,9 @@ pub extend Tuples with Debug::{to_repr}
 /// Create a value of type `Tuples`.
 pub fn Tuples::new(
   unit_tuple~ : Unit,
-  single~ : Int,
-  pair~ : (Int, String),
-  annotated~ : (Int, Double),
+  single~ : Int32,
+  pair~ : (Int32, String),
+  annotated~ : (Int32, Double),
 ) -> Tuples {
   Tuples::{ unit_tuple, single, pair, annotated, }
 }
@@ -1387,7 +1387,7 @@ pub fn tuples_of_string(s : StringView) -> Tuples raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Tuples` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_tuples(x : Tuples, indent? : Int = 0) -> String {
+pub fn string_of_tuples(x : Tuples, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_tuples(x), indent~)
 }
 
@@ -1429,7 +1429,7 @@ pub fn celsius_of_string(
 ///|
 /// Serialize a value of type `Celsius` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_celsius(x : Celsius, indent? : Int = 0) -> String {
+pub fn string_of_celsius(x : Celsius, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_celsius(x), indent~)
 }
 
@@ -1501,7 +1501,7 @@ pub fn temperatures_of_string(
 ///|
 /// Serialize a value of type `Temperatures` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_temperatures(x : Temperatures, indent? : Int = 0) -> String {
+pub fn string_of_temperatures(x : Temperatures, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_temperatures(x), indent~)
 }
 
@@ -1546,7 +1546,7 @@ pub fn int_entries_of_string(
 ///|
 /// Serialize a value of type `IntEntries` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_int_entries(x : IntEntries, indent? : Int = 0) -> String {
+pub fn string_of_int_entries(x : IntEntries, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_int_entries(x), indent~)
 }
 
@@ -1581,7 +1581,7 @@ pub fn raw_of_string(s : StringView) -> Raw raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Raw` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_raw(x : Raw, indent? : Int = 0) -> String {
+pub fn string_of_raw(x : Raw, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_raw(x), indent~)
 }
 
@@ -1646,7 +1646,7 @@ pub fn tagged_of_string(s : StringView) -> Tagged raise @atd_runtime.JsonError {
 ///|
 /// Serialize a value of type `Tagged` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_tagged(x : Tagged, indent? : Int = 0) -> String {
+pub fn string_of_tagged(x : Tagged, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_tagged(x), indent~)
 }
 
@@ -1706,7 +1706,7 @@ pub fn no_derive_of_string(
 ///|
 /// Serialize a value of type `NoDerive` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_no_derive(x : NoDerive, indent? : Int = 0) -> String {
+pub fn string_of_no_derive(x : NoDerive, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_no_derive(x), indent~)
 }
 
@@ -1768,7 +1768,7 @@ pub fn empty_record_of_string(
 ///|
 /// Serialize a value of type `EmptyRecord` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_empty_record(x : EmptyRecord, indent? : Int = 0) -> String {
+pub fn string_of_empty_record(x : EmptyRecord, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_empty_record(x), indent~)
 }
 
@@ -1791,7 +1791,7 @@ pub extend EmptyRecord with ToJson::{to_json}
 /// ```
 pub(all) enum Documented {
   /// A documented case.
-  Documented(Int)
+  Documented(Int32)
   Undocumented
 } derive(Eq, Debug)
 
@@ -1840,7 +1840,7 @@ pub fn documented_of_string(
 ///|
 /// Serialize a value of type `Documented` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of_documented(x : Documented, indent? : Int = 0) -> String {
+pub fn string_of_documented(x : Documented, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write_documented(x), indent~)
 }
 
@@ -1855,7 +1855,7 @@ pub extend Documented with ToJson::{to_json}
 ///|
 pub(all) struct StringIntEntry {
   key : String
-  value : Int
+  value : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -1866,7 +1866,7 @@ pub extend StringIntEntry with Debug::{to_repr}
 
 ///|
 /// Create a value of type `StringIntEntry`.
-pub fn StringIntEntry::new(key~ : String, value~ : Int) -> StringIntEntry {
+pub fn StringIntEntry::new(key~ : String, value~ : Int32) -> StringIntEntry {
   StringIntEntry::{ key, value, }
 }
 
@@ -1915,7 +1915,7 @@ pub fn _string_int_entry_of_string(
 /// given indentation.
 pub fn string_of__string_int_entry(
   x : StringIntEntry,
-  indent? : Int = 0,
+  indent~ : Int32 = 0,
 ) -> String {
   @atd_runtime.stringify(write__string_int_entry(x), indent~)
 }
@@ -1961,6 +1961,6 @@ pub fn _int_boxed_of_string(
 ///|
 /// Serialize a value of type `IntBoxed` to JSON, compactly or with the
 /// given indentation.
-pub fn string_of__int_boxed(x : IntBoxed, indent? : Int = 0) -> String {
+pub fn string_of__int_boxed(x : IntBoxed, indent~ : Int32 = 0) -> String {
   @atd_runtime.stringify(write__int_boxed(x), indent~)
 }

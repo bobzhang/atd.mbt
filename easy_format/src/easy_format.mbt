@@ -113,7 +113,7 @@ pub(all) struct ListParam {
   /// several lines and several list items per line. Default: `WrapAtoms`
   wrap_body : Wrap
   /// Extra indentation of the list body. Default: `2`
-  indent_body : Int
+  indent_body : Int32
   /// Default: `None`
   list_style : String?
   /// Default: `None`
@@ -161,7 +161,7 @@ pub(all) struct LabelParam {
   space_after_label : Bool
   /// Extra indentation before the item that comes after a label.
   /// Default: `2`
-  indent_after_label : Int
+  indent_after_label : Int32
   /// Default: `None`
   label_style : String?
 } derive(Eq, Debug)
@@ -376,7 +376,7 @@ pub fn define_styles(
 }
 
 ///|
-fn pp_open_xbox(fmt : @format.Formatter, p : ListParam, indent : Int) -> Unit {
+fn pp_open_xbox(fmt : @format.Formatter, p : ListParam, indent : Int32) -> Unit {
   match p.wrap_body {
     AlwaysWrap | NeverWrap | WrapAtoms => fmt.open_hvbox(indent)
     ForceBreaks | ForceBreaksRec => fmt.open_vbox(indent)
@@ -403,7 +403,7 @@ fn extra_box(p : ListParam, l : ArrayView[T]) -> Bool {
 fn pp_open_nonaligned_box(
   fmt : @format.Formatter,
   p : ListParam,
-  indent : Int,
+  indent : Int32,
   l : ArrayView[T],
 ) -> Unit {
   match p.wrap_body {
@@ -728,8 +728,8 @@ pub fn to_formatter(fmt : @format.Formatter, x : T) -> Unit {
 pub fn to_buffer(
   buf : StringBuilder,
   x : T,
-  escape? : Escape = NoEscape,
-  styles? : ArrayView[(String, Style)] = [],
+  escape~ : Escape = NoEscape,
+  styles~ : ArrayView[(String, Style)] = [],
 ) -> Unit {
   let fmt = @format.Formatter::of_buffer(buf)
   define_styles(fmt, escape, styles)
@@ -740,8 +740,8 @@ pub fn to_buffer(
 /// Pretty-print a tree into a string. `Pretty.to_string` in OCaml.
 pub fn to_string(
   x : T,
-  escape? : Escape = NoEscape,
-  styles? : ArrayView[(String, Style)] = [],
+  escape~ : Escape = NoEscape,
+  styles~ : ArrayView[(String, Style)] = [],
 ) -> String {
   let buf = StringBuilder()
   to_buffer(buf, x, escape~, styles~)

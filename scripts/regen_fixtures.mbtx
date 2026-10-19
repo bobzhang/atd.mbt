@@ -14,7 +14,7 @@ import {
 }
 
 ///|
-async fn check(cmd : String, args : Array[String], cwd? : String = ".") -> Unit {
+async fn check(cmd : String, args : Array[String], cwd~ : String = ".") -> Unit {
   let code = @process.run(cmd, args, cwd~)
   if code != 0 {
     raise Failure("command failed: \{cmd} \{args.join(" ")}")
