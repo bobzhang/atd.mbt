@@ -147,7 +147,7 @@ fn open_box_of_string(str : String) -> (Int32, BoxType) raise FormatError {
   while i < len && str[i] >= 'a' && str[i] <= 'z' {
     i += 1
   }
-  let box_name = str.view(start_offset=wstart, end_offset=i).to_owned()
+  let box_name = str[wstart:i].to_owned()
   while i < len && (str[i] == ' ' || str[i] == '\t') {
     i += 1
   }
@@ -159,7 +159,7 @@ fn open_box_of_string(str : String) -> (Int32, BoxType) raise FormatError {
     0
   } else {
     // OCaml's integers have 63 bits
-    let n = @string.parse_int64(str.view(start_offset=nstart, end_offset=i)) catch {
+    let n = @string.parse_int64(str[nstart:i]) catch {
       _ => raise invalid_box()
     }
     if n > 0x7FFFFFFFL {
@@ -500,7 +500,7 @@ fn Printer::compute_tag(
   if s.length() < 2 {
     s
   } else {
-    s.view(start_offset=1, end_offset=s.length() - 1).to_owned()
+    s[1:s.length() - 1].to_owned()
   }
 }
 

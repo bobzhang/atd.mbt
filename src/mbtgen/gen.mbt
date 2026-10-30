@@ -94,7 +94,7 @@ fn header(
     lines.push("//")
     for l in doc {
       // turn doc comments into ordinary comments
-      lines.push("//" + l.view(start_offset=3).to_owned())
+      lines.push("//" + l[3:].to_owned())
     }
   }
   lines.push("")
@@ -193,11 +193,11 @@ pub fn generate(
 /// `path/to/Foo.atd`.
 pub fn output_file_name(atd_path : String) -> String {
   let base = match atd_path.rev_find("/") {
-    Some(i) => atd_path.view(start_offset=i + 1).to_owned()
+    Some(i) => atd_path[i + 1:].to_owned()
     None => atd_path
   }
   let base = if base.has_suffix(".atd") {
-    base.view(end_offset=base.length() - 4).to_owned()
+    base[:base.length() - 4].to_owned()
   } else {
     base
   }

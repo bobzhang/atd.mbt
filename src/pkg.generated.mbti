@@ -42,11 +42,11 @@ pub fn check_module(Module) -> Unit raise AtdError
 
 pub fn check_type_refs(Map[String, Import], ArrayView[TypeDef]) -> Unit raise AtdError
 
-pub fn compare_string_lists(ArrayView[String], ArrayView[String]) -> Int
+pub fn compare_string_lists(ArrayView[String], ArrayView[String]) -> Int32
 
-pub fn compare_strings(StringView, StringView) -> Int
+pub fn compare_strings(StringView, StringView) -> Int32
 
-pub fn concatenate_into_lines(Array[String], max_length~ : Int) -> Array[String]
+pub fn concatenate_into_lines(Array[String], max_length~ : Int32) -> Array[String]
 
 pub fn default_format_annot(AnnotSection) -> @easy_format.T
 
@@ -68,9 +68,9 @@ pub fn expand_type_defs(Array[TypeDef], prefix? : String, keep_builtins? : Bool,
 
 pub fn format(Any, format_annot? : (AnnotSection) -> @easy_format.T) -> @easy_format.T
 
-pub fn get_construct(Map[TypeName, (Int, TypeDef?)], TypeName) -> (Int, TypeExpr)?
+pub fn get_construct(Map[TypeName, (Int32, TypeDef?)], TypeName) -> (Int32, TypeExpr)?
 
-pub fn get_construct_of_expr(Map[TypeName, (Int, TypeDef?)], TypeExpr) -> TypeExpr?
+pub fn get_construct_of_expr(Map[TypeName, (Int32, TypeDef?)], TypeExpr) -> TypeExpr?
 
 pub fn get_doc(Loc, Array[AnnotSection]) -> Array[DocBlock]? raise AtdError
 
@@ -92,7 +92,7 @@ pub fn get_json_lowercase_tags(Array[AnnotSection]) -> Bool raise AtdError
 
 pub fn get_json_open_enum(Array[AnnotSection]) -> Bool raise AtdError
 
-pub fn get_json_precision(Array[AnnotSection]) -> Int? raise AtdError
+pub fn get_json_precision(Array[AnnotSection]) -> Int32? raise AtdError
 
 pub fn get_json_record(Array[AnnotSection]) -> JsonRecord raise AtdError
 
@@ -100,7 +100,7 @@ pub fn get_json_sum(Array[AnnotSection]) -> JsonSum raise AtdError
 
 pub fn get_json_sum_repr(Array[AnnotSection]) -> JsonSumRepr raise AtdError
 
-pub fn get_original_definition(Map[TypeName, (Int, TypeDef?)], TypeName) -> (Int, TypeDef?)?
+pub fn get_original_definition(Map[TypeName, (Int32, TypeDef?)], TypeName) -> (Int32, TypeDef?)?
 
 pub fn html_of_doc(Array[DocBlock]) -> String
 
@@ -112,13 +112,13 @@ pub let jsonschema_annot_schema : Array[SchemaSection]
 
 pub fn jsonschema_of_module(Module, src_name~ : String, root_type~ : String, version? : JsonschemaVersion, xprop? : Bool) -> @yojson.Value raise AtdError
 
-pub fn load_bytes(BytesView, annot_schema? : Array[SchemaSection], expand? : Bool, keep_builtins? : Bool, keep_poly? : Bool, xdebug? : Bool, inherit_fields? : Bool, inherit_variants? : Bool, pos_fname? : String, pos_lnum? : Int, on_warning? : (String) -> Unit) -> Module raise AtdError
+pub fn load_bytes(BytesView, annot_schema? : Array[SchemaSection], expand? : Bool, keep_builtins? : Bool, keep_poly? : Bool, xdebug? : Bool, inherit_fields? : Bool, inherit_variants? : Bool, pos_fname? : String, pos_lnum? : Int32, on_warning? : (String) -> Unit) -> Module raise AtdError
 
 pub fn load_imports(ArrayView[Import]) -> Map[String, Import] raise AtdError
 
-pub fn load_string(String, annot_schema? : Array[SchemaSection], expand? : Bool, keep_builtins? : Bool, keep_poly? : Bool, xdebug? : Bool, inherit_fields? : Bool, inherit_variants? : Bool, pos_fname? : String, pos_lnum? : Int, on_warning? : (String) -> Unit) -> Module raise AtdError
+pub fn load_string(String, annot_schema? : Array[SchemaSection], expand? : Bool, keep_builtins? : Bool, keep_poly? : Bool, xdebug? : Bool, inherit_fields? : Bool, inherit_variants? : Bool, pos_fname? : String, pos_lnum? : Int32, on_warning? : (String) -> Unit) -> Module raise AtdError
 
-pub fn make_predef_table(ArrayView[TypeDef]) -> Map[TypeName, (Int, TypeDef?)] raise AtdError
+pub fn make_predef_table(ArrayView[TypeDef]) -> Map[TypeName, (Int32, TypeDef?)] raise AtdError
 
 pub fn ocaml_escaped(StringView) -> String
 
@@ -126,9 +126,9 @@ pub fn ocaml_quote(StringView) -> String
 
 pub fn parse_doc_text(Loc, String) -> Array[DocBlock] raise AtdError
 
-pub fn parse_module(BytesView, pos_fname? : String, pos_lnum? : Int) -> Module raise AtdError
+pub fn parse_module(BytesView, pos_fname? : String, pos_lnum? : Int32) -> Module raise AtdError
 
-pub fn predef_types() -> Array[(TypeName, Int, TypeDef?)]
+pub fn predef_types() -> Array[(TypeName, Int32, TypeDef?)]
 
 pub fn print_doc_text(Array[DocBlock]) -> String
 
@@ -138,7 +138,7 @@ pub fn reflect_module(String, Module) -> String
 
 pub fn resolve_import(Map[String, Import], Loc, TypeName) -> ((Import, ImportedType?)?, String) raise AtdError
 
-pub fn rewrap_paragraph(String, max_length~ : Int) -> Array[String]
+pub fn rewrap_paragraph(String, max_length~ : Int32) -> Array[String]
 
 pub fn split_on_blank(String) -> Array[String]
 
@@ -239,7 +239,7 @@ pub(all) struct JsonAdapter {
 } derive(Eq, @debug.Debug)
 
 pub(all) enum JsonFloat {
-  Float(Int?)
+  Float(Int32?)
   Int
 } derive(Eq, @debug.Debug)
 
@@ -281,7 +281,7 @@ pub(all) struct Loc {
 } derive(Eq, @debug.Debug)
 #alias(new, deprecated)
 pub fn Loc::Loc(Pos, Pos) -> Self
-pub fn Loc::compare(Self, Self) -> Int
+pub fn Loc::compare(Self, Self) -> Int32
 
 pub(all) struct Module {
   head : (Loc, Array[AnnotSection])
@@ -312,9 +312,9 @@ pub(all) struct OcamlAdapter {
 
 pub(all) struct Pos {
   fname : String
-  lnum : Int
-  bol : Int
-  cnum : Int
+  lnum : Int32
+  bol : Int32
+  cnum : Int32
 } derive(Eq, @debug.Debug)
 
 pub(all) struct SchemaSection {
@@ -402,7 +402,7 @@ pub type Doc = Array[DocBlock]
 
 pub type Imports = Map[String, Import]
 
-pub type PredefTable = Map[TypeName, (Int, TypeDef?)]
+pub type PredefTable = Map[TypeName, (Int32, TypeDef?)]
 
 pub type Schema = Array[SchemaSection]
 

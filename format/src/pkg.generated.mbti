@@ -19,9 +19,9 @@ pub let default_stag_functions : StagFunctions
 
 pub fn dprintf(String, ArrayView[Arg]) -> (Formatter) -> Unit
 
-pub fn format_float_c(Double, Char, Int, sign? : Char, alt? : Bool) -> String
+pub fn format_float_c(Double, Char, Int32, sign? : Char, alt? : Bool) -> String
 
-pub fn hexstring_of_float(Double, Int, Char) -> String
+pub fn hexstring_of_float(Double, Int32, Char) -> String
 
 pub fn[T] kasprintf((String) -> T, String, ArrayView[Arg]) -> T
 
@@ -31,7 +31,7 @@ pub fn string_escaped(StringView) -> String
 
 pub fn string_of_float(Double) -> String
 
-pub fn utf8_length(StringView) -> Int
+pub fn utf8_length(StringView) -> Int32
 
 // Errors
 pub(all) suberror InvalidArgument {
@@ -43,8 +43,8 @@ pub fn InvalidArgument::to_repr(Self) -> @debug.Repr
 
 // Types and methods
 pub(all) enum Arg {
-  Int(Int)
-  Int32(Int)
+  Int(Int32)
+  Int32(Int32)
   Int64(Int64)
   Float(Double)
   String(String)
@@ -65,10 +65,10 @@ pub fn Formatter::close_tbox(Self) -> Unit
 pub fn Formatter::force_newline(Self) -> Unit
 pub fn Formatter::get_ellipsis_text(Self) -> String
 pub fn Formatter::get_geometry(Self) -> Geometry
-pub fn Formatter::get_margin(Self) -> Int
+pub fn Formatter::get_margin(Self) -> Int32
 pub fn Formatter::get_mark_tags(Self) -> Bool
-pub fn Formatter::get_max_boxes(Self) -> Int
-pub fn Formatter::get_max_indent(Self) -> Int
+pub fn Formatter::get_max_boxes(Self) -> Int32
+pub fn Formatter::get_max_indent(Self) -> Int32
 pub fn Formatter::get_out_functions(Self) -> OutFunctions
 pub fn Formatter::get_output_functions(Self) -> ((StringView) -> Unit, () -> Unit)
 pub fn Formatter::get_print_tags(Self) -> Bool
@@ -77,26 +77,26 @@ pub fn[T] Formatter::kprintf(Self, (Self) -> T, String, ArrayView[Arg]) -> T
 pub fn Formatter::of_buffer(StringBuilder) -> Self
 pub fn Formatter::of_out_functions(OutFunctions) -> Self
 pub fn Formatter::of_symbolic_output_buffer(SymbolicOutputBuffer) -> Self
-pub fn Formatter::open_box(Self, Int) -> Unit
+pub fn Formatter::open_box(Self, Int32) -> Unit
 pub fn Formatter::open_hbox(Self) -> Unit
-pub fn Formatter::open_hovbox(Self, Int) -> Unit
-pub fn Formatter::open_hvbox(Self, Int) -> Unit
+pub fn Formatter::open_hovbox(Self, Int32) -> Unit
+pub fn Formatter::open_hvbox(Self, Int32) -> Unit
 pub fn Formatter::open_stag(Self, Stag) -> Unit
 pub fn Formatter::open_tag(Self, String) -> Unit
 pub fn Formatter::open_tbox(Self) -> Unit
-pub fn Formatter::open_vbox(Self, Int) -> Unit
+pub fn Formatter::open_vbox(Self, Int32) -> Unit
 pub fn Formatter::over_max_boxes(Self) -> Bool
 pub fn[T] Formatter::print_array(Self, pp_sep? : (Self) -> Unit, (Self, T) -> Unit, ArrayView[T]) -> Unit
-pub fn Formatter::print_as(Self, Int, String) -> Unit
+pub fn Formatter::print_as(Self, Int32, String) -> Unit
 pub fn Formatter::print_bool(Self, Bool) -> Unit
-pub fn Formatter::print_break(Self, Int, Int) -> Unit
+pub fn Formatter::print_break(Self, Int32, Int32) -> Unit
 pub fn Formatter::print_char(Self, Char) -> Unit
-pub fn Formatter::print_custom_break(Self, fits~ : (String, Int, String), breaks~ : (String, Int, String)) -> Unit
+pub fn Formatter::print_custom_break(Self, fits~ : (String, Int32, String), breaks~ : (String, Int32, String)) -> Unit
 pub fn Formatter::print_cut(Self) -> Unit
 pub fn Formatter::print_float(Self, Double) -> Unit
 pub fn Formatter::print_flush(Self) -> Unit
 pub fn Formatter::print_if_newline(Self) -> Unit
-pub fn Formatter::print_int(Self, Int) -> Unit
+pub fn Formatter::print_int(Self, Int32) -> Unit
 pub fn[T] Formatter::print_iter(Self, pp_sep? : (Self) -> Unit, (Self, T) -> Unit, Iter[T]) -> Unit
 pub fn[T] Formatter::print_list(Self, pp_sep? : (Self) -> Unit, (Self, T) -> Unit, @list.List[T]) -> Unit
 pub fn Formatter::print_newline(Self) -> Unit
@@ -106,16 +106,16 @@ pub fn[T, E] Formatter::print_result(Self, ok~ : (Self, T) -> Unit, error~ : (Se
 pub fn Formatter::print_space(Self) -> Unit
 pub fn Formatter::print_string(Self, String) -> Unit
 pub fn Formatter::print_tab(Self) -> Unit
-pub fn Formatter::print_tbreak(Self, Int, Int) -> Unit
+pub fn Formatter::print_tbreak(Self, Int32, Int32) -> Unit
 pub fn Formatter::print_text(Self, String) -> Unit
 pub fn Formatter::printf(Self, String, ArrayView[Arg]) -> Unit
-pub fn Formatter::safe_set_geometry(Self, max_indent~ : Int, margin~ : Int) -> Unit
+pub fn Formatter::safe_set_geometry(Self, max_indent~ : Int32, margin~ : Int32) -> Unit
 pub fn Formatter::set_ellipsis_text(Self, String) -> Unit
-pub fn Formatter::set_geometry(Self, max_indent~ : Int, margin~ : Int) -> Unit raise InvalidArgument
-pub fn Formatter::set_margin(Self, Int) -> Unit
+pub fn Formatter::set_geometry(Self, max_indent~ : Int32, margin~ : Int32) -> Unit raise InvalidArgument
+pub fn Formatter::set_margin(Self, Int32) -> Unit
 pub fn Formatter::set_mark_tags(Self, Bool) -> Unit
-pub fn Formatter::set_max_boxes(Self, Int) -> Unit
-pub fn Formatter::set_max_indent(Self, Int) -> Unit
+pub fn Formatter::set_max_boxes(Self, Int32) -> Unit
+pub fn Formatter::set_max_indent(Self, Int32) -> Unit
 pub fn Formatter::set_out_functions(Self, OutFunctions) -> Unit
 pub fn Formatter::set_output_functions(Self, (StringView) -> Unit, () -> Unit) -> Unit
 pub fn Formatter::set_print_tags(Self, Bool) -> Unit
@@ -125,8 +125,8 @@ pub fn Formatter::set_tags(Self, Bool) -> Unit
 pub fn Formatter::update_geometry(Self, (Geometry) -> Geometry) -> Unit
 
 pub(all) struct Geometry {
-  max_indent : Int
-  margin : Int
+  max_indent : Int32
+  margin : Int32
 } derive(Eq, @debug.Debug)
 pub fn Geometry::equal(Self, Self) -> Bool
 pub fn Geometry::not_equal(Self, Self) -> Bool
@@ -136,8 +136,8 @@ pub(all) struct OutFunctions {
   out_string : (StringView) -> Unit
   out_flush : () -> Unit
   out_newline : () -> Unit
-  out_spaces : (Int) -> Unit
-  out_indent : (Int) -> Unit
+  out_spaces : (Int32) -> Unit
+  out_indent : (Int32) -> Unit
 }
 
 pub(all) enum Stag {
@@ -168,8 +168,8 @@ pub(all) enum SymbolicOutputItem {
   OutputFlush
   OutputNewline
   OutputString(String)
-  OutputSpaces(Int)
-  OutputIndent(Int)
+  OutputSpaces(Int32)
+  OutputIndent(Int32)
 } derive(Eq, @debug.Debug)
 pub fn SymbolicOutputItem::equal(Self, Self) -> Bool
 pub fn SymbolicOutputItem::not_equal(Self, Self) -> Bool

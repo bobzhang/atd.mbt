@@ -154,59 +154,59 @@ pub fn string_list_of_json(Json) -> Array[String] raise @atd_runtime.JsonError
 
 pub fn string_list_of_string(StringView) -> Array[String] raise @atd_runtime.JsonError
 
-pub fn string_of__int_boxed(Json, indent? : Int) -> String
+pub fn string_of__int_boxed(Json, indent? : Int32) -> String
 
-pub fn string_of__string_int_entry(StringIntEntry, indent? : Int) -> String
+pub fn string_of__string_int_entry(StringIntEntry, indent? : Int32) -> String
 
-pub fn string_of_celsius(Celsius, indent? : Int) -> String
+pub fn string_of_celsius(Celsius, indent? : Int32) -> String
 
-pub fn string_of_color(Color, indent? : Int) -> String
+pub fn string_of_color(Color, indent? : Int32) -> String
 
-pub fn string_of_defaults(Defaults, indent? : Int) -> String
+pub fn string_of_defaults(Defaults, indent? : Int32) -> String
 
-pub fn string_of_documented(Documented, indent? : Int) -> String
+pub fn string_of_documented(Documented, indent? : Int32) -> String
 
-pub fn string_of_empty_record(EmptyRecord, indent? : Int) -> String
+pub fn string_of_empty_record(EmptyRecord, indent? : Int32) -> String
 
-pub fn string_of_forest(Forest, indent? : Int) -> String
+pub fn string_of_forest(Forest, indent? : Int32) -> String
 
-pub fn string_of_fruit(Fruit, indent? : Int) -> String
+pub fn string_of_fruit(Fruit, indent? : Int32) -> String
 
-pub fn string_of_inline(Inline, indent? : Int) -> String
+pub fn string_of_inline(Inline, indent? : Int32) -> String
 
-pub fn string_of_inline_nested(InlineNested, indent? : Int) -> String
+pub fn string_of_inline_nested(InlineNested, indent? : Int32) -> String
 
-pub fn string_of_inline_nested_b(InlineNestedB, indent? : Int) -> String
+pub fn string_of_inline_nested_b(InlineNestedB, indent? : Int32) -> String
 
-pub fn string_of_inline_point(InlinePoint, indent? : Int) -> String
+pub fn string_of_inline_point(InlinePoint, indent? : Int32) -> String
 
-pub fn string_of_int64s(Int64s, indent? : Int) -> String
+pub fn string_of_int64s(Int64s, indent? : Int32) -> String
 
-pub fn string_of_int_entries(Array[StringIntEntry], indent? : Int) -> String
+pub fn string_of_int_entries(Array[StringIntEntry], indent? : Int32) -> String
 
-pub fn string_of_maps(Maps, indent? : Int) -> String
+pub fn string_of_maps(Maps, indent? : Int32) -> String
 
-pub fn string_of_match(Match, indent? : Int) -> String
+pub fn string_of_match(Match, indent? : Int32) -> String
 
-pub fn string_of_no_derive(NoDerive, indent? : Int) -> String
+pub fn string_of_no_derive(NoDerive, indent? : Int32) -> String
 
-pub fn string_of_no_patch(NoPatch, indent? : Int) -> String
+pub fn string_of_no_patch(NoPatch, indent? : Int32) -> String
 
-pub fn string_of_option_like(OptionLike, indent? : Int) -> String
+pub fn string_of_option_like(OptionLike, indent? : Int32) -> String
 
-pub fn string_of_patch(Patch, indent? : Int) -> String
+pub fn string_of_patch(Patch, indent? : Int32) -> String
 
-pub fn string_of_raw(Json, indent? : Int) -> String
+pub fn string_of_raw(Json, indent? : Int32) -> String
 
-pub fn string_of_string_list(Array[String], indent? : Int) -> String
+pub fn string_of_string_list(Array[String], indent? : Int32) -> String
 
-pub fn string_of_tagged(Tagged, indent? : Int) -> String
+pub fn string_of_tagged(Tagged, indent? : Int32) -> String
 
-pub fn string_of_temperatures(Temperatures, indent? : Int) -> String
+pub fn string_of_temperatures(Temperatures, indent? : Int32) -> String
 
-pub fn string_of_tree(Tree, indent? : Int) -> String
+pub fn string_of_tree(Tree, indent? : Int32) -> String
 
-pub fn string_of_tuples(Tuples, indent? : Int) -> String
+pub fn string_of_tuples(Tuples, indent? : Int32) -> String
 
 pub fn tagged_of_json(Json) -> Tagged raise @atd_runtime.JsonError
 
@@ -301,26 +301,26 @@ pub impl ToJson for Color
 
 pub(all) struct Defaults {
   b : Bool
-  i : Int
+  i : Int32
   f : Double
   s : String
   l : Array[String]
-  o : Int?
+  o : Int32?
   u : Unit
   j : Json
   alias_default : Array[String]
-  custom : Array[Int]
+  custom : Array[Int32]
   custom_enum : Color
 } derive(Eq, @debug.Debug)
 pub fn Defaults::equal(Self, Self) -> Bool
-pub fn Defaults::new(b? : Bool, i? : Int, f? : Double, s? : String, l? : Array[String], o? : Int?, u? : Unit, j? : Json, alias_default? : Array[String], custom? : Array[Int], custom_enum? : Color) -> Self
+pub fn Defaults::new(b? : Bool, i? : Int32, f? : Double, s? : String, l? : Array[String], o? : Int32?, u? : Unit, j? : Json, alias_default? : Array[String], custom? : Array[Int32], custom_enum? : Color) -> Self
 pub fn Defaults::not_equal(Self, Self) -> Bool
 pub fn Defaults::to_json(Self) -> Json
 pub fn Defaults::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Defaults
 
 pub(all) enum Documented {
-  Documented(Int)
+  Documented(Int32)
   Undocumented
 } derive(Eq, @debug.Debug)
 pub fn Documented::equal(Self, Self) -> Bool
@@ -381,10 +381,10 @@ pub fn InlineNested::to_repr(Self) -> @debug.Repr
 pub impl ToJson for InlineNested
 
 pub(all) struct InlineNestedB {
-  z : Int
+  z : Int32
 } derive(Eq, @debug.Debug)
 pub fn InlineNestedB::equal(Self, Self) -> Bool
-pub fn InlineNestedB::new(z~ : Int) -> Self
+pub fn InlineNestedB::new(z~ : Int32) -> Self
 pub fn InlineNestedB::not_equal(Self, Self) -> Bool
 pub fn InlineNestedB::to_json(Self) -> Json
 pub fn InlineNestedB::to_repr(Self) -> @debug.Repr
@@ -404,38 +404,38 @@ pub impl ToJson for InlinePoint
 pub(all) struct Int64s {
   big : Int64
   big_str : Int64
-  small_str : Int
+  small_str : Int32
   rounded : Double
   precise : Double
 } derive(Eq, @debug.Debug)
 pub fn Int64s::equal(Self, Self) -> Bool
-pub fn Int64s::new(big~ : Int64, big_str~ : Int64, small_str~ : Int, rounded~ : Double, precise~ : Double) -> Self
+pub fn Int64s::new(big~ : Int64, big_str~ : Int64, small_str~ : Int32, rounded~ : Double, precise~ : Double) -> Self
 pub fn Int64s::not_equal(Self, Self) -> Bool
 pub fn Int64s::to_json(Self) -> Json
 pub fn Int64s::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Int64s
 
 pub(all) struct Maps {
-  by_name : Map[String, Int]
-  by_id : Map[Int, String]
+  by_name : Map[String, Int32]
+  by_id : Map[Int32, String]
   pairs : Array[(String, Double)]
 } derive(Eq, @debug.Debug)
 pub fn Maps::equal(Self, Self) -> Bool
-pub fn Maps::new(by_name~ : Map[String, Int], by_id~ : Map[Int, String], pairs~ : Array[(String, Double)]) -> Self
+pub fn Maps::new(by_name~ : Map[String, Int32], by_id~ : Map[Int32, String], pairs~ : Array[(String, Double)]) -> Self
 pub fn Maps::not_equal(Self, Self) -> Bool
 pub fn Maps::to_json(Self) -> Json
 pub fn Maps::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Maps
 
 pub(all) struct Match {
-  match_ : Int
+  match_ : Int32
   fn_ : String
   kind : String
   x_ : Bool
-  some_list : Array[Int]
+  some_list : Array[Int32]
 } derive(Eq, @debug.Debug)
 pub fn Match::equal(Self, Self) -> Bool
-pub fn Match::new(match_~ : Int, fn_~ : String, kind~ : String, x_~ : Bool, some_list? : Array[Int]) -> Self
+pub fn Match::new(match_~ : Int32, fn_~ : String, kind~ : String, x_~ : Bool, some_list? : Array[Int32]) -> Self
 pub fn Match::not_equal(Self, Self) -> Bool
 pub fn Match::to_json(Self) -> Json
 pub fn Match::to_repr(Self) -> @debug.Repr
@@ -449,10 +449,10 @@ pub fn NoDerive::to_json(Self) -> Json
 pub impl ToJson for NoDerive
 
 pub(all) struct NoPatch {
-  x : Int??
+  x : Int32??
 } derive(Eq, @debug.Debug)
 pub fn NoPatch::equal(Self, Self) -> Bool
-pub fn NoPatch::new(x? : Int?) -> Self
+pub fn NoPatch::new(x? : Int32?) -> Self
 pub fn NoPatch::not_equal(Self, Self) -> Bool
 pub fn NoPatch::to_json(Self) -> Json
 pub fn NoPatch::to_repr(Self) -> @debug.Repr
@@ -460,9 +460,9 @@ pub impl ToJson for NoPatch
 
 pub(all) enum OptionLike {
   None_
-  Some_(Int)
+  Some_(Int32)
   Ok_
-  Different(Int, String, Bool)
+  Different(Int32, String, Bool)
 } derive(Eq, @debug.Debug)
 pub fn OptionLike::equal(Self, Self) -> Bool
 pub fn OptionLike::not_equal(Self, Self) -> Bool
@@ -471,12 +471,12 @@ pub fn OptionLike::to_repr(Self) -> @debug.Repr
 pub impl ToJson for OptionLike
 
 pub(all) struct Patch {
-  x : Int??
-  y : Int??
-  z : Int??
+  x : Int32??
+  y : Int32??
+  z : Int32??
 } derive(Eq, @debug.Debug)
 pub fn Patch::equal(Self, Self) -> Bool
-pub fn Patch::new(x? : Int?, y? : Int?, z? : Int?) -> Self
+pub fn Patch::new(x? : Int32?, y? : Int32?, z? : Int32?) -> Self
 pub fn Patch::not_equal(Self, Self) -> Bool
 pub fn Patch::to_json(Self) -> Json
 pub fn Patch::to_repr(Self) -> @debug.Repr
@@ -484,10 +484,10 @@ pub impl ToJson for Patch
 
 pub(all) struct StringIntEntry {
   key : String
-  value : Int
+  value : Int32
 } derive(Eq, @debug.Debug)
 pub fn StringIntEntry::equal(Self, Self) -> Bool
-pub fn StringIntEntry::new(key~ : String, value~ : Int) -> Self
+pub fn StringIntEntry::new(key~ : String, value~ : Int32) -> Self
 pub fn StringIntEntry::not_equal(Self, Self) -> Bool
 pub fn StringIntEntry::to_json(Self) -> Json
 pub fn StringIntEntry::to_repr(Self) -> @debug.Repr
@@ -516,7 +516,7 @@ pub fn Temperatures::to_repr(Self) -> @debug.Repr
 pub impl ToJson for Temperatures
 
 pub(all) enum Tree {
-  Leaf(Int)
+  Leaf(Int32)
   Node(Tree, Tree)
 } derive(Eq, @debug.Debug)
 pub fn Tree::equal(Self, Self) -> Bool
@@ -527,12 +527,12 @@ pub impl ToJson for Tree
 
 pub(all) struct Tuples {
   unit_tuple : Unit
-  single : Int
-  pair : (Int, String)
-  annotated : (Int, Double)
+  single : Int32
+  pair : (Int32, String)
+  annotated : (Int32, Double)
 } derive(Eq, @debug.Debug)
 pub fn Tuples::equal(Self, Self) -> Bool
-pub fn Tuples::new(unit_tuple~ : Unit, single~ : Int, pair~ : (Int, String), annotated~ : (Int, Double)) -> Self
+pub fn Tuples::new(unit_tuple~ : Unit, single~ : Int32, pair~ : (Int32, String), annotated~ : (Int32, Double)) -> Self
 pub fn Tuples::not_equal(Self, Self) -> Bool
 pub fn Tuples::to_json(Self) -> Json
 pub fn Tuples::to_repr(Self) -> @debug.Repr

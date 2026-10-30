@@ -73,7 +73,7 @@ pub fn Formatter::print_text(self : Formatter, s : String) -> Unit {
   let mut left = 0
   let mut right = 0
   let flush = () => {
-    self.print_string(s.view(start_offset=left, end_offset=right).to_owned())
+    self.print_string(s[left:right].to_owned())
     right += 1
     left = right
   }

@@ -93,7 +93,7 @@ async fn run(args : ArrayView[String]) -> Unit {
   for dst, input in destinations {
     let src = @fs.read_file(input).binary()
     let basename = match input.rev_find("/") {
-      Some(i) => input.view(start_offset=i + 1).to_owned()
+      Some(i) => input[i + 1:].to_owned()
       None => input
     }
     results.push(

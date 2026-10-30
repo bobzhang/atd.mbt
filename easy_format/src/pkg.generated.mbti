@@ -68,7 +68,7 @@ pub fn LabelBreak::to_repr(Self) -> @debug.Repr
 pub(all) struct LabelParam {
   label_break : LabelBreak
   space_after_label : Bool
-  indent_after_label : Int
+  indent_after_label : Int32
   label_style : String?
 } derive(Eq, @debug.Debug)
 pub fn LabelParam::equal(Self, Self) -> Bool
@@ -84,7 +84,7 @@ pub(all) struct ListParam {
   stick_to_label : Bool
   align_closing : Bool
   wrap_body : Wrap
-  indent_body : Int
+  indent_body : Int32
   list_style : String?
   opening_style : String?
   body_style : String?

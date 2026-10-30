@@ -64,7 +64,7 @@ test "long lists" {
   // like OCaml's output
   assert_eq(s.length(), 3080002)
   assert_eq(
-    s.view(end_offset=87).to_owned(),
+    s[:87].to_owned(),
     "[\n  x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,\n  x, x, ",
   )
 }

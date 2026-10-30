@@ -99,7 +99,7 @@ fn display_blanks(out_string : (StringView) -> Unit, n : Int32) -> Unit {
   let mut n = n
   while n > 0 {
     if n <= 80 {
-      out_string(blank_line.view(end_offset=n))
+      out_string(blank_line[:n])
       n = 0
     } else {
       out_string(blank_line)
