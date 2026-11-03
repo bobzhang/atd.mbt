@@ -491,13 +491,15 @@ async fn main {
       // invalid formats must be rejected by bobzhang/format as well, with
       // the same message
       if code > 0 {
-        // `abort` prints its message on stdout
-        let (mbt_code, mbt_out, _) = run(mbt_driver, path)
-        let mbt_reason = @utf8.decode_lossy(mbt_out)
-          .split("\n")
-          .next()
-          .unwrap_or("")
-          .to_owned()
+        // Current native runtimes report aborts on stderr; older runtimes
+        // used stdout. Compare the original diagnostic on either channel.
+        let (mbt_code, mbt_out, mbt_err) = run(mbt_driver, path)
+        let diagnostic = if mbt_out.is_empty() {
+          mbt_err
+        } else {
+          @utf8.decode_lossy(mbt_out)
+        }
+        let mbt_reason = diagnostic.split("\n").next().unwrap_or("").to_owned()
         if mbt_code == 0 || ocaml_error_message(reason) != Some(mbt_reason) {
           diffs += 1
           @stdio.stdout.write(
