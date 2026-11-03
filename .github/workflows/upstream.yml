@@ -20,6 +20,10 @@ env:
 jobs:
   differential:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        moonbit: [pre-release]
     steps:
       - name: Checkout
         uses: actions/checkout@v5
