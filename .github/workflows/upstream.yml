@@ -53,14 +53,14 @@ jobs:
       - name: Check that the compatibility tests are up to date
         run: |
           moon update
-          moonx scripts/gen_compat_tests.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe"
+          moon run --target native scripts/gen_compat_tests.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe"
           moon fmt
           git diff --exit-code -- src/atdcat
 
       - name: Differential fuzzing
         run: |
           moon build --target native src/cmd/atdcat
-          moonx scripts/fuzz_atdcat.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe" 300 "$GITHUB_RUN_ID"
+          moon run --target native scripts/fuzz_atdcat.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe" 300 "$GITHUB_RUN_ID"
 
       - name: Differential fuzzing of the format module
-        run: opam exec -- moonx scripts/fuzz_format.mbtx 3000 "$GITHUB_RUN_ID"
+        run: opam exec -- moon run --target native scripts/fuzz_format.mbtx 3000 "$GITHUB_RUN_ID"
