@@ -4,6 +4,7 @@
 
 ///|
 /// A position in a source file.
+#derive(Eq, Debug)
 pub(all) struct Pos {
   /// File name, used in error messages.
   fname : String
@@ -13,14 +14,15 @@ pub(all) struct Pos {
   bol : Int32
   /// Byte offset of the position.
   cnum : Int32
-} derive(Eq, Debug)
+}
 
 ///|
 /// A region in a source file.
+#derive(Eq, Debug)
 pub(all) struct Loc {
   start : Pos
   end_ : Pos
-} derive(Eq, Debug)
+}
 
 ///|
 /// The dummy position, as OCaml's `Lexing.dummy_pos`.

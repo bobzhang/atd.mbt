@@ -281,10 +281,11 @@ pub fn annot_create_id() -> String {
 ///|
 /// A section of an annotation schema: the fields allowed in the section,
 /// with the kind of node where they may occur.
+#derive(Debug)
 pub(all) struct SchemaSection {
   section : String
   fields : Array[(NodeKind, String)]
-} derive(Debug)
+}
 
 ///|
 /// A schema for checking the placement of annotations.

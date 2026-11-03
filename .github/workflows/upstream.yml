@@ -20,6 +20,10 @@ env:
 jobs:
   differential:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        moonbit: [latest, pre-release]
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -43,20 +47,23 @@ jobs:
 
       - name: Set up MoonBit
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- "${{ matrix.moonbit }}"
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
       - name: Check that the compatibility tests are up to date
         run: |
           moon update
-          moonx scripts/gen_compat_tests.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe"
+          moon run --target native scripts/gen_compat_tests.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe"
           moon fmt
           git diff --exit-code -- src/atdcat
 
       - name: Differential fuzzing
         run: |
           moon build --target native src/cmd/atdcat
-          moonx scripts/fuzz_atdcat.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe" 300 "$GITHUB_RUN_ID"
+          moon run --target native scripts/fuzz_atdcat.mbtx "$PWD/.repos/atd/_build/default/atdcat/src/atdcat.exe" 300 "$GITHUB_RUN_ID"
 
       - name: Differential fuzzing of the format module
-        run: opam exec -- moonx scripts/fuzz_format.mbtx 3000 "$GITHUB_RUN_ID"
+        run: opam exec -- moon run --target native scripts/fuzz_format.mbtx 3000 "$GITHUB_RUN_ID"
+
+      - name: Native malformed-format diagnostic regression
+        run: python3 scripts/check_format_rejection.py

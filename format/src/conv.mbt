@@ -125,8 +125,8 @@ fn fixed_digits(x : Double, prec : Int32) -> (String, String) {
   } else {
     all
   }
-  let int_part = all.view(end_offset=all.length() - prec).to_owned()
-  let frac_part = all.view(start_offset=all.length() - prec).to_owned()
+  let int_part = all[:all.length() - prec].to_owned()
+  let frac_part = all[all.length() - prec:].to_owned()
   let int_part = if int_part == "" {
     "0"
   } else {
@@ -135,7 +135,7 @@ fn fixed_digits(x : Double, prec : Int32) -> (String, String) {
     while i < int_part.length() - 1 && int_part[i] == '0' {
       i += 1
     }
-    int_part.view(start_offset=i).to_owned()
+    int_part[i:].to_owned()
   }
   (int_part, frac_part)
 }
@@ -200,9 +200,7 @@ pub fn format_float_c(
       let (d, e) = scientific_digits(a, prec)
       let s = digits_string(d)
       let mantissa = if prec > 0 || alt {
-        s.view(end_offset=1).to_owned() +
-        "." +
-        s.view(start_offset=1).to_owned()
+        s[:1].to_owned() + "." + s[1:].to_owned()
       } else {
         s
       }
@@ -215,14 +213,14 @@ pub fn format_float_c(
       if e < -4 || e >= p {
         // scientific notation with p - 1 digits after the point
         let s = digits_string(d)
-        let mut frac = s.view(start_offset=1).to_owned()
+        let mut frac = s[1:].to_owned()
         if !alt {
           frac = strip_trailing_zeros(frac)
         }
         let mantissa = if frac != "" || alt {
-          s.view(end_offset=1).to_owned() + "." + frac
+          s[:1].to_owned() + "." + frac
         } else {
-          s.view(end_offset=1).to_owned()
+          s[:1].to_owned()
         }
         mantissa + exponent_string(e, upper)
       } else {
@@ -246,7 +244,7 @@ fn strip_trailing_zeros(s : String) -> String {
   while n > 0 && s[n - 1] == '0' {
     n -= 1
   }
-  s.view(end_offset=n).to_owned()
+  s[:n].to_owned()
 }
 
 ///|
@@ -483,13 +481,9 @@ fn fix_padding(padty : PadTy, width : Int32, s : String) -> String {
     Right => String::make(fill, ' ') + s
     Zeros =>
       if len > 0 && (s[0] == '+' || s[0] == '-' || s[0] == ' ') {
-        s.view(end_offset=1).to_owned() +
-        String::make(fill, '0') +
-        s.view(start_offset=1).to_owned()
+        s[:1].to_owned() + String::make(fill, '0') + s[1:].to_owned()
       } else if len > 1 && s[0] == '0' && (s[1] == 'x' || s[1] == 'X') {
-        s.view(end_offset=2).to_owned() +
-        String::make(fill, '0') +
-        s.view(start_offset=2).to_owned()
+        s[:2].to_owned() + String::make(fill, '0') + s[2:].to_owned()
       } else {
         String::make(fill, '0') + s
       }
@@ -506,16 +500,12 @@ fn fix_int_precision(prec : Int32, s : String) -> String {
   }
   let c = s[0]
   if (c == '+' || c == '-' || c == ' ') && prec + 1 > len {
-    s.view(end_offset=1).to_owned() +
-    String::make(prec + 1 - len, '0') +
-    s.view(start_offset=1).to_owned()
+    s[:1].to_owned() + String::make(prec + 1 - len, '0') + s[1:].to_owned()
   } else if c == '0' &&
     prec + 2 > len &&
     len > 1 &&
     (s[1] == 'x' || s[1] == 'X') {
-    s.view(end_offset=2).to_owned() +
-    String::make(prec + 2 - len, '0') +
-    s.view(start_offset=2).to_owned()
+    s[:2].to_owned() + String::make(prec + 2 - len, '0') + s[2:].to_owned()
   } else if (
       (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')
     ) &&

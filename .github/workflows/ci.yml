@@ -13,17 +13,11 @@ jobs:
   check:
     name: ${{ matrix.os }} (moonbit ${{ matrix.moonbit-version }})
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.moonbit-version == 'nightly' }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            moonbit-version: latest
-          - os: macos-latest
-            moonbit-version: latest
-          - os: ubuntu-latest
-            moonbit-version: nightly
+        os: [ubuntu-latest, macos-latest]
+        moonbit-version: [latest, pre-release]
     steps:
       - name: Checkout
         uses: actions/checkout@v5

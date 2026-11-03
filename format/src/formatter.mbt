@@ -99,7 +99,7 @@ fn display_blanks(out_string : (StringView) -> Unit, n : Int32) -> Unit {
   let mut n = n
   while n > 0 {
     if n <= 80 {
-      out_string(blank_line.view(end_offset=n))
+      out_string(blank_line[:n])
       n = 0
     } else {
       out_string(blank_line)
@@ -470,10 +470,11 @@ pub fn Formatter::get_margin(self : Formatter) -> Int32 {
 
 ///|
 /// The geometry of a formatter.
+#derive(Eq, Debug)
 pub(all) struct Geometry {
   max_indent : Int32
   margin : Int32
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Geometry with Eq::{equal, not_equal}
@@ -483,9 +484,10 @@ pub extend Geometry with Debug::{to_repr}
 
 ///|
 /// Error raised by functions given invalid arguments.
+#derive(Eq, Debug)
 pub(all) suberror InvalidArgument {
   InvalidArgument(String)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend InvalidArgument with Eq::{equal, not_equal}
@@ -651,13 +653,14 @@ pub fn Formatter::set_tags(self : Formatter, b : Bool) -> Unit {
 
 ///|
 /// An item of symbolic output.
+#derive(Eq, Debug)
 pub(all) enum SymbolicOutputItem {
   OutputFlush
   OutputNewline
   OutputString(String)
   OutputSpaces(Int32)
   OutputIndent(Int32)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend SymbolicOutputItem with Eq::{equal, not_equal}
