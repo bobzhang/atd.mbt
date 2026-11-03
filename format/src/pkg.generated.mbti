@@ -34,9 +34,10 @@ pub fn string_of_float(Double) -> String
 pub fn utf8_length(StringView) -> Int32
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub(all) suberror InvalidArgument {
   InvalidArgument(String)
-} derive(Eq, @debug.Debug)
+}
 pub fn InvalidArgument::equal(Self, Self) -> Bool
 pub fn InvalidArgument::not_equal(Self, Self) -> Bool
 pub fn InvalidArgument::to_repr(Self) -> @debug.Repr
@@ -124,10 +125,11 @@ pub fn Formatter::set_tab(Self) -> Unit
 pub fn Formatter::set_tags(Self, Bool) -> Unit
 pub fn Formatter::update_geometry(Self, (Geometry) -> Geometry) -> Unit
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Geometry {
   max_indent : Int32
   margin : Int32
-} derive(Eq, @debug.Debug)
+}
 pub fn Geometry::equal(Self, Self) -> Bool
 pub fn Geometry::not_equal(Self, Self) -> Bool
 pub fn Geometry::to_repr(Self) -> @debug.Repr
@@ -140,10 +142,11 @@ pub(all) struct OutFunctions {
   out_indent : (Int32) -> Unit
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Stag {
   StringTag(String)
   OtherTag(String)
-} derive(Eq, @debug.Debug)
+}
 pub fn Stag::equal(Self, Self) -> Bool
 pub fn Stag::not_equal(Self, Self) -> Bool
 pub fn Stag::to_repr(Self) -> @debug.Repr
@@ -164,13 +167,14 @@ pub fn SymbolicOutputBuffer::clear(Self) -> Unit
 pub fn SymbolicOutputBuffer::flush(Self) -> Array[SymbolicOutputItem]
 pub fn SymbolicOutputBuffer::get(Self) -> Array[SymbolicOutputItem]
 
+#derive(Eq, @debug.Debug)
 pub(all) enum SymbolicOutputItem {
   OutputFlush
   OutputNewline
   OutputString(String)
   OutputSpaces(Int32)
   OutputIndent(Int32)
-} derive(Eq, @debug.Debug)
+}
 pub fn SymbolicOutputItem::equal(Self, Self) -> Bool
 pub fn SymbolicOutputItem::not_equal(Self, Self) -> Bool
 pub fn SymbolicOutputItem::to_repr(Self) -> @debug.Repr

@@ -53,6 +53,7 @@ pub fn json_string_of_number(x : Double, repr : String?) -> String {
 ///|
 /// A JSON value like Yojson's: objects are association lists, which
 /// preserve the order and the duplicates of their keys.
+#derive(Eq, Debug)
 pub(all) enum Value {
   Null
   Bool(Bool)
@@ -61,7 +62,7 @@ pub(all) enum Value {
   String(String)
   List(Array[Value])
   Assoc(Array[(String, Value)])
-} derive(Eq, Debug)
+}
 
 ///|
 /// Convert from MoonBit's `Json`.

@@ -42,9 +42,10 @@ pub fn to_string(T, escape? : Escape, styles? : ArrayView[(String, Style)]) -> S
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub(all) struct AtomParam {
   atom_style : String?
-} derive(Eq, @debug.Debug)
+}
 pub fn AtomParam::equal(Self, Self) -> Bool
 pub fn AtomParam::not_equal(Self, Self) -> Bool
 pub fn AtomParam::to_repr(Self) -> @debug.Repr
@@ -55,26 +56,29 @@ pub(all) enum Escape {
   EscapeString((String) -> String)
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum LabelBreak {
   Auto
   Always
   AlwaysRec
   Never
-} derive(Eq, @debug.Debug)
+}
 pub fn LabelBreak::equal(Self, Self) -> Bool
 pub fn LabelBreak::not_equal(Self, Self) -> Bool
 pub fn LabelBreak::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct LabelParam {
   label_break : LabelBreak
   space_after_label : Bool
   indent_after_label : Int32
   label_style : String?
-} derive(Eq, @debug.Debug)
+}
 pub fn LabelParam::equal(Self, Self) -> Bool
 pub fn LabelParam::not_equal(Self, Self) -> Bool
 pub fn LabelParam::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct ListParam {
   space_after_opening : Bool
   space_after_separator : Bool
@@ -90,15 +94,16 @@ pub(all) struct ListParam {
   body_style : String?
   separator_style : String?
   closing_style : String?
-} derive(Eq, @debug.Debug)
+}
 pub fn ListParam::equal(Self, Self) -> Bool
 pub fn ListParam::not_equal(Self, Self) -> Bool
 pub fn ListParam::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Style {
   tag_open : String
   tag_close : String
-} derive(Eq, @debug.Debug)
+}
 pub fn Style::equal(Self, Self) -> Bool
 pub fn Style::not_equal(Self, Self) -> Bool
 pub fn Style::to_repr(Self) -> @debug.Repr
@@ -110,6 +115,7 @@ pub(all) enum T {
   Custom((@format.Formatter) -> Unit)
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Wrap {
   WrapAtoms
   AlwaysWrap
@@ -117,7 +123,7 @@ pub(all) enum Wrap {
   ForceBreaks
   ForceBreaksRec
   NoBreaks
-} derive(Eq, @debug.Debug)
+}
 pub fn Wrap::equal(Self, Self) -> Bool
 pub fn Wrap::not_equal(Self, Self) -> Bool
 pub fn Wrap::to_repr(Self) -> @debug.Repr

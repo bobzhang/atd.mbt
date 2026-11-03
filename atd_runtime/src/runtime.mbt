@@ -71,9 +71,10 @@ pub impl Show for Path with fn output(self, logger) {
 
 ///|
 /// Error raised when a JSON value doesn't have the expected shape.
+#derive(Eq, Debug)
 pub(all) suberror JsonError {
   JsonError(String)
-} derive(Eq, Debug)
+}
 
 ///|
 pub impl Show for JsonError with fn output(self, logger) {

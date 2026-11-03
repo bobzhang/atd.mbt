@@ -7,6 +7,7 @@
 
 ///|
 /// How the body of a list may be wrapped.
+#derive(Eq, Debug)
 pub(all) enum Wrap {
   /// wrap if the list contains only atoms
   WrapAtoms
@@ -22,7 +23,7 @@ pub(all) enum Wrap {
   ForceBreaksRec
   /// align horizontally: never break the line between list items
   NoBreaks
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Wrap with Eq::{equal, not_equal}
@@ -32,6 +33,7 @@ pub extend Wrap with Debug::{to_repr}
 
 ///|
 /// When to break the line after a label.
+#derive(Eq, Debug)
 pub(all) enum LabelBreak {
   /// if there's not enough room
   Auto
@@ -42,7 +44,7 @@ pub(all) enum LabelBreak {
   AlwaysRec
   /// never
   Never
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend LabelBreak with Eq::{equal, not_equal}
@@ -54,10 +56,11 @@ pub extend LabelBreak with Debug::{to_repr}
 /// The markers printed around the text of a style: the opening and closing
 /// markers of a semantic tag, which are not counted in the width of the
 /// text.
+#derive(Eq, Debug)
 pub(all) struct Style {
   tag_open : String
   tag_close : String
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Style with Eq::{equal, not_equal}
@@ -67,10 +70,11 @@ pub extend Style with Debug::{to_repr}
 
 ///|
 /// Parameters of an atom.
+#derive(Eq, Debug)
 pub(all) struct AtomParam {
   /// Default: `None`
   atom_style : String?
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend AtomParam with Eq::{equal, not_equal}
@@ -85,6 +89,7 @@ pub let atom : AtomParam = { atom_style: None, }
 
 ///|
 /// Parameters of a list.
+#derive(Eq, Debug)
 pub(all) struct ListParam {
   /// Whether there must be some whitespace after the opening string.
   /// Default: `true`
@@ -124,7 +129,7 @@ pub(all) struct ListParam {
   separator_style : String?
   /// Default: `None`
   closing_style : String?
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend ListParam with Eq::{equal, not_equal}
@@ -154,6 +159,7 @@ pub let list : ListParam = {
 
 ///|
 /// Parameters of a label.
+#derive(Eq, Debug)
 pub(all) struct LabelParam {
   /// Whether to break the line after the label. Default: `Auto`
   label_break : LabelBreak
@@ -164,7 +170,7 @@ pub(all) struct LabelParam {
   indent_after_label : Int32
   /// Default: `None`
   label_style : String?
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend LabelParam with Eq::{equal, not_equal}

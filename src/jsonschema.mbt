@@ -6,10 +6,11 @@
 
 ///|
 /// Supported versions of the JSON Schema standard.
+#derive(Eq, Debug)
 pub(all) enum JsonschemaVersion {
   Draft_2019_09
   Draft_2020_12
-} derive(Eq, Debug)
+}
 
 ///|
 /// The latest supported version.

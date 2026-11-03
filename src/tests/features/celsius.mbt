@@ -1,6 +1,7 @@
 ///|
 /// A user-defined type used through `<mbt t="Celsius" ...>`.
-pub(all) struct Celsius(Double) derive(Eq, Debug)
+#derive(Eq, Debug)
+pub(all) struct Celsius(Double)
 
 ///|
 pub fn Celsius::from_double(x : Double) -> Celsius {

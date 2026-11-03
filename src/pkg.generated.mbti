@@ -159,24 +159,27 @@ pub let version : String
 pub fn visit(module_? : ((Module) -> Unit raise AtdError, Module) -> Unit raise AtdError, import_? : ((Import) -> Unit raise AtdError, Import) -> Unit raise AtdError, imported_type? : ((ImportedType) -> Unit raise AtdError, ImportedType) -> Unit raise AtdError, type_def? : ((TypeDef) -> Unit raise AtdError, TypeDef) -> Unit raise AtdError, type_expr? : ((TypeExpr) -> Unit raise AtdError, TypeExpr) -> Unit raise AtdError, variant? : ((Variant) -> Unit raise AtdError, Variant) -> Unit raise AtdError, cell? : ((Cell) -> Unit raise AtdError, Cell) -> Unit raise AtdError, field? : ((Field) -> Unit raise AtdError, Field) -> Unit raise AtdError) -> (Any) -> Unit raise AtdError
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub(all) suberror AtdError {
   AtdError(String)
-} derive(Eq, @debug.Debug)
+}
 pub fn AtdError::message(Self) -> String
 pub impl Show for AtdError
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub(all) struct AnnotField {
   name : String
   loc : Loc
   value : String?
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct AnnotSection {
   name : String
   loc : Loc
   fields : Array[AnnotField]
-} derive(Eq, @debug.Debug)
+}
 
 pub(all) enum Any {
   Module(Module)
@@ -189,34 +192,40 @@ pub(all) enum Any {
   Field(Field)
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Cell {
   loc : Loc
   expr : TypeExpr
   annot : Array[AnnotSection]
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum DocBlock {
   Paragraph(Array[DocInline])
   Pre(Array[String])
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum DocInline {
   Text(String)
   Code(String)
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Field {
   Field(SimpleField)
   Inherit(Loc, TypeExpr)
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum FieldKind {
   Required
   Optional
   WithDefault
-} derive(Eq, @debug.Debug)
+}
 pub fn FieldKind::is_required(Self) -> Bool
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Import {
   loc : Loc
   path : Array[String]
@@ -224,76 +233,88 @@ pub(all) struct Import {
   alias_ : String?
   name : String
   types : Array[ImportedType]
-} derive(Eq, @debug.Debug)
+}
 pub fn Import::new(loc~ : Loc, path~ : Array[String], annot~ : Array[AnnotSection], alias_? : String, types~ : Array[ImportedType]) -> Self
 
+#derive(Eq, @debug.Debug)
 pub(all) struct ImportedType {
   params : Array[String]
   name : String
   annot : Array[AnnotSection]
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct JsonAdapter {
   ocaml_adapter : OcamlAdapter?
   java_adapter : String?
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum JsonFloat {
   Float(Int32?)
   Int
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum JsonInt {
   Int
   String
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum JsonList {
   Array
   Object
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct JsonRecord {
   json_keep_nulls : Bool
   json_record_adapter : JsonAdapter
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct JsonSum {
   json_sum_adapter : JsonAdapter
   json_open_enum : Bool
   json_lowercase_tags : Bool
   json_sum_repr : JsonSumRepr
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum JsonSumRepr {
   Array
   Object
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum JsonschemaVersion {
   Draft_2019_09
   Draft_2020_12
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Loc {
   start : Pos
   end_ : Pos
-} derive(Eq, @debug.Debug)
+}
 #alias(new, deprecated)
 pub fn Loc::Loc(Pos, Pos) -> Self
 pub fn Loc::compare(Self, Self) -> Int32
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Module {
   head : (Loc, Array[AnnotSection])
   imports : Array[Import]
   type_defs : Array[TypeDef]
-} derive(Eq, @debug.Debug)
+}
 pub fn Module::map_all_annot(Self, (Array[AnnotSection]) -> Array[AnnotSection]) -> Self
 pub fn Module::map_type_exprs(Self, (TypeExpr) -> TypeExpr) -> Self
 pub fn Module::remove_wrap_constructs(Self) -> Self
 pub fn Module::use_only_name_variant(Self) -> Self
 pub fn Module::use_only_specific_variants(Self) -> Self
 
+#derive(Eq, @debug.Debug)
 pub(all) enum NodeKind {
   ModuleHead
   Import
@@ -303,33 +324,38 @@ pub(all) enum NodeKind {
   Variant
   Cell
   Field
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct OcamlAdapter {
   normalize : String
   restore : String
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Pos {
   fname : String
   lnum : Int32
   bol : Int32
   cnum : Int32
-} derive(Eq, @debug.Debug)
+}
 
+#derive(@debug.Debug)
 pub(all) struct SchemaSection {
   section : String
   fields : Array[(NodeKind, String)]
-} derive(@debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct SimpleField {
   loc : Loc
   name : String
   kind : FieldKind
   annot : Array[AnnotSection]
   expr : TypeExpr
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) struct TypeDef {
   loc : Loc
   name : TypeName
@@ -337,8 +363,9 @@ pub(all) struct TypeDef {
   annot : Array[AnnotSection]
   value : TypeExpr
   orig : TypeDef?
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, @debug.Debug)
 pub(all) enum TypeExpr {
   Sum(Loc, Array[Variant], Array[AnnotSection])
   Record(Loc, Array[Field], Array[AnnotSection])
@@ -350,7 +377,7 @@ pub(all) enum TypeExpr {
   Wrap(Loc, TypeExpr, Array[AnnotSection])
   Name(Loc, TypeInst, Array[AnnotSection])
   Tvar(Loc, String)
-} derive(Eq, @debug.Debug)
+}
 pub fn TypeExpr::annot(Self) -> Array[AnnotSection]
 pub fn TypeExpr::extract_type_names(Self, ignorable? : Array[TypeName]) -> Array[TypeName]
 pub fn[A] TypeExpr::fold(Self, A, (Self, A) -> A raise AtdError) -> A raise AtdError
@@ -360,15 +387,17 @@ pub fn TypeExpr::map_annot(Self, (Array[AnnotSection]) -> Array[AnnotSection] ra
 pub fn TypeExpr::map_deep(Self, (Self) -> Self) -> Self
 pub fn TypeExpr::set_loc(Self, Loc) -> Self
 
+#derive(Eq, @debug.Debug)
 pub(all) struct TypeInst {
   loc : Loc
   name : TypeName
   args : Array[TypeExpr]
-} derive(Eq, @debug.Debug)
+}
 
+#derive(Eq, Hash, @debug.Debug)
 pub(all) struct TypeName {
   path : Array[String]
-} derive(Eq, Hash, @debug.Debug)
+}
 #alias(new, deprecated)
 pub fn TypeName::TypeName(Array[String]) -> Self
 pub fn TypeName::basename(Self) -> String
@@ -390,10 +419,11 @@ pub fn UniqueNames::reverse_translate(Self, String) -> String?
 pub fn UniqueNames::translate(Self, String, preferred_translation? : String) -> String
 pub fn UniqueNames::translate_only(Self, String) -> String?
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Variant {
   Variant(Loc, String, Array[AnnotSection], TypeExpr?)
   Inherit(Loc, TypeExpr)
-} derive(Eq, @debug.Debug)
+}
 
 // Type aliases
 pub type Annot = Array[AnnotSection]
