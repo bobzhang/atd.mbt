@@ -1,15 +1,4 @@
-///|
-// Differential fuzzing of atdcat: mutate the ATD files of the upstream
-// repository and compare the outputs of the MoonBit atdcat and of the
-// reference OCaml atdcat.
-//
-// Usage, from the root of the repository, after `moon build --target native`:
-//
-//   moonx scripts/fuzz_atdcat.mbtx <reference atdcat.exe> [count] [seed] [atdcat]
-//
-// The last argument is the MoonBit atdcat to test, a native executable or
-// a .wasm file run with moonrun; it defaults to the native build in _build.
-
+----
 import {
   "moonbitlang/async@0.22.4",
   "moonbitlang/async@0.22.4/fs",
@@ -21,6 +10,19 @@ import {
   "moonbitlang/core/buffer",
   "moonbitlang/core/encoding/utf8",
 }
+----
+
+///|
+// Differential fuzzing of atdcat: mutate the ATD files of the upstream
+// repository and compare the outputs of the MoonBit atdcat and of the
+// reference OCaml atdcat.
+//
+// Usage, from the root of the repository, after `moon build --target native`:
+//
+//   moonx scripts/fuzz_atdcat.mbtx <reference atdcat.exe> [count] [seed] [atdcat]
+//
+// The last argument is the MoonBit atdcat to test, a native executable or
+// a .wasm file run with moonrun; it defaults to the native build in _build.
 
 ///|
 let tokens : Array[String] = [
@@ -154,8 +156,9 @@ async fn main {
     "_build/native/debug/build/bobzhang/atd/cmd/atdcat/atdcat.exe"
   }
   // the seed of ChaCha8 must have 32 bytes
+  // Padding guarantees 32 UTF-16 units; retain the original raw-unit seed range.
   let seed_bytes = @utf8.encode(
-    (seed + String::make(32, '_')).view(end_offset=32),
+    (seed + String::make(32, '_')).unsafe_view(start=0, end=32),
   )
   let rand = @random.Rand::chacha8(seed=seed_bytes)
   let sources = []

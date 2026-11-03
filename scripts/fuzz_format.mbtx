@@ -1,3 +1,17 @@
+----
+import {
+  "moonbitlang/async@0.22.4",
+  "moonbitlang/async@0.22.4/fs",
+  "moonbitlang/async@0.22.4/process",
+  "moonbitlang/async@0.22.4/stdio",
+  "moonbitlang/core/env",
+  "moonbitlang/core/random",
+  "moonbitlang/core/double",
+  "moonbitlang/core/string",
+  "moonbitlang/core/encoding/utf8",
+}
+----
+
 ///|
 // Differential fuzzing of the format module: generate random scripts of
 // pretty-printing operations (boxes, break hints, tabulations, tags,
@@ -11,18 +25,6 @@
 // This builds the two drivers: format/fuzz/driver.ml with OCaml's Format and
 // the bobzhang/format_fuzz module of the workspace (format/fuzz). See
 // format/fuzz/README.md for the format of the scripts.
-
-import {
-  "moonbitlang/async@0.22.4",
-  "moonbitlang/async@0.22.4/fs",
-  "moonbitlang/async@0.22.4/process",
-  "moonbitlang/async@0.22.4/stdio",
-  "moonbitlang/core/env",
-  "moonbitlang/core/random",
-  "moonbitlang/core/double",
-  "moonbitlang/core/string",
-  "moonbitlang/core/encoding/utf8",
-}
 
 ///|
 let mbt_driver = "_build/native/debug/build/bobzhang/format_fuzz/format_fuzz.exe"
@@ -436,11 +438,7 @@ fn ocaml_error_message(err : String) -> String? {
       "Fatal error: exception Failure(\"", "Fatal error: exception Invalid_argument(\"",
     ] {
     if err.has_prefix(prefix) && err.has_suffix("\")") {
-      return Some(
-        err
-        .view(start_offset=prefix.length(), end_offset=err.length() - 2)
-        .to_owned(),
-      )
+      return Some(err[prefix.length():err.length() - 2].to_owned())
     }
   }
   None
@@ -462,8 +460,9 @@ async fn main {
   let count = if args.length() > 1 { @string.parse_int(args[1]) } else { 1000 }
   let seed = if args.length() > 2 { args[2] } else { "0" }
   // the seed of ChaCha8 must have 32 bytes
+  // Padding guarantees 32 UTF-16 units; retain the original raw-unit seed range.
   let seed_bytes = @utf8.encode(
-    (seed + String::make(32, '_')).view(end_offset=32),
+    (seed + String::make(32, '_')).unsafe_view(start=0, end=32),
   )
   let rand = @random.Rand::chacha8(seed=seed_bytes)
   let tmp = @fs.tmpdir(prefix="format-fuzz")

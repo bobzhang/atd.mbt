@@ -1,3 +1,14 @@
+----
+import {
+  "moonbitlang/async@0.22.4",
+  "moonbitlang/async@0.22.4/fs",
+  "moonbitlang/async@0.22.4/process",
+  "moonbitlang/async@0.22.4/stdio",
+  "moonbitlang/core/env",
+  "moonbitlang/core/encoding/utf8",
+}
+----
+
 ///|
 // Generate MoonBit tests checking that the MoonBit atdcat produces the same
 // output as the reference OCaml atdcat.
@@ -9,15 +20,6 @@
 //
 // The upstream ATD sources are expected in .repos/atd (see README.md).
 // The generated test files are written to src/atdcat/.
-
-import {
-  "moonbitlang/async@0.22.4",
-  "moonbitlang/async@0.22.4/fs",
-  "moonbitlang/async@0.22.4/process",
-  "moonbitlang/async@0.22.4/stdio",
-  "moonbitlang/core/env",
-  "moonbitlang/core/encoding/utf8",
-}
 
 ///|
 let upstream : String = ".repos/atd"
