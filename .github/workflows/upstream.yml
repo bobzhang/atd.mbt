@@ -64,3 +64,6 @@ jobs:
 
       - name: Differential fuzzing of the format module
         run: opam exec -- moon run --target native scripts/fuzz_format.mbtx 3000 "$GITHUB_RUN_ID"
+
+      - name: Native malformed-format diagnostic regression
+        run: python3 scripts/check_format_rejection.py
