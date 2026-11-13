@@ -3,17 +3,19 @@
 
 ///|
 /// Inline element of a paragraph.
+#derive(Eq, Debug)
 pub(all) enum DocInline {
   Text(String)
   Code(String)
-} derive(Eq, Debug)
+}
 
 ///|
 /// Block of documentation.
+#derive(Eq, Debug)
 pub(all) enum DocBlock {
   Paragraph(Array[DocInline])
   Pre(Array[String])
-} derive(Eq, Debug)
+}
 
 ///|
 /// Documentation: a list of blocks.

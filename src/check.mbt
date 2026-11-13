@@ -7,11 +7,12 @@ priv struct CheckEnv {
 }
 
 ///|
+#derive(Eq)
 priv enum Kind {
   KSum
   KRecord
   KOther
-} derive(Eq)
+}
 
 ///|
 fn get_kind(t : TypeExpr) -> Kind {

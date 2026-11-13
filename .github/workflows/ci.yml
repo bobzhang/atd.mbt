@@ -13,24 +13,21 @@ jobs:
   check:
     name: ${{ matrix.os }} (moonbit ${{ matrix.moonbit-version }})
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.moonbit-version == 'nightly' }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
-            moonbit-version: latest
+            moonbit-version: pre-release
           - os: macos-latest
-            moonbit-version: latest
-          - os: ubuntu-latest
-            moonbit-version: nightly
+            moonbit-version: pre-release
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
       - name: Set up MoonBit
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- "${{ matrix.moonbit-version }}"
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- pre-release
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
       - name: Show MoonBit version

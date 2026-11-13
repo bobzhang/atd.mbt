@@ -3,6 +3,7 @@
 // longest-match semantics.
 
 ///|
+#derive(Eq)
 priv enum Token {
   OpParen
   ClParen
@@ -32,7 +33,7 @@ priv enum Token {
   Tident(String)
   StringLit(String)
   Eof
-} derive(Eq)
+}
 
 ///|
 priv struct Lexer {
