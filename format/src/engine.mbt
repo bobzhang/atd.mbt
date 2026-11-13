@@ -32,13 +32,14 @@ priv enum BoxType {
 
 ///|
 /// A semantic tag.
+#derive(Eq, Debug)
 pub(all) enum Stag {
   /// The tags of `open_tag` and of `@{<tag>` in format strings
   StringTag(String)
   /// Other tags, identified by a name; the default tag functions ignore
   /// them
   OtherTag(String)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Stag with Eq::{equal, not_equal}

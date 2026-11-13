@@ -6,10 +6,11 @@
 
 ///|
 /// Supported versions of the JSON Schema standard.
+#derive(Eq, Debug)
 pub(all) enum JsonschemaVersion {
   Draft_2019_09
   Draft_2020_12
-} derive(Eq, Debug)
+}
 
 ///|
 /// The latest supported version.
@@ -140,7 +141,7 @@ fn trans_type_expr(xprop : Bool, x : TypeExpr) -> JsType raise AtdError {
               { expr: Name(_, { name: { path: ["string"], }, .. }, _), .. },
               { expr: value, .. },
             ],
-            _
+            _,
           ),
           Object,
         ) => JMap(trans_type_expr(xprop, value))

@@ -5,9 +5,10 @@
 /// The composite ATD type name `a.b.c` is represented as `TN(["a", "b", "c"])`.
 /// The list of path components may not be empty. Two components indicate a
 /// type provided by an external module.
+#derive(Eq, Hash, Debug)
 pub(all) struct TypeName {
   path : Array[String]
-} derive(Eq, Hash, Debug)
+}
 
 ///|
 /// Build a type name from its path components.

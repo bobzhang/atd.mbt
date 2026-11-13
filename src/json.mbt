@@ -2,64 +2,72 @@
 
 ///|
 /// JSON representation of an ATD `int`.
+#derive(Eq, Debug)
 pub(all) enum JsonInt {
   Int
   String
-} derive(Eq, Debug)
+}
 
 ///|
 /// JSON representation of an ATD `float`.
+#derive(Eq, Debug)
 pub(all) enum JsonFloat {
   /// Number with an optional maximum number of decimal places
   Float(Int32?)
   Int
-} derive(Eq, Debug)
+}
 
 ///|
 /// OCaml-specific JSON adapter.
+#derive(Eq, Debug)
 pub(all) struct OcamlAdapter {
   normalize : String
   restore : String
-} derive(Eq, Debug)
+}
 
 ///|
 /// JSON adapters for various target languages.
+#derive(Eq, Debug)
 pub(all) struct JsonAdapter {
   ocaml_adapter : OcamlAdapter?
   java_adapter : String?
-} derive(Eq, Debug)
+}
 
 ///|
 /// JSON representation of lists: JSON arrays, or JSON objects for lists of
 /// pairs whose first element is a string.
+#derive(Eq, Debug)
 pub(all) enum JsonList {
   Array
   Object
-} derive(Eq, Debug)
+}
 
 ///|
 /// Representation of the variants of a sum type with a payload:
 /// `["Cons", payload]` (Array, default) or `{"Cons": payload}` (Object).
+#derive(Eq, Debug)
 pub(all) enum JsonSumRepr {
   Array
   Object
-} derive(Eq, Debug)
+}
 
 ///|
 /// Record options.
+#derive(Eq, Debug)
 pub(all) struct JsonRecord {
   json_keep_nulls : Bool
   json_record_adapter : JsonAdapter
-} derive(Eq, Debug)
+}
 
 ///|
 /// Sum type options.
+#derive(Eq, Debug)
 pub(all) struct JsonSum {
   json_sum_adapter : JsonAdapter
   json_open_enum : Bool
   json_lowercase_tags : Bool
   json_sum_repr : JsonSumRepr
-} derive(Eq, Debug)
+}
 
 ///|
 /// All the valid annotations of the form `<json ...>`.

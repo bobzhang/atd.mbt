@@ -53,6 +53,7 @@ pub fn string_of_anything(x : Anything, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum DifferentKindsOfThings {
   Root
   Thing(Int32)
@@ -60,7 +61,7 @@ pub(all) enum DifferentKindsOfThings {
   WOW
   // JSON: "!!!"
   Amaze(Array[String])
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend DifferentKindsOfThings with Eq::{equal, not_equal}
@@ -171,9 +172,10 @@ pub fn string_of_this(x : This, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct SimpleRecord {
   str : String
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend SimpleRecord with Eq::{equal, not_equal}
@@ -239,6 +241,7 @@ pub impl ToJson for SimpleRecord with fn to_json(self) {
 pub extend SimpleRecord with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Root {
   id : String
   this : This
@@ -263,7 +266,7 @@ pub(all) struct Root {
   anything : Anything
   wrapped : Array[String]
   ext_tag : @ext_types.Tag
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Root with Eq::{equal, not_equal}
@@ -591,11 +594,12 @@ pub fn string_of_alias(x : Alias, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum Shape {
   Circle(Double)
   Square(Double)
   Point
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Shape with Eq::{equal, not_equal}
@@ -702,9 +706,10 @@ pub fn string_of_pair(x : Pair, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Foo {
   foo : String
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Foo with Eq::{equal, not_equal}
@@ -885,10 +890,11 @@ pub fn string_of_import_(x : Import, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct IntFloatParametrizedRecord {
   field_a : Int32
   field_b : Array[Double]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend IntFloatParametrizedRecord with Eq::{equal, not_equal}

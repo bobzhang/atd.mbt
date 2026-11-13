@@ -18,13 +18,14 @@
 // Test module for atdmbt.
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Match {
   match_ : Int32
   fn_ : String
   kind : String
   x_ : Bool
   some_list : Array[Int32]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Match with Eq::{equal, not_equal}
@@ -110,6 +111,7 @@ pub impl ToJson for Match with fn to_json(self) {
 pub extend Match with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum OptionLike {
   // JSON: "None"
   None_
@@ -119,7 +121,7 @@ pub(all) enum OptionLike {
   Ok_
   // JSON: "other"
   Different(Int32, String, Bool)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend OptionLike with Eq::{equal, not_equal}
@@ -199,13 +201,14 @@ pub impl ToJson for OptionLike with fn to_json(self) {
 pub extend OptionLike with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Int64s {
   big : Int64
   big_str : Int64
   small_str : Int32
   rounded : Double
   precise : Double
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Int64s with Eq::{equal, not_equal}
@@ -289,11 +292,12 @@ pub impl ToJson for Int64s with fn to_json(self) {
 pub extend Int64s with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Maps {
   by_name : Map[String, Int32]
   by_id : Map[Int32, String]
   pairs : Array[(String, Double)]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Maps with Eq::{equal, not_equal}
@@ -387,10 +391,11 @@ pub impl ToJson for Maps with fn to_json(self) {
 pub extend Maps with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum Inline {
   Point(InlinePoint)
   Nested(Array[InlineNested])
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Inline with Eq::{equal, not_equal}
@@ -455,10 +460,11 @@ pub impl ToJson for Inline with fn to_json(self) {
 pub extend Inline with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct InlinePoint {
   x : Double
   y : Double
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend InlinePoint with Eq::{equal, not_equal}
@@ -528,9 +534,10 @@ pub impl ToJson for InlinePoint with fn to_json(self) {
 pub extend InlinePoint with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct InlineNestedB {
   z : Int32
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend InlineNestedB with Eq::{equal, not_equal}
@@ -599,10 +606,11 @@ pub impl ToJson for InlineNestedB with fn to_json(self) {
 pub extend InlineNestedB with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum InlineNested {
   A
   B(InlineNestedB)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend InlineNested with Eq::{equal, not_equal}
@@ -664,10 +672,11 @@ pub impl ToJson for InlineNested with fn to_json(self) {
 pub extend InlineNested with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum Tree {
   Leaf(Int32)
   Node(Tree, Tree)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Tree with Eq::{equal, not_equal}
@@ -733,10 +742,11 @@ pub impl ToJson for Tree with fn to_json(self) {
 pub extend Tree with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Forest {
   trees : Array[Tree]
   parent : Forest?
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Forest with Eq::{equal, not_equal}
@@ -807,6 +817,7 @@ pub impl ToJson for Forest with fn to_json(self) {
 pub extend Forest with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Defaults {
   b : Bool
   i : Int32
@@ -819,7 +830,7 @@ pub(all) struct Defaults {
   alias_default : StringList
   custom : Array[Int32]
   custom_enum : Color
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Defaults with Eq::{equal, not_equal}
@@ -986,11 +997,12 @@ pub fn string_of_string_list(x : StringList, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum Color {
   Red
   Green
   Blue
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Color with Eq::{equal, not_equal}
@@ -1048,11 +1060,12 @@ pub impl ToJson for Color with fn to_json(self) {
 pub extend Color with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Patch {
   x : Int32??
   y : Int32??
   z : Int32??
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Patch with Eq::{equal, not_equal}
@@ -1143,9 +1156,10 @@ pub impl ToJson for Patch with fn to_json(self) {
 pub extend Patch with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct NoPatch {
   x : Int32??
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend NoPatch with Eq::{equal, not_equal}
@@ -1215,11 +1229,12 @@ pub impl ToJson for NoPatch with fn to_json(self) {
 pub extend NoPatch with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) enum Fruit {
   Apple
   Banana
   Other(String)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Fruit with Eq::{equal, not_equal}
@@ -1279,12 +1294,13 @@ pub impl ToJson for Fruit with fn to_json(self) {
 pub extend Fruit with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Tuples {
   unit_tuple : Unit
   single : Int32
   pair : (Int32, String)
   annotated : (Int32, Double)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Tuples with Eq::{equal, not_equal}
@@ -1434,10 +1450,11 @@ pub fn string_of_celsius(x : Celsius, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Temperatures {
   temps : Array[Celsius]
   plain : String
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Temperatures with Eq::{equal, not_equal}
@@ -1586,10 +1603,11 @@ pub fn string_of_raw(x : Raw, indent~ : Int32 = 0) -> String {
 }
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct Tagged {
   tag : @ext.Tag
   tags : Array[@ext.Tag]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Tagged with Eq::{equal, not_equal}
@@ -1719,7 +1737,8 @@ pub impl ToJson for NoDerive with fn to_json(self) {
 pub extend NoDerive with ToJson::{to_json}
 
 ///|
-pub(all) struct EmptyRecord {} derive(Eq, Debug)
+#derive(Eq, Debug)
+pub(all) struct EmptyRecord {}
 
 ///|
 pub extend EmptyRecord with Eq::{equal, not_equal}
@@ -1789,11 +1808,12 @@ pub extend EmptyRecord with ToJson::{to_json}
 /// preformatted
 ///   text
 /// ```
+#derive(Eq, Debug)
 pub(all) enum Documented {
   /// A documented case.
   Documented(Int32)
   Undocumented
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Documented with Eq::{equal, not_equal}
@@ -1853,10 +1873,11 @@ pub impl ToJson for Documented with fn to_json(self) {
 pub extend Documented with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct StringIntEntry {
   key : String
   value : Int32
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend StringIntEntry with Eq::{equal, not_equal}

@@ -3,20 +3,22 @@
 ///|
 /// An annotation field, i.e. a key with an optional value within an
 /// annotation, e.g. `baz="123"` or `bar` in `<foo bar baz="123">`.
+#derive(Eq, Debug)
 pub(all) struct AnnotField {
   name : String
   loc : Loc
   value : String?
-} derive(Eq, Debug)
+}
 
 ///|
 /// A single annotation within edgy brackets, e.g.
 /// `<"foo" bar baz="123" path.to.thing="abc">`.
+#derive(Eq, Debug)
 pub(all) struct AnnotSection {
   name : String
   loc : Loc
   fields : Array[AnnotField]
-} derive(Eq, Debug)
+}
 
 ///|
 /// An annotation, consisting of a sequence of sections.
@@ -24,16 +26,18 @@ pub type Annot = Array[AnnotSection]
 
 ///|
 /// Contents of an ATD file.
+#derive(Eq, Debug)
 pub(all) struct Module {
   /// The head of an ATD file is just a list of annotations.
   head : (Loc, Annot)
   imports : Array[Import]
   type_defs : Array[TypeDef]
-} derive(Eq, Debug)
+}
 
 ///|
 /// Require the existence of another ATD module.
 /// The concrete syntax is `from module.path [as alias] import type1, ...`.
+#derive(Eq, Debug)
 pub(all) struct Import {
   loc : Loc
   /// The full name of the ATD module.
@@ -46,20 +50,22 @@ pub(all) struct Import {
   name : String
   /// The list of types explicitly imported from the module.
   types : Array[ImportedType]
-} derive(Eq, Debug)
+}
 
 ///|
 /// A type imported by a `from ... import ...` statement.
+#derive(Eq, Debug)
 pub(all) struct ImportedType {
   /// Type parameter names, e.g. `["a"]` for `'a t`.
   params : Array[String]
   /// The name of the type in the external module.
   name : String
   annot : Annot
-} derive(Eq, Debug)
+}
 
 ///|
 /// A type definition.
+#derive(Eq, Debug)
 pub(all) struct TypeDef {
   loc : Loc
   name : TypeName
@@ -70,10 +76,11 @@ pub(all) struct TypeDef {
   /// Polymorphic type definition from which this definition has been
   /// derived through monomorphization, if applicable.
   orig : TypeDef?
-} derive(Eq, Debug)
+}
 
 ///|
 /// A type expression.
+#derive(Eq, Debug)
 pub(all) enum TypeExpr {
   /// A sum type (within square brackets)
   Sum(Loc, Array[Variant], Annot)
@@ -95,34 +102,38 @@ pub(all) enum TypeExpr {
   Name(Loc, TypeInst, Annot)
   /// A type variable identifier without the tick
   Tvar(Loc, String)
-} derive(Eq, Debug)
+}
 
 ///|
 /// A dot-separated type name and its arguments.
+#derive(Eq, Debug)
 pub(all) struct TypeInst {
   loc : Loc
   name : TypeName
   args : Array[TypeExpr]
-} derive(Eq, Debug)
+}
 
 ///|
 /// A single variant or an `inherit` statement.
+#derive(Eq, Debug)
 pub(all) enum Variant {
   Variant(Loc, String, Annot, TypeExpr?)
   Inherit(Loc, TypeExpr)
-} derive(Eq, Debug)
+}
 
 ///|
 /// Tuple cell, with annotations placed before the type expression, as in
 /// `<ocaml default="0.0">: float`.
+#derive(Eq, Debug)
 pub(all) struct Cell {
   loc : Loc
   expr : TypeExpr
   annot : Annot
-} derive(Eq, Debug)
+}
 
 ///|
 /// Kinds of record fields.
+#derive(Eq, Debug)
 pub(all) enum FieldKind {
   /// required field, e.g. `id : string`
   Required
@@ -130,24 +141,26 @@ pub(all) enum FieldKind {
   Optional
   /// optional field with a default value, e.g. `~websites : string list`
   WithDefault
-} derive(Eq, Debug)
+}
 
 ///|
 /// A record field that is not an `inherit` statement.
+#derive(Eq, Debug)
 pub(all) struct SimpleField {
   loc : Loc
   name : String
   kind : FieldKind
   annot : Annot
   expr : TypeExpr
-} derive(Eq, Debug)
+}
 
 ///|
 /// A single record field or an `inherit` statement.
+#derive(Eq, Debug)
 pub(all) enum Field {
   Field(SimpleField)
   Inherit(Loc, TypeExpr)
-} derive(Eq, Debug)
+}
 
 ///|
 /// Any kind of node, used to define a visitor root.
@@ -480,6 +493,7 @@ pub fn visit(
 
 ///|
 /// Kinds of nodes that carry annotations.
+#derive(Eq, Debug)
 pub(all) enum NodeKind {
   ModuleHead
   Import
@@ -489,7 +503,7 @@ pub(all) enum NodeKind {
   Variant
   Cell
   Field
-} derive(Eq, Debug)
+}
 
 ///|
 /// Iterate over all the annotations of a tree, calling `f` with the kind of

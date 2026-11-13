@@ -2,9 +2,10 @@
 /// Error raised by the functions of the ATD library.
 /// It corresponds to both `Ast.Atd_error` and `Failure` in the OCaml
 /// implementation; the payload is the complete error message.
+#derive(Debug, Eq)
 pub(all) suberror AtdError {
   AtdError(String)
-} derive(Debug, Eq)
+}
 
 ///|
 /// Return the error message.
