@@ -9,7 +9,7 @@ fn unhex(s : String) -> String {
   }
   let bytes = FixedArray::make(s.length() / 2, b'\x00')
   for i in 0..<bytes.length() {
-    let byte = @string.parse_int(s[2 * i:2 * i + 2], base=16) catch {
+    let byte = @string.parse_int(s[2 * i:2 * i + 2], radix=16) catch {
       _ => abort("bad hex string \{s}")
     }
     bytes[i] = byte.to_byte()
@@ -35,7 +35,7 @@ fn int64(s : String) -> Int64 {
 
 ///|
 fn float_of_bits(s : String) -> Double {
-  let bits = @string.parse_uint64(s, base=16) catch {
+  let bits = @string.parse_uint64(s, radix=16) catch {
     _ => abort("bad float \{s}")
   }
   bits.reinterpret_as_double()
