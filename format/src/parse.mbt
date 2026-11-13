@@ -35,7 +35,7 @@ fn FormatParser::char_at(self : FormatParser, i : Int32) -> Char {
 /// The position of an index in error messages: like in OCaml, it counts
 /// the bytes of the UTF-8 encoding.
 fn FormatParser::pos(self : FormatParser, i : Int32) -> Int32 {
-  utf8_length(self.str.view(end_offset=i))
+  utf8_length(self.str[:i])
 }
 
 ///|
@@ -83,9 +83,7 @@ fn FormatParser::incompatible_flag(
   symb : Char,
   option : String,
 ) -> FormatError {
-  let subfmt = self.str
-    .view(start_offset=pct_ind, end_offset=str_ind)
-    .to_owned()
+  let subfmt = self.str[pct_ind:str_ind].to_owned()
   FormatError(
     "invalid format \{self.quoted()}: at character number \{self.pos(pct_ind)}, \{option} is incompatible with '\{symb}' in sub-format \{string_to_caml_string(subfmt)}",
   )
@@ -135,9 +133,7 @@ fn FormatParser::add_literal(
   if str_ind == lit_start {
     fmt
   } else {
-    fmt.prepend(
-      Lit(self.str.view(start_offset=lit_start, end_offset=str_ind).to_owned()),
-    )
+    fmt.prepend(Lit(self.str[lit_start:str_ind].to_owned()))
   }
 }
 

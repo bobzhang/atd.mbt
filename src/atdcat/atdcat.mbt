@@ -73,7 +73,7 @@ fn format_html_comments(x : @atd.AnnotSection) -> @easy_format.T {
 ///|
 fn basename(path : String) -> String {
   match path.rev_find("/") {
-    Some(i) => path.view(start_offset=i + 1).to_owned()
+    Some(i) => path[i + 1:].to_owned()
     None => path
   }
 }
