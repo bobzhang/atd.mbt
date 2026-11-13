@@ -1,6 +1,6 @@
 name = "bobzhang/easy_format"
 
-version = "0.1.0"
+version = "0.1.1"
 
 readme = "README.md"
 
@@ -13,7 +13,7 @@ keywords = [ "pretty-printing", "format", "indentation", "ocaml" ]
 description = "A port of OCaml's easy-format: pretty-printing of trees made of atoms, lists and labels, with styles"
 
 import {
-  "bobzhang/format@0.1.1",
+  "bobzhang/format@0.1.2",
 }
 
 source = "src"

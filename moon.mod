@@ -1,6 +1,6 @@
 name = "bobzhang/atd"
 
-version = "0.3.0"
+version = "0.3.1"
 
 readme = "README.md"
 
@@ -15,8 +15,8 @@ description = "A MoonBit port of ATD (Adaptable Type Definitions) with a MoonBit
 import {
   "moonbitlang/x@0.5.5",
   "moonbitlang/async@0.22.4",
-  "bobzhang/format@0.1.1",
-  "bobzhang/easy_format@0.1.0",
+  "bobzhang/format@0.1.2",
+  "bobzhang/easy_format@0.1.1",
   "bobzhang/atd_runtime@0.1.0",
 }
 
