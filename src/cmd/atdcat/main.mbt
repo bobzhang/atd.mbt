@@ -17,7 +17,7 @@ impl Show for ReadError with fn output(self, logger) {
 }
 
 ///|
-async fn main {
+async fn main_async() -> Unit {
   let args = @env.args()
   // Read the input files first, since the core of atdcat is synchronous.
   let files : Map[String, Result[Bytes, String]] = Map([])
@@ -66,4 +66,9 @@ async fn main {
   if code != 0 {
     @sys.exit(code)
   }
+}
+
+///|
+fn main {
+  @async.run_async_main(main_async)
 }
