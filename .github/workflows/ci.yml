@@ -16,18 +16,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            moonbit-version: pre-release
-          - os: macos-latest
-            moonbit-version: pre-release
+        os: [ubuntu-latest, macos-latest]
+        moonbit-version: [latest, pre-release]
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
       - name: Set up MoonBit
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- pre-release
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s -- "${{ matrix.moonbit-version }}"
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
       - name: Show MoonBit version
