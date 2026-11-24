@@ -129,7 +129,7 @@ fn run(ppf : @format.Formatter, line : String) -> Unit {
 }
 
 ///|
-async fn main {
+async fn main_async() -> Unit {
   let script = @stdio.stdin.read_all().binary()
   let script = String::from_array(script.iter().map(b => b.to_char()).collect())
   let buf = StringBuilder()
@@ -139,4 +139,9 @@ async fn main {
   }
   ppf.print_flush()
   @stdio.stdout.write(buf.to_string())
+}
+
+///|
+fn main {
+  @async.run_async_main(main_async)
 }

@@ -111,7 +111,7 @@ async fn run(args : ArrayView[String]) -> Unit {
 }
 
 ///|
-async fn main {
+async fn main_async() -> Unit {
   run(@env.args()) catch {
     Exit(code) => @sys.exit(code)
     @atd.AtdError(msg) => {
@@ -123,4 +123,9 @@ async fn main {
       @sys.exit(2)
     }
   }
+}
+
+///|
+fn main {
+  @async.run_async_main(main_async)
 }
