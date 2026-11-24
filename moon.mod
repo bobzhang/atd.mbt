@@ -1,6 +1,6 @@
 name = "bobzhang/atd"
 
-version = "0.3.1"
+version = "0.3.2"
 
 readme = "README.md"
 
@@ -17,7 +17,7 @@ import {
   "moonbitlang/async@0.22.4",
   "bobzhang/format@0.1.2",
   "bobzhang/easy_format@0.1.1",
-  "bobzhang/atd_runtime@0.1.0",
+  "bobzhang/atd_runtime@0.1.1",
 }
 
 source = "src"
