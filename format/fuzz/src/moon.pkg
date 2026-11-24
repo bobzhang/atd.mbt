@@ -1,6 +1,5 @@
 import {
   "bobzhang/format",
-  "moonbitlang/async",
   "moonbitlang/async/stdio",
   "moonbitlang/core/string",
   "moonbitlang/core/encoding/utf8",

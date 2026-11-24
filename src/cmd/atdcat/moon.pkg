@@ -1,6 +1,5 @@
 import {
   "bobzhang/atd/atdcat" @atdcat_lib,
-  "moonbitlang/async",
   "moonbitlang/async/fs",
   "moonbitlang/async/stdio",
   "moonbitlang/x/sys",

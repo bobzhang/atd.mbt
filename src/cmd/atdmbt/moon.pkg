@@ -1,7 +1,6 @@
 import {
   "bobzhang/atd",
   "bobzhang/atd/mbtgen",
-  "moonbitlang/async",
   "moonbitlang/async/fs",
   "moonbitlang/async/stdio",
   "moonbitlang/x/sys",
