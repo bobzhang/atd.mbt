@@ -64,7 +64,7 @@ async fn main_async() -> Unit {
   @stdio.stderr.write(err.to_string())
   @stdio.stdout.write(out.to_string())
   if code != 0 {
-    @sys.exit(code)
+    @env.exit(code)
   }
 }
 

@@ -113,14 +113,14 @@ async fn run(args : ArrayView[String]) -> Unit {
 ///|
 async fn main_async() -> Unit {
   run(@env.args()) catch {
-    Exit(code) => @sys.exit(code)
+    Exit(code) => @env.exit(code)
     @atd.AtdError(msg) => {
       @stdio.stderr.write(msg + "\n")
-      @sys.exit(1)
+      @env.exit(1)
     }
     e => {
       @stdio.stderr.write("atdmbt: \{e}\n")
-      @sys.exit(2)
+      @env.exit(2)
     }
   }
 }
